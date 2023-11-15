@@ -21,9 +21,9 @@ additional_defines = [
 additional_includes = [
   # Path should be absolute only!
   #'D:/absolute/path/to/include/folder/'
-  'D:/sorai/third_party/',
-  'D:/sorai/third_party/google/v8/',
-  'D:/sorai/third_party/uv/',
+  'D:/resourcemod/third_party/',
+  'D:/resourcemod/third_party/google/v8/',
+  'D:/resourcemod/third_party/uv/',
 ]
 
 class SDK(object):
