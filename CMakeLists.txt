@@ -26,7 +26,6 @@ add_library(resourcemod SHARED
 
 target_link_libraries(resourcemod
         ${CMAKE_SOURCE_DIR}/third_party/sourcehook/sourcehook.lib
-        ${CMAKE_SOURCE_DIR}/lib/quickjs.lib
         )
 target_compile_definitions(resourcemod PUBLIC IS_INTERNAL_RUNTIME)
 ### THIS PART IS ACTUALLY IN-USE

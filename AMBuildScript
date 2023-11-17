@@ -9,7 +9,6 @@ additional_libs = [
   '../../../lib/v8_monolith.lib',
   '../../../lib/v8_libbase.lib',
   '../../../lib/v8_libplatform.lib',
-  '../../../lib/uv.lib',
 ]
 
 additional_defines = [
@@ -23,7 +22,6 @@ additional_includes = [
   #'D:/absolute/path/to/include/folder/'
   'D:/resourcemod/third_party/',
   'D:/resourcemod/third_party/google/v8/',
-  'D:/resourcemod/third_party/uv/',
 ]
 
 class SDK(object):

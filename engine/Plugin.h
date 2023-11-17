@@ -39,6 +39,8 @@ public:
     // v8 test
     void LoadPluginFS();
 
+    void AsyncCallback(v8::Global<v8::Function> cb);
+
     void SubscribeOnEvent(std::string name, v8::Local<v8::Value> cb);
 
     bool FireEvent(std::string, std::string);

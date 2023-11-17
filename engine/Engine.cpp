@@ -7,9 +7,10 @@
 #include "../game/hooks/EventManager.h"
 #include "v8/Module.h"
 #include <direct.h>
+#include "EventLoop.h"
 
 Engine *g_Engine;
-
+EventLoop *g_EventLoop;
 void Engine::Init() {
     // Get current exe path
     char cwd[MAX_PATH];
@@ -27,6 +28,8 @@ void Engine::Init() {
     this->gameDataPath.append("/").append("gamedata").append("/").append("rmod.cs2.json");
 
     g_Engine = this;
+    g_EventLoop = new EventLoop();
+    g_EventLoop->Run();
     this->InitV8();
 }
 

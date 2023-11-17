@@ -10,6 +10,7 @@
 #include "v8/Events.h"
 #include "v8/Module.h"
 #include "v8/ExternalRuntime.h"
+#include "v8/Timers.h"
 
 extern Engine *g_Engine;
 
@@ -40,6 +41,14 @@ bool Plugin::FireEvent(std::string name, std::string data) {
         }
     }
     return false;
+}
+
+void Plugin::AsyncCallback(v8::Global<v8::Function> cb) {
+    v8::HandleScope handle_scope(g_Engine->isolate);
+    auto c = cb.Get(g_Engine->isolate)->Call(this->v8context.Get(g_Engine->isolate), v8::Undefined(g_Engine->isolate), 0, nullptr);
+    if (c.IsEmpty()) {
+        logger::log("C is empty.");
+    }
 }
 
 bool Plugin::FireGameEvent(IGameEvent *event) {
@@ -99,6 +108,15 @@ void Plugin::LoadPluginFS() {
             ctx,
             v8::String::NewFromUtf8(g_Engine->isolate, "external_runtime", v8::NewStringType::kNormal).ToLocalChecked(),
             external
+    );
+
+    // Create events object
+    Timers *t = new Timers();
+    v8::Local<v8::Object> timers = t->Wrap();
+    ctx->Global()->Set(
+            ctx,
+            v8::String::NewFromUtf8(g_Engine->isolate, "timers", v8::NewStringType::kNormal).ToLocalChecked(),
+            timers
     );
 
     std::string mainModuleName = this->name.c_str();

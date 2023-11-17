@@ -5,9 +5,8 @@
 2. Set environment variables HL2SDK and MMS_PATH (full paths)
 3. Open AMBuildScript file and replace values in additional_includes with your full paths
 4. Build v8 engine and put `v8_libbase.lib`, `v8_libplatform.lib` and `v8_monolith.lib` to ./lib folder
-5. Build libuv and put `uv.lib` to ./lib folder
-6. `make configure`
-7. `make build`
+5. `make configure`
+6. `make build`
 
 ### How to build v8
 1. Install visual studio 2020
