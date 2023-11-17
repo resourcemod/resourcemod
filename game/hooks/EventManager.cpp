@@ -9,6 +9,7 @@
 #include "../../engine/Engine.h"
 #include "Structs.h"
 #include "../Virtual.h"
+#include "../cs2/Memory.h"
 #include <tier1/KeyValues.h>
 #include <igameevents.h>
 
@@ -18,6 +19,7 @@ extern SourceHook::ISourceHook *g_SHPtr;
 extern IVEngineServer2 *g_SourceEngine;
 extern IGameEventSystem *g_SourceEvents;
 extern ISource2Server *g_pSource2Server;
+extern Memory *g_Memory;
 IGameEventManager2 *g_gameEventManager;
 
 SH_DECL_HOOK8_void(IGameEventSystem, PostEventAbstract, SH_NOATTRIB, 0, CSplitScreenSlot, bool, int, const uint64*,
@@ -31,7 +33,7 @@ SH_DECL_HOOK2(IGameEventManager2, FireEvent, SH_NOATTRIB, 0, bool, IGameEvent *,
 void EventManager::StartHooks() {
     // make event calls with O1
     this->FillLegacyEventsMap();
-    g_gameEventManager = (IGameEventManager2 *) (CALL_VIRTUAL(uintptr_t, 91, g_pSource2Server) - 8);
+    g_gameEventManager = (IGameEventManager2 *) (CALL_VIRTUAL(uintptr_t, g_Memory->offsets["GameEventManager"], g_pSource2Server) - 8);
     SH_ADD_HOOK(IGameEventManager2, FireEvent, g_gameEventManager,
             SH_MEMBER(this, &EventManager::OnEventFired), false);
     SH_ADD_HOOK(IGameEventSystem, PostEventAbstract, g_SourceEvents,
@@ -56,8 +58,14 @@ bool EventManager::OnEventFired(IGameEvent *event, bool bDontBroadcast = false) 
     {
         RETURN_META_VALUE(MRES_IGNORED, false);
     }
+    int prevent = 0;
     if (this->events.count(event->GetName()) > 0) {
-        g_Engine->FireGameEvent(event);
+        if (g_Engine->FireGameEvent(event)) {
+            prevent++;
+        }
+    }
+    if (prevent > 0) {
+        RETURN_META_VALUE(MRES_SUPERCEDE, false);
     }
     return false;
 }

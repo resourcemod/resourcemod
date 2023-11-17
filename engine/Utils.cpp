@@ -15,7 +15,7 @@ void Engine::LoadMeta() {
     std::string n = meta["name"].as_string();
     logger::log(logger::format("Launching %s", n.c_str()));
 
-    if(meta["external_runtime"]["enabled"].is_true()) {
+    if(meta["features"]["external_runtime"].is_true()) {
         std::string externalRuntimePullAddr =
                 meta["external_runtime"]["endpoints"]["pull"].is_null() ?
                 "127.0.0.1:30001" :
@@ -28,13 +28,7 @@ void Engine::LoadMeta() {
 
         g_Engine->pullAddr = externalRuntimePullAddr;
         g_Engine->pushAddr = externalRuntimePushAddr;
-        logger::log(logger::format("is ext rt running: %d", g_Engine->isExternalRuntimeRunning));
-        logger::log(logger::format("is ext rt running: %d", g_Engine->isExternalRuntimeRunning));
-        logger::log(logger::format("is ext rt running: %d", g_Engine->isExternalRuntimeRunning));
         Engine::RunExternalRuntime(meta["external_runtime"]["console"].is_true());
-        logger::log(logger::format("is ext rt running: %d", g_Engine->isExternalRuntimeRunning));
-        logger::log(logger::format("is ext rt running: %d", g_Engine->isExternalRuntimeRunning));
-        logger::log(logger::format("is ext rt running: %d", g_Engine->isExternalRuntimeRunning));
         logger::log("Launching external runtime");
         for(;;) {
             logger::log(logger::format("is ext rt running: %d", g_Engine->isExternalRuntimeRunning));
@@ -49,8 +43,8 @@ void Engine::LoadMeta() {
     }
     logger::log("Done! Loading ResourceMod plugins in memory...");
 
-    for (const auto &element: meta["plugins"].iter_array()) {
-        Plugin *p = new Plugin(element["name"].as_string(), element["version"].as_string());
+    for (const auto &element: meta["plugins"].iter_object()) {
+        Plugin *p = new Plugin(element.first, element.second.as_string());
         this->plugins.push_back(p);
         p->LoadPluginFS();
     }

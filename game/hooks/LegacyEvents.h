@@ -14,12 +14,25 @@
 #include "../../engine/Engine.h"
 #include "../js/Player.h"
 
-extern Engine* g_Engine;
+extern Engine *g_Engine;
 
 class RMEvent {
 public:
     const char *event_name;
+
     virtual v8::Local<v8::Object> SerializeV8(v8::Local<v8::Context> ctx) = 0;
+
+    virtual void PreventSourceEvent() = 0;
+
+    virtual bool Prevent() = 0;
+
+    static void Cancel(const v8::FunctionCallbackInfo<v8::Value> &info) {
+        v8::Local<v8::Object> self = info.Holder();
+        v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(self->GetInternalField(0));
+        void *ptr = wrap->Value();
+        static_cast<RMEvent *>(ptr)->PreventSourceEvent();
+        info.GetReturnValue().Set(v8::True(info.GetIsolate()));
+    }
 };
 
 class server_spawn : public RMEvent {
@@ -47,6 +60,16 @@ public:
     const char *os;
     bool dedicated;
     bool password;
+
+    bool prevent = false;
+
+    void PreventSourceEvent() override {
+        logger::log("Not implemented.");
+    }
+
+    bool Prevent() override {
+        return this->prevent;
+    }
 
     v8::Local<v8::Object> SerializeV8(v8::Local<v8::Context> ctx) override {
         // todo: implement
@@ -1214,33 +1237,54 @@ public:
         this->player = new Player(controller);
     };
 
-    static void GetItem(v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info) {
+    static void GetItem(const v8::FunctionCallbackInfo<v8::Value> &info) {
         v8::Local<v8::Object> self = info.Holder();
         v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(self->GetInternalField(0));
-        void* ptr = wrap->Value();
-        const char * value = static_cast<item_pickup*>(ptr)->item;
+        void *ptr = wrap->Value();
+        const char *value = static_cast<item_pickup *>(ptr)->item;
         v8::Local<v8::String> item = v8::String::NewFromUtf8(info.GetIsolate(), value).ToLocalChecked();
         info.GetReturnValue().Set(item);
     }
 
     const char *event_name = "item_pickup";
     CEntityInstance *userid;//playercontroller
-    Player * player;
+    Player *player;
     const char *item;
     bool silent;
     int defindex;
 
+    bool prevent = false;
+
+    void PreventSourceEvent() override {
+        this->prevent = true;
+    }
+
+    bool Prevent() override {
+        return this->prevent;
+    }
+
     v8::Local<v8::Object> SerializeV8(v8::Local<v8::Context> ctx) override {
         v8::Local<v8::ObjectTemplate> t = v8::ObjectTemplate::New(g_Engine->isolate);
         t->SetInternalFieldCount(2);
-
-        t->SetAccessor(v8::String::NewFromUtf8(g_Engine->isolate, "name", v8::NewStringType::kInternalized).ToLocalChecked(), Player::GetName);
-        t->SetAccessor(v8::String::NewFromUtf8(g_Engine->isolate, "steam_id", v8::NewStringType::kInternalized).ToLocalChecked(), Player::GetSteamID);
-        t->SetAccessor(v8::String::NewFromUtf8(g_Engine->isolate, "item", v8::NewStringType::kInternalized).ToLocalChecked(), item_pickup::GetItem);
-
+        t->Set(
+                v8::String::NewFromUtf8(g_Engine->isolate, "GetPlayer",
+                                        v8::NewStringType::kInternalized).ToLocalChecked(),
+                v8::FunctionTemplate::New(g_Engine->isolate, Player::GetPlayerObject)
+        );
+        t->Set(
+                v8::String::NewFromUtf8(g_Engine->isolate, "Cancel",
+                                        v8::NewStringType::kInternalized).ToLocalChecked(),
+                v8::FunctionTemplate::New(g_Engine->isolate, &RMEvent::Cancel)
+        );
+        t->Set(
+                v8::String::NewFromUtf8(g_Engine->isolate, "GetItem",
+                                        v8::NewStringType::kInternalized).ToLocalChecked(),
+                v8::FunctionTemplate::New(g_Engine->isolate, &item_pickup::GetItem)
+        );
         v8::Local<v8::Object> obj = t->NewInstance(ctx).ToLocalChecked();
         obj->SetInternalField(0, v8::External::New(g_Engine->isolate, this));
         obj->SetInternalField(1, v8::External::New(g_Engine->isolate, this->player));
+
         return obj;
     };
 };

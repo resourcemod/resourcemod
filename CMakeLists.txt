@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(resourcemod)
 
-set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/lib)
 
 add_definitions(-DCOMPILER_MSVC64 -DCOMPILER_MSVC -Dprotobuf_BUILD_TESTS=OFF)

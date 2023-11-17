@@ -14,6 +14,7 @@
 #include <engine/igameeventsystem.h>
 #include "cs2/cgameresourceserviceserver.h"
 #include <sourcehook/sourcehook.h>
+#include "cs2/Memory.h"
 #include <direct.h>
 
 ResourceMod g_ResourceMod;
@@ -26,6 +27,7 @@ EventManager *g_EventManager;
 CSchemaSystem* g_SchemaSystem;
 CEntitySystem* g_pEntitySystem;
 CGameResourceService* g_GameResourceService;
+Memory *g_Memory;
 
 class GameSessionConfiguration_t { };
 
@@ -72,6 +74,8 @@ bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 
     Engine *rmod = new Engine();
     rmod->Init();
+    g_Memory = new Memory();
+    g_Memory->LoadOffsets(rmod->gameDataPath);
 
     g_EventManager = new EventManager();
     g_EventManager->StartHooks();
@@ -97,7 +101,7 @@ bool ResourceMod::Unload(char *error, size_t maxlen) {
 }
 
 const char *ResourceMod::GetLicense() {
-    return "MIT";
+    return "GPL-3.0";
 }
 
 const char *ResourceMod::GetVersion() {

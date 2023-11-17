@@ -40,21 +40,20 @@ public:
     v8::Local<v8::Object> Wrap() override {
         v8::EscapableHandleScope handle_scope(g_Engine->isolate);
 
-        v8::Local<v8::ObjectTemplate> class_t;
-        v8::Local<v8::ObjectTemplate> raw_t = v8::ObjectTemplate::New(g_Engine->isolate);
-        raw_t->SetInternalFieldCount(1);
-        raw_t->Set(
+        v8::Local<v8::ObjectTemplate> data = v8::ObjectTemplate::New(g_Engine->isolate);
+        data->SetInternalFieldCount(1);
+        data->Set(
                 v8::String::NewFromUtf8(g_Engine->isolate, "log", v8::NewStringType::kNormal).ToLocalChecked(),
                 v8::FunctionTemplate::New(g_Engine->isolate, &Console::log));
-        raw_t->Set(
+        data->Set(
                 v8::String::NewFromUtf8(g_Engine->isolate, "error", v8::NewStringType::kNormal).ToLocalChecked(),
                 v8::FunctionTemplate::New(g_Engine->isolate, &Console::error));
-        class_t = v8::Local<v8::ObjectTemplate>::New(g_Engine->isolate, raw_t);
         //create instance
-        v8::Local<v8::Object> result = class_t->NewInstance(g_Engine->isolate->GetCurrentContext()).ToLocalChecked();
+        v8::Local<v8::Object> result = data->NewInstance(g_Engine->isolate->GetCurrentContext()).ToLocalChecked();
         //create wrapper
         v8::Local<v8::External> ptr = v8::External::New(g_Engine->isolate, this);
         result->SetInternalField(0, ptr);
+
         return handle_scope.Escape(result);
     }
 

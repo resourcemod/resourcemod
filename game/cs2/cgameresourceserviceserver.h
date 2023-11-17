@@ -20,14 +20,17 @@
 #pragma once
 #include <tier0/platform.h>
 #include "interfaces/interfaces.h"
+#include "Memory.h"
 
 class CGameEntitySystem;
+
+extern Memory *g_Memory;
 
 class CGameResourceService
 {
 public:
     CGameEntitySystem *GetGameEntitySystem()
     {
-        return *reinterpret_cast<CGameEntitySystem **>((uintptr_t)(this) + 0x58);
+        return *reinterpret_cast<CGameEntitySystem **>((uintptr_t)(this) + g_Memory->offsets["GameEntitySystem"]);
     }
 };

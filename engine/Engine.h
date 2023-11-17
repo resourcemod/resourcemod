@@ -12,8 +12,10 @@
 #include <queue>
 #include <mutex>
 #include "TSQueue.h"
+
 #ifndef IS_INTERNAL_RUNTIME
 #else
+
 #include "Plugin.h"
 #include "igameevents.h"
 #include "libplatform/libplatform.h"
@@ -23,7 +25,18 @@
 #include "v8-local-handle.h"
 #include "v8-primitive.h"
 #include "v8-script.h"
+
 #endif
+
+#define CS_TEAM_NONE        0
+#define CS_TEAM_SPECTATOR   1
+#define CS_TEAM_T           2
+#define CS_TEAM_CT          3
+
+#define HUD_PRINTNOTIFY        1
+#define HUD_PRINTCONSOLE    2
+#define HUD_PRINTTALK        3
+#define HUD_PRINTCENTER        4
 
 class Engine {
 public:
@@ -32,6 +45,7 @@ public:
     std::string rootPath = "";
     std::string resourcemodFolder = "";
     std::string pluginsFolder = "";
+    std::string gameDataPath = "";
     std::string metaPath = "";
 
     bool isRunning = false;
@@ -44,36 +58,46 @@ public:
 
     // External Runtime
     static bool RunExternalRuntime(bool console);
+
     std::string pushAddr;
     std::string pullAddr;
 
     // event name and json data
     static void SendNodeMessage(std::string, std::string);
+
     TSQueue<const char *> rtEvents;
     TSQueue<const char *> rtCallbacks;
+
     static void HandleSocketMessage();
 
     // Utils
     static std::string GetFileContent(std::string);
+
     static std::string LoadPluginFile(std::string, std::string);
 
 #ifndef IS_INTERNAL_RUNTIME
 #else
-    std::vector<Plugin*> plugins;
+    std::vector<Plugin *> plugins;
 
     void InitV8();
+
     void LoadMeta();
+
     std::unique_ptr<v8::Platform> platform;
     v8::Isolate::CreateParams create_params;
-    v8::Isolate* isolate;
-    void FireGameEvent(IGameEvent* event);
+    v8::Isolate *isolate;
+
+    bool FireGameEvent(IGameEvent *event);
+
     void FireEvent(std::string, std::string);
 
     static v8::MaybeLocal<v8::Module> ResolveModule(v8::Local<v8::Context> context,
-                                             v8::Local<v8::String> specifier,
-                                             v8::Local<v8::FixedArray> arr,
-                                             v8::Local<v8::Module> referrer);
+                                                    v8::Local<v8::String> specifier,
+                                                    v8::Local<v8::FixedArray> arr,
+                                                    v8::Local<v8::Module> referrer);
+
 #endif
+
     static bool HasSuffix(std::string string, std::string suffix);
 
     void Shutdown();

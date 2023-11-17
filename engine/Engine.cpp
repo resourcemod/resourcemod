@@ -23,6 +23,9 @@ void Engine::Init() {
     this->metaPath = this->resourcemodFolder.c_str();
     this->metaPath.append("/").append(RESOURCEMOD_META);
 
+    this->gameDataPath = this->resourcemodFolder.c_str();
+    this->gameDataPath.append("/").append("gamedata").append("/").append("rmod.cs2.json");
+
     g_Engine = this;
     this->InitV8();
 }
@@ -51,10 +54,17 @@ void Engine::FireEvent(std::string name, std::string json) {
     }
 }
 
-void Engine::FireGameEvent(IGameEvent *event) {
+bool Engine::FireGameEvent(IGameEvent *event) {
+    int prevent = 0;
     for (auto item: g_Engine->plugins) {
-        item->FireGameEvent(event);
+        if (item->FireGameEvent(event)) {
+            prevent++;
+        }
     }
+    if (prevent > 0) {
+        return true;
+    }
+    return false;
 }
 
 void Engine::Shutdown() {

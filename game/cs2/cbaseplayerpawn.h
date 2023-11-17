@@ -22,7 +22,10 @@
 #include "cbaseentity.h"
 #include "cbasemodelentity.h"
 #include "cbaseplayercontroller.h"
+#include "Memory.h"
 #include "services.h"
+
+extern Memory* g_Memory;
 
 class CBasePlayerPawn : public CBaseModelEntity
 {
@@ -34,22 +37,26 @@ public:
     SCHEMA_FIELD(CCSPlayer_ItemServices*, m_pItemServices)
     SCHEMA_FIELD(CHandle<CBasePlayerController>, m_hController)
 
-    void TakeDamage(int iDamage)
-    {
-        if (m_iHealth() - iDamage <= 0)
-            CommitSuicide(false, true);
-        else
-            Z_CBaseEntity::TakeDamage(iDamage);
-    }
-
     void CommitSuicide(bool bExplode, bool bForce)
     {
-        //static int offset = g_GameConfig->GetOffset("CBasePlayerPawn_CommitSuicide");
-        //CALL_VIRTUAL(void, offset, this, bExplode, bForce);
+        static int offset = g_Memory->offsets["CBasePlayerPawn_CommitSuicide"];
+        CALL_VIRTUAL(void, offset, this, bExplode, bForce);
+    }
+
+    void Slap(int hp) {
+        if (m_iHealth() - hp <= 0) {
+            this->CommitSuicide(true, true);
+            return;
+        }
+        this->SetHP(m_iHealth() - hp);
     }
 
     int GetHP() {
         return m_iHealth();
+    }
+
+    void SetHP(int health) {
+        m_iHealth = health;
     }
 
     CBasePlayerController *GetController() { return m_hController.Get(); }

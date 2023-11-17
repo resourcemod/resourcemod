@@ -12,7 +12,7 @@
 #include "igameevents.h"
 #include "v8.h"
 
-struct eventCallback{
+struct eventCallback {
     std::string name;
     v8::Global<v8::Function> cb;
 };
@@ -23,6 +23,7 @@ public:
         this->name = std::move(n);
         this->version = std::move(version);
     };
+
     ~Plugin() {
         this->isLoaded = false;
     };
@@ -33,13 +34,17 @@ public:
     bool isLoaded = false;
 
     // Subscribed event handlers (key is event name, value is event callback)
-    std::map<std::string, eventCallback*> events;
+    std::map<std::string, eventCallback *> events;
 
     // v8 test
     void LoadPluginFS();
+
     void SubscribeOnEvent(std::string name, v8::Local<v8::Value> cb);
+
     bool FireEvent(std::string, std::string);
-    bool FireGameEvent(IGameEvent* event);
+
+    bool FireGameEvent(IGameEvent *event);
+
     v8::Global<v8::Context> v8context;
 };
 
