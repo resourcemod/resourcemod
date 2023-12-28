@@ -18,11 +18,21 @@ void Engine::Init() {
         this->rootPath = cwd;
     }
     this->resourcemodFolder = "../../csgo/addons/resourcemod";
+
     this->pluginsFolder = this->resourcemodFolder.c_str();
     this->pluginsFolder.append("/plugins");
 
+    //this->extensionsFolder = this->resourcemodFolder.c_str();
+    //this->extensionsFolder.append("/extensions");
+
     this->metaPath = this->resourcemodFolder.c_str();
     this->metaPath.append("/").append(RESOURCEMOD_META);
+
+    this->pluginsPath = this->resourcemodFolder.c_str();
+    this->pluginsPath.append("/").append(RESOURCEMOD_PLUGINS);
+
+    //this->extensionsPath = this->resourcemodFolder.c_str();
+    //this->extensionsPath.append("/").append(RESOURCEMOD_EXTENSIONS);
 
     this->gameDataPath = this->resourcemodFolder.c_str();
     this->gameDataPath.append("/").append("gamedata").append("/").append("rmod.cs2.json");
@@ -46,7 +56,9 @@ void Engine::InitV8() {
     this->isolate = v8::Isolate::New(this->create_params);
     this->isolate->SetHostImportModuleDynamicallyCallback(Module::CallDynamic);
     this->isolate->SetHostInitializeImportMetaObjectCallback(Module::CallMeta);
+    this->isolate->Enter();
     this->LoadMeta();
+    this->LoadPlugins();
 }
 
 extern EventManager *g_EventManager;

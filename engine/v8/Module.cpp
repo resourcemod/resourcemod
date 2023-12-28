@@ -10,10 +10,6 @@
 extern Engine* g_Engine;
 
 std::string Module::ReadFile(std::string filename) {
-    // todo: make c++ module loader by file extension
-    if (Engine::HasSuffix(filename, ":ext")) {
-
-    }
     std::string fullModuleName = g_Engine->pluginsFolder;
     fullModuleName.append("/").append(filename);
     return Engine::GetFileContent(fullModuleName);

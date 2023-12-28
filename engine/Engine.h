@@ -28,6 +28,8 @@
 
 #endif
 
+#define EXPORT __declspec(dllexport)
+
 #define CS_TEAM_NONE        0
 #define CS_TEAM_SPECTATOR   1
 #define CS_TEAM_T           2
@@ -38,15 +40,20 @@
 #define HUD_PRINTTALK        3
 #define HUD_PRINTCENTER        4
 
-class Engine {
+EXPORT class Engine {
 public:
-    const int WINDOWS_SERVER_FOLDER_OFFSET = 15;
     const std::string RESOURCEMOD_META = "resourcemod.json";
+    const std::string RESOURCEMOD_PLUGINS = "plugins.json";
+    //const std::string RESOURCEMOD_EXTENSIONS = "extensions.json";
+
     std::string rootPath = "";
     std::string resourcemodFolder = "";
     std::string pluginsFolder = "";
+    //std::string extensionsFolder = "";
     std::string gameDataPath = "";
     std::string metaPath = "";
+    std::string pluginsPath = "";
+    //std::string extensionsPath = "";
 
     bool isRunning = false;
     bool isExternalRuntimeRunning = false;
@@ -83,9 +90,13 @@ public:
 
     void LoadMeta();
 
+    void LoadPlugins();
+
     std::unique_ptr<v8::Platform> platform;
     v8::Isolate::CreateParams create_params;
     v8::Isolate *isolate;
+
+    EXPORT v8::Isolate *GetIsolate();
 
     bool FireGameEvent(IGameEvent *event);
 

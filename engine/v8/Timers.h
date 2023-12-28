@@ -59,21 +59,21 @@ public:
         }
     };
 
-    v8::Local<v8::Object> Wrap() override {
-        v8::EscapableHandleScope handle_scope(g_Engine->isolate);
+    v8::Local<v8::Object> Wrap(v8::Isolate *isolate) override {
+        v8::EscapableHandleScope handle_scope(isolate);
 
-        v8::Local<v8::ObjectTemplate> data = v8::ObjectTemplate::New(g_Engine->isolate);
+        v8::Local<v8::ObjectTemplate> data = v8::ObjectTemplate::New(isolate);
         data->SetInternalFieldCount(1);
         data->Set(
-                v8::String::NewFromUtf8(g_Engine->isolate, "SetTimeout", v8::NewStringType::kNormal).ToLocalChecked(),
-                v8::FunctionTemplate::New(g_Engine->isolate, &Timers::SetTimeout));
+                v8::String::NewFromUtf8(isolate, "SetTimeout", v8::NewStringType::kNormal).ToLocalChecked(),
+                v8::FunctionTemplate::New(isolate, &Timers::SetTimeout));
         data->Set(
-                v8::String::NewFromUtf8(g_Engine->isolate, "SetInterval", v8::NewStringType::kNormal).ToLocalChecked(),
-                v8::FunctionTemplate::New(g_Engine->isolate, &Timers::SetInterval));
+                v8::String::NewFromUtf8(isolate, "SetInterval", v8::NewStringType::kNormal).ToLocalChecked(),
+                v8::FunctionTemplate::New(isolate, &Timers::SetInterval));
         //create instance
-        v8::Local<v8::Object> result = data->NewInstance(g_Engine->isolate->GetCurrentContext()).ToLocalChecked();
+        v8::Local<v8::Object> result = data->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
         //create wrapper
-        v8::Local<v8::External> ptr = v8::External::New(g_Engine->isolate, this);
+        v8::Local<v8::External> ptr = v8::External::New(isolate, this);
         result->SetInternalField(0, ptr);
 
         return handle_scope.Escape(result);

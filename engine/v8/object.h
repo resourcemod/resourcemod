@@ -9,7 +9,7 @@
 
 class V8Object {
 public:
-    virtual v8::Local<v8::Object> Wrap() = 0;
+    virtual v8::Local<v8::Object> Wrap(v8::Isolate *isolate) = 0;
 };
 
 #endif //RESOURCEMOD_OBJECT_H

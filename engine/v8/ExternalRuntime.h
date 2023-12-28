@@ -31,19 +31,19 @@ public:
         Engine::SendNodeMessage(event_name, data);
     };
 
-    v8::Local<v8::Object> Wrap() override {
-        v8::EscapableHandleScope handle_scope(g_Engine->isolate);
+    v8::Local<v8::Object> Wrap(v8::Isolate *isolate) override {
+        v8::EscapableHandleScope handle_scope(isolate);
 
         v8::Local<v8::ObjectTemplate> class_t;
-        v8::Local<v8::ObjectTemplate> raw_t = v8::ObjectTemplate::New(g_Engine->isolate);
+        v8::Local<v8::ObjectTemplate> raw_t = v8::ObjectTemplate::New(isolate);
         raw_t->SetInternalFieldCount(1);
         raw_t->Set(
-                v8::String::NewFromUtf8(g_Engine->isolate, "send", v8::NewStringType::kNormal).ToLocalChecked(),
-                v8::FunctionTemplate::New(g_Engine->isolate, &ExternalRuntime::send));
+                v8::String::NewFromUtf8(isolate, "send", v8::NewStringType::kNormal).ToLocalChecked(),
+                v8::FunctionTemplate::New(isolate, &ExternalRuntime::send));
 
-        class_t = v8::Local<v8::ObjectTemplate>::New(g_Engine->isolate, raw_t);
-        v8::Local<v8::Object> result = class_t->NewInstance(g_Engine->isolate->GetCurrentContext()).ToLocalChecked();
-        v8::Local<v8::External> ptr = v8::External::New(g_Engine->isolate, this);
+        class_t = v8::Local<v8::ObjectTemplate>::New(isolate, raw_t);
+        v8::Local<v8::Object> result = class_t->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
+        v8::Local<v8::External> ptr = v8::External::New(isolate, this);
         result->SetInternalField(0, ptr);
         return handle_scope.Escape(result);
     }

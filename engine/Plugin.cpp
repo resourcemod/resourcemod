@@ -36,7 +36,7 @@ bool Plugin::FireEvent(std::string name, std::string data) {
         auto c = it->second->cb.Get(g_Engine->isolate)->Call(this->v8context.Get(g_Engine->isolate),
                                                              v8::Undefined(g_Engine->isolate), 1, t);
         if (c.IsEmpty()) {
-            logger::log("C is empty.");
+            logger::log("Call is empty.");
             return true;
         }
     }
@@ -47,7 +47,7 @@ void Plugin::AsyncCallback(v8::Global<v8::Function> cb) {
     v8::HandleScope handle_scope(g_Engine->isolate);
     auto c = cb.Get(g_Engine->isolate)->Call(this->v8context.Get(g_Engine->isolate), v8::Undefined(g_Engine->isolate), 0, nullptr);
     if (c.IsEmpty()) {
-        logger::log("C is empty.");
+        logger::log("Call is empty.");
     }
 }
 
@@ -66,7 +66,7 @@ bool Plugin::FireGameEvent(IGameEvent *event) {
         auto c = it->second->cb.Get(g_Engine->isolate)->Call(this->v8context.Get(g_Engine->isolate),
                                                              v8::Undefined(g_Engine->isolate), 1, t);
         if (c.IsEmpty()) {
-            logger::log("C is empty.");
+            logger::log("Call is empty.");
         }
         return ev->Prevent();
     }
@@ -80,12 +80,14 @@ void Plugin::LoadPluginFS() {
     v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(g_Engine->isolate);
     v8::Local<v8::Context> ctx = v8::Context::New(g_Engine->isolate, nullptr, global);
 
+    v8::Persistent<v8::Context> persistent_context(g_Engine->isolate, ctx);
+
     this->v8context.Reset(g_Engine->isolate, ctx);
     v8::Context::Scope context_scope(ctx);
 
     // Create console object
     Console *c = new Console();
-    v8::Local<v8::Object> con = c->Wrap();
+    v8::Local<v8::Object> con = c->Wrap(g_Engine->isolate);
     ctx->Global()->Set(
             ctx,
             v8::String::NewFromUtf8(g_Engine->isolate, "console", v8::NewStringType::kNormal).ToLocalChecked(),
@@ -94,7 +96,7 @@ void Plugin::LoadPluginFS() {
 
     // Create events object
     Events *e = new Events();
-    v8::Local<v8::Object> events = e->Wrap();
+    v8::Local<v8::Object> events = e->Wrap(g_Engine->isolate);
     ctx->Global()->Set(
             ctx,
             v8::String::NewFromUtf8(g_Engine->isolate, "events", v8::NewStringType::kNormal).ToLocalChecked(),
@@ -102,22 +104,26 @@ void Plugin::LoadPluginFS() {
     );
 
     // Create external runtime object
-    ExternalRuntime *ert = new ExternalRuntime();
-    v8::Local<v8::Object> external = ert->Wrap();
-    ctx->Global()->Set(
-            ctx,
-            v8::String::NewFromUtf8(g_Engine->isolate, "external_runtime", v8::NewStringType::kNormal).ToLocalChecked(),
-            external
-    );
+    if (g_Engine->isExternalRuntimeRunning) {
+        ExternalRuntime *ert = new ExternalRuntime();
+        v8::Local<v8::Object> external = ert->Wrap(g_Engine->isolate);
+        ctx->Global()->Set(
+                ctx,
+                v8::String::NewFromUtf8(g_Engine->isolate, "external_runtime", v8::NewStringType::kNormal).ToLocalChecked(),
+                external
+        );
+    }
 
     // Create events object
     Timers *t = new Timers();
-    v8::Local<v8::Object> timers = t->Wrap();
+    v8::Local<v8::Object> timers = t->Wrap(g_Engine->isolate);
     ctx->Global()->Set(
             ctx,
             v8::String::NewFromUtf8(g_Engine->isolate, "timers", v8::NewStringType::kNormal).ToLocalChecked(),
             timers
     );
+
+    // this->LoadExtensions(); // will load extensions for the global object (mb we should replace it with commonjs modules? Or even WASM?)
 
     std::string mainModuleName = this->name.c_str();
     auto contents = Module::ReadFile(mainModuleName.append("/plugin.js"));
@@ -125,4 +131,42 @@ void Plugin::LoadPluginFS() {
             Module::CheckModule(Module::LoadModule(contents, ctx), ctx);
     v8::Local<v8::Value> returned = Module::ExecModule(mod, ctx);
     v8::String::Utf8Value val(g_Engine->isolate, returned);
+}
+
+/*void Plugin::LoadExtensions() {
+    std::string f = this->folder.c_str();
+    f.append("/").append("plugin.json");
+    rana::value meta = rana::from_file(f);
+    if (meta["extensions"].is_object()) {
+        for(const auto &ext: meta["extensions"].iter_object()) {
+            std::string extPath = g_Engine->extensionsFolder.c_str();
+            extPath.append("/").append(ext.first).append(".dll"); // todo: linux support
+            this->LoadExtension(extPath, g_Engine->isolate);
+        }
+    }
+}*/
+
+// Extensions will be in a few next releases
+// @unused
+void *Plugin::LoadExtension(std::string path, v8::Isolate *isolate) {
+    const auto hd = LoadLibraryA(path.c_str());
+    if (!hd) {
+        logger::log(logger::format("%lu", GetLastError()));
+        return nullptr;
+    }
+
+    const auto init = GetProcAddress(hd, "InitExtension");
+    if (!init) {
+        logger::log("Load function is undefined.");
+        return nullptr;
+    }
+
+    typedef void(*InitExtension)(Engine*, Plugin*);
+    const auto InitJsModule = reinterpret_cast<InitExtension>(init);
+    InitJsModule(g_Engine, this);
+    return nullptr;
+}
+
+v8::Global<v8::Context> Plugin::GetGlobalContext() {
+    return this->v8context.Pass();
 }

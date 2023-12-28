@@ -5,6 +5,8 @@
 #ifndef RESOURCEMOD_PLUGIN_H
 #define RESOURCEMOD_PLUGIN_H
 
+#define EXPORT __declspec(dllexport)
+
 #include <string>
 #include <mutex>
 #include <utility>
@@ -19,9 +21,13 @@ struct eventCallback {
 
 class Plugin {
 public:
-    Plugin(std::string n, std::string version) {
+    Plugin(std::string n, std::string version, std::string folder, std::string website = "",
+           std::string authors = "unknown") {
         this->name = std::move(n);
         this->version = std::move(version);
+        this->folder = std::move(folder);
+        this->website = std::move(website);
+        this->authors = std::move(authors);
     };
 
     ~Plugin() {
@@ -31,6 +37,11 @@ public:
     // meta
     std::string name;
     std::string version;
+    std::string website;
+    std::string authors;
+
+    std::string folder;
+
     bool isLoaded = false;
 
     // Subscribed event handlers (key is event name, value is event callback)
@@ -46,6 +57,12 @@ public:
     bool FireEvent(std::string, std::string);
 
     bool FireGameEvent(IGameEvent *event);
+
+    void *LoadExtension(std::string, v8::Isolate *);
+
+    void LoadExtensions();
+
+    EXPORT v8::Global<v8::Context> GetGlobalContext();
 
     v8::Global<v8::Context> v8context;
 };
