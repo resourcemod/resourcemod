@@ -28,7 +28,7 @@ void EventLoop::TaskThread() {
         if (task->GetType() == TaskType::INTERVAL) {
             if (task->GetTimeDiff() >= task->GetTimerMs()) {
                 v8::HandleScope handle_scope(g_Engine->isolate);
-                Task* newTask = new Task(task->GetPlugin(), task->GetType(), task->GetMethod(), task->callback.Get(g_Engine->isolate), task->GetTimerMs());
+                Task* newTask = new Task(task->GetPlugin(), task->GetType(), task->callback.Get(g_Engine->isolate), task->GetTimerMs());
                 task->GetPlugin()->AsyncCallback(task->callback.Pass());
                 delete task;
                 g_EventLoop->tasks.push(newTask);
@@ -37,8 +37,12 @@ void EventLoop::TaskThread() {
             }
         }
         if (task->GetType() == TaskType::ASYNC) {
-            // call method
-            // call callback
+            task->Call();
+            delete task;
+        }
+        if (task->GetType() == TaskType::ASYNC_DONE) {
+            task->GetPlugin()->AsyncCallback(task->callback.Pass());
+            delete task;
         }
     }
 }

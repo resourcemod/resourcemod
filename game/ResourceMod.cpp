@@ -8,8 +8,6 @@
 #include "../engine/Engine.h"
 #include "hooks/EventManager.h"
 #include "../logger/logger.h"
-#include "./cs2/Schema.h"
-#include "provider/provider_base.h"
 #include "cs2/cschemasystem.h"
 #include <engine/igameeventsystem.h>
 #include "cs2/cgameresourceserviceserver.h"
@@ -87,15 +85,18 @@ bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 
 void ResourceMod::Hook_StartupServer(const GameSessionConfiguration_t& config, ISource2WorldSession*, const char*) {
     g_pEntitySystem = g_GameResourceService->GetGameEntitySystem();
-    logger::log(logger::format("EntitySystem pointer: %p", g_pEntitySystem));
-    logger::log(logger::format("g_GameResourceService pointer: %p", g_GameResourceService));
+}
+
+CGameEntitySystem *GameEntitySystem()
+{
+    return *reinterpret_cast<CGameEntitySystem **>((uintptr_t)(g_GameResourceService) + g_Memory->offsets["GameEntitySystem"]);
 }
 
 bool ResourceMod::Unload(char *error, size_t maxlen) {
     // remove hooks
     SH_REMOVE_HOOK_MEMFUNC(INetworkServerService, StartupServer, g_pNetworkServerService, this, &ResourceMod::Hook_StartupServer, true);
     g_EventManager->StopHooks();
-    // stop engine and runtimes
+    g_Engine->Shutdown();
     ConVar_Unregister();
     return true;
 }

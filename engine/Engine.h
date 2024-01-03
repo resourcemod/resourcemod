@@ -56,7 +56,20 @@ public:
     //std::string extensionsPath = "";
 
     bool isRunning = false;
+
+    // external runtime
     bool isExternalRuntimeRunning = false;
+
+    // database
+    bool isDatabaseRequired = false;
+    std::string databaseType = "mysql"; // todo: make it enum ig and make variables below more flexible
+    std::string databaseHost = "localhost";
+    std::string databasePort = "3306";
+    std::string databaseName = "";
+    std::string databaseUser = "";
+    std::string databasePass = "";
+
+    bool RunDatabaseConnector();
 
     void Init();
 

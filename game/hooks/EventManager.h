@@ -6,16 +6,13 @@
 #define RESOURCEMOD_EVENTMANAGER_H
 
 #include <tier1/functors.h>
-#include <irecipientfilter.h>
-#include <networksystem/inetworkserializer.h>
-#include <ISmmPlugin.h>
 #include <stdint.h>
 #include <sourcehook/sourcehook.h>
-
-#include <engine/igameeventsystem.h>
+#include <ISmmPlugin.h>
 #include <igameevents.h>
 #include <unordered_map>
 #include "LegacyEvents.h"
+#include "engine/igameeventsystem.h"
 #include <map>
 
 typedef std::map<std::string, RMEvent*(*)(IGameEvent*)> events_map_t;

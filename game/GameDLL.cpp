@@ -5,7 +5,6 @@
 #include "GameDLL.h"
 #include "../logger/logger.h"
 #include "cs2/cschemasystem.h"
-#include <engine/igameeventsystem.h>
 
 template<typename T>
 T* GetInGameInterface(const char* name, const char * library) {
@@ -40,12 +39,6 @@ CSchemaSystem *GameDLL::getSchemaSystem() {
 IVEngineServer2 *GameDLL::getSource2EngineToServer() {
     return GetInGameInterface<IVEngineServer2>("Source2EngineToServer001", "engine2.dll");
 }
-
-CGameEntitySystem *GameDLL::GetGameEntitySystem()
-{
-    static int offset = 80; // todo: toml game offsets storage
-    return *reinterpret_cast<CGameEntitySystem **>((uintptr_t)(this) + offset);
-};
 
 ISource2GameClients *GameDLL::getSource2GameClients() {
     return GetInGameInterface<ISource2GameClients>("Source2GameClients001", "server.dll");

@@ -13,20 +13,24 @@ extern Engine *g_Engine;
 enum TaskType {
     TIMER,
     INTERVAL,
-    ASYNC
+    ASYNC,
+    ASYNC_DONE
 };
 
-class Task {
+class AsyncCall {
+public:
+    virtual void Call() = 0;
+};
+
+class Task : public AsyncCall {
     Plugin *plugin;
     TaskType type;
-    void *method;
     std::chrono::time_point<std::chrono::system_clock> created;
     int timerMs;
 public:
-    Task(Plugin *plugin, TaskType type, void *method, v8::Local<v8::Function> callback, int ms = 0) {
+    Task(Plugin *plugin, TaskType type, v8::Local<v8::Function> callback, int ms = 0) {
         this->plugin = plugin;
         this->type = type;
-        this->method = method;
         this->callback.Reset(g_Engine->isolate, callback);
         this->created = std::chrono::system_clock::now();
         this->timerMs = ms;
@@ -40,10 +44,6 @@ public:
 
     TaskType GetType() {
         return this->type;
-    }
-
-    void *GetMethod() {
-        return this->method;
     }
 
     void SetFreshlyCreated() {
@@ -60,10 +60,14 @@ public:
 
         return milliseconds.count();
     }
+
+    void Call() override {
+
+    }
 };
 
 class EventLoop {
-    TSQueue<Task *> tasks;
+    TSQueue<Task*> tasks;
     bool isRunning = false;
 
 public:

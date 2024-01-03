@@ -1,16 +1,18 @@
 #include "Engine.h"
 #include "../logger/logger.h"
 #include <chrono>
-#include <rana/rana.hpp>
 #include <mutex>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 extern Engine *g_Engine;
 
 void Engine::SendNodeMessage(std::string event, std::string data) {
-    rana::value v = rana::from_string("{}");
+    json v;
     v["event"] = event;
     v["message"] = data;
-    std::string json = rana::to_string(v);
+    std::string json = v.dump();
     g_Engine->rtEvents.push(json.c_str());
 }
 
@@ -20,16 +22,16 @@ void Engine::HandleSocketMessage() {
             continue;
         }
         std::string msg = g_Engine->rtCallbacks.pop();
-        rana::value v = rana::from_string(msg);
-        if (!v.is_valid()) {
+        json v = json::parse(msg);
+        if (!v.empty()) {
             continue;
         }
-        g_Engine->FireEvent(v["event"].as_string(), rana::to_string(v["data"]));
+        g_Engine->FireEvent(v["event"], v["data"].dump());
     }
 }
 
 bool LoadResourceModDependencies() {
-    std::string path = "../../csgo/addons/resourcemod/bin/libzmq-mt-4_3_4.dll";
+    std::string path = "../../csgo/addons/resourcemod/bin/libzmq-mt-4_3_4.dll"; //todo: do smth
     const auto hd = LoadLibraryA(path.c_str());
     if (!hd) {
         printf("\n\n%lu\n\n", GetLastError());
@@ -43,7 +45,7 @@ bool Engine::RunExternalRuntime(bool console) {
         logger::log("Failed to inject external runtime libraries");
         return false;
     }
-    std::string path = "../../csgo/addons/resourcemod/bin/external_runtime.dll";
+    std::string path = "../../csgo/addons/resourcemod/bin/external_runtime.dll"; //todo: do smth
     const auto hd = LoadLibraryA(path.c_str());
     if (!hd) {
         printf("\n\n%lu\n\n", GetLastError());

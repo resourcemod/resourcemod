@@ -28,9 +28,12 @@ target_link_libraries(resourcemod
         ${CMAKE_SOURCE_DIR}/third_party/sourcehook/sourcehook.lib
         )
 target_compile_definitions(resourcemod PUBLIC IS_INTERNAL_RUNTIME)
+
 ### THIS PART IS ACTUALLY IN-USE
 ### IT RELATED TO EXTERNAL RUNTIME
 ### IT WILL COMPILE YOUR EXTERNAL RUNTIME DLL FILE
+
+# External Runtime Project
 project(external_runtime)
 
 set (CMAKE_CXX_STANDARD 17)
@@ -40,8 +43,24 @@ include_directories(third_party)
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
-add_library(external_runtime SHARED external_runtime/ExternalRuntime.cpp)
+add_library(external_runtime SHARED modules/external_runtime/ExternalRuntime.cpp)
 
 target_link_libraries(external_runtime
         ${CMAKE_SOURCE_DIR}/lib/libzmq.lib
+        )
+
+# Databases Project
+project(databases)
+
+set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/lib)
+add_definitions(-DCOMPILER_MSVC64 -DCOMPILER_MSVC)
+include_directories(third_party)
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
+add_library(databases SHARED modules/databases/MySQL.cpp engine/Database.cpp)
+
+target_link_libraries(databases
+        ${CMAKE_SOURCE_DIR}/lib/mysqlcppconn.lib
         )

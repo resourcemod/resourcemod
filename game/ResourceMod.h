@@ -7,7 +7,6 @@
 
 
 #include <ISmmPlugin.h>
-#include "engine/igameeventsystem.h"
 
 #ifdef _WIN32
 #define WIN_LINUX(win, linux) win

@@ -4,3 +4,6 @@
 [submodule "metamod-source"]
 	path = alliedmodders/metamod-source
 	url = https://github.com/alliedmodders/metamod-source.git
+[submodule "third_party/google/protobuf"]
+	path = third_party/google/protobuf
+	url = https://github.com/protocolbuffers/protobuf.git

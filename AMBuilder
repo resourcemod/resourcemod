@@ -16,6 +16,12 @@ for sdk_name in MMSPlugin.sdks:
     elif binary.compiler.family == 'msvc':
       binary.compiler.cxxflags += ['/std:c++20']
 
+    binary.compiler.cxxincludes += [
+      os.path.join(builder.sourcePath, 'third_party', 'google', 'protobuf', 'third_party', 'abseil-cpp'),
+      os.path.join(builder.sourcePath, 'third_party', 'google', 'protobuf', 'src'),
+      os.path.join(builder.sourcePath, 'protobuf', 'generated'),
+    ]
+
     if binary.compiler.family == 'clang':
       binary.compiler.cxxflags += ['-Wno-register']
 
@@ -31,11 +37,13 @@ for sdk_name in MMSPlugin.sdks:
         'game/cs2/Schema.cpp',
         'game/hooks/LegacyEvents.cpp',
         'engine/v8/Module.cpp',
+        'engine/Database.cpp'
     ]
 
     if sdk_name in ['dota', 'cs2']:
       binary.sources += [
       os.path.join(sdk.path, 'entity2', 'entitysystem.cpp'),
+      os.path.join(sdk.path, 'entity2', 'entityidentity.cpp'),
       os.path.join(sdk.path, 'tier1', 'convar.cpp')
     ]
 

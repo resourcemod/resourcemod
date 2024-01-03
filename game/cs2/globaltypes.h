@@ -19,6 +19,7 @@
 
 #pragma once
 #include <tier0/platform.h>
+#include <mathlib/vector.h>
 #include "Schema.h"
 
 struct GameTime_t

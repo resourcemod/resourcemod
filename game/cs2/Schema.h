@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include "tier0/dbg.h"
+#include <tier1/utlmap.h>
 #include "const.h"
 #include "cbaseentity.h"
 #include "../Virtual.h"

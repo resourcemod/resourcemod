@@ -5,32 +5,54 @@
 #include "../logger/logger.h"
 #include "Plugin.h"
 #include <fstream>
-#include <rana/rana.hpp>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 extern Engine *g_Engine;
 
 void Engine::LoadMeta() {
-    rana::value meta = rana::from_file(this->metaPath.c_str());
+    std::ifstream f(this->metaPath);
+    json meta = json::parse(f);
 
-    std::string n = meta["name"].as_string();
+    std::string n = meta["name"];
     logger::log(logger::format("Launching %s", n.c_str()));
 
-    if (meta["features"]["external_runtime"].is_true()) {
+    if (meta["features"]["database"]) {
+        this->isDatabaseRequired = true;
+        this->databaseType = meta["database"]["type"];
+        this->databaseHost = meta["database"]["connection"]["host"];
+        this->databasePort = meta["database"]["connection"]["port"];
+        this->databaseUser = meta["database"]["connection"]["user"];
+        this->databasePass = meta["database"]["connection"]["password"];
+        this->databaseName = meta["database"]["connection"]["database"];
+        if (!this->RunDatabaseConnector()) {
+            logger::log("Cannot start the database module, but it is required.");
+            logger::fatal();
+            return;
+        }
+    }
+
+    if (meta["features"]["external_runtime"]) {
         std::string externalRuntimePullAddr =
                 meta["external_runtime"]["endpoints"]["pull"].is_null() ?
                 "127.0.0.1:30001" :
-                meta["external_runtime"]["endpoints"]["pull"]["host"].as_string() + ":" +
-                meta["external_runtime"]["endpoints"]["pull"]["port"].as_string();
+                meta["external_runtime"]["endpoints"]["pull"]["host"] + ":" +
+                meta["external_runtime"]["endpoints"]["pull"]["port"];
 
         std::string externalRuntimePushAddr =
                 meta["external_runtime"]["endpoints"]["push"].is_null() ?
                 "127.0.0.1:30002" :
-                meta["external_runtime"]["endpoints"]["push"]["host"].as_string() + ":" +
-                meta["external_runtime"]["endpoints"]["push"]["port"].as_string();
+                meta["external_runtime"]["endpoints"]["push"]["host"] + ":" +
+                meta["external_runtime"]["endpoints"]["push"]["port"];
 
         g_Engine->pullAddr = externalRuntimePullAddr;
         g_Engine->pushAddr = externalRuntimePushAddr;
-        Engine::RunExternalRuntime(meta["external_runtime"]["console"].is_true());
+        if (!Engine::RunExternalRuntime(meta["external_runtime"]["console"])) {
+            logger::log("Cannot start the external runtime module, but it is required.");
+            logger::fatal();
+            return;
+        }
         logger::log("Launching external runtime");
         for (;;) {
             if (g_Engine->isExternalRuntimeRunning) {
@@ -43,24 +65,28 @@ void Engine::LoadMeta() {
 }
 
 void Engine::LoadPlugins() {
-    rana::value meta = rana::from_file(this->pluginsPath.c_str()); // plugins.json
+    std::ifstream f(this->pluginsPath);
+    json list = json::parse(f);
+
     logger::log("Loading plugins...");
-    for (const auto &element: meta.iter_object()) {
-        logger::log(element.first);
+    for (auto element = list.begin(); element != list.end(); ++element){
+        logger::log(element.key());
         std::string folder = this->pluginsFolder.c_str();
-        folder.append("/").append(element.first);
+        folder.append("/").append(element.key());
         std::string meta = folder.c_str();
         meta.append("/").append("plugin.json");
-        rana::value info = rana::from_file(meta);
+
+        std::ifstream fi(meta);
+        json info = json::parse(fi);
         std::string authors;
         if (info["authors"].is_array()) {
-            for(const auto &author: info["authors"].iter_array()) {
-                authors.append(", ").append(author.as_string());
+            for(auto author: info["authors"]) {
+                authors.append(", ").append(author);
             }
         } else {
             authors = "unknown";
         }
-        Plugin *p = new Plugin(info["name"].as_string(), info["version"].as_string(), folder, info["website"].as_string(), authors);
+        Plugin *p = new Plugin(info["name"], info["version"], folder, info["website"], authors);
         this->plugins.push_back(p);
         p->LoadPluginFS();
     }

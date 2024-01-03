@@ -5,11 +5,7 @@
 #include "EventManager.h"
 #include "../../logger/logger.h"
 #include "../GameDLL.h"
-#include "../../protoc_generated/usermessages.pb.h"
-#include "../../engine/Engine.h"
 #include "Structs.h"
-#include "../Virtual.h"
-#include "../cs2/Memory.h"
 #include <tier1/KeyValues.h>
 #include <igameevents.h>
 

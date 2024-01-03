@@ -34,7 +34,7 @@ public:
                     return;
                 }
                 v8::Local<v8::Integer> timeout = args[1].As<v8::Integer>();
-                Task *task = new Task(item, TaskType::TIMER, nullptr, callback.As<v8::Function>(), timeout->Int32Value(args.GetIsolate()->GetCurrentContext()).ToChecked());
+                Task *task = new Task(item, TaskType::TIMER, callback.As<v8::Function>(), timeout->Int32Value(args.GetIsolate()->GetCurrentContext()).ToChecked());
                 g_EventLoop->PushTask(task);
                 return;
             }
@@ -52,7 +52,7 @@ public:
                 }
                 v8::Local<v8::Integer> timeout = args[1].As<v8::Integer>();
                 logger::log(logger::format("Interval timeout %d", timeout->Int32Value(args.GetIsolate()->GetCurrentContext()).ToChecked()));
-                Task *task = new Task(item, TaskType::INTERVAL, nullptr, callback.As<v8::Function>(), timeout->Int32Value(args.GetIsolate()->GetCurrentContext()).ToChecked());
+                Task *task = new Task(item, TaskType::INTERVAL, callback.As<v8::Function>(), timeout->Int32Value(args.GetIsolate()->GetCurrentContext()).ToChecked());
                 g_EventLoop->PushTask(task);
                 return;
             }

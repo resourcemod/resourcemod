@@ -5,8 +5,6 @@
 #ifndef RESOURCEMOD_LEGACYEVENTS_H
 #define RESOURCEMOD_LEGACYEVENTS_H
 
-#include <entityhandle.h>
-#include <igameevents.h>
 #include "../cs2/cbaseentity.h"
 #include "../../logger/logger.h"
 #include "../cs2/cbaseplayercontroller.h"

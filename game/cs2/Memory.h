@@ -7,17 +7,21 @@
 
 #include <string>
 #include <map>
-#include <rana/rana.hpp>
 #include "../../logger/logger.h"
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 class Memory {
 public:
     std::map<std::string, int> offsets;
 
     void LoadOffsets(std::string path) {
-        rana::value json = rana::from_file(path.c_str());
-        for (const auto &element: json["offsets"].iter_object()) {
-            this->offsets[element.first.c_str()] = atoi(element.second.find("windows")->second.as_string().c_str());
+        std::ifstream f(path);
+        json list = json::parse(f);
+        for (auto element = list["offsets"].begin(); element != list["offsets"].end(); ++element) {
+            std::string v = element.value().find("windows").value();
+            this->offsets[element.key()] = atoi(v.c_str());
         }
     }
 

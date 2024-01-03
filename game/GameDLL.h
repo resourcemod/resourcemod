@@ -18,8 +18,6 @@ public:
     static IVEngineServer2 * getSource2EngineToServer();
     static ISource2GameClients* getSource2GameClients();
 
-    CGameEntitySystem *GetGameEntitySystem();
-
     static void BootResourceMod();
 };
 
