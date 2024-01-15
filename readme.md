@@ -1,42 +1,20 @@
 # Resourcemod
+ResourceMod is an ecosystem of plugins and other game content in Counter Strike 2. With this mod you can improve your game server with modifications (plugins) written in Javascript.
 
-### How to build
-1. `git clone --recurse-submodules git@github.com:ResourceMod/resourcemod.git`
-2. Set environment variables HL2SDK and MMS_PATH (full paths)
-3. Open AMBuildScript file and replace values in additional_includes with your full paths
-4. Build v8 engine and put `v8_libbase.lib`, `v8_libplatform.lib` and `v8_monolith.lib` to ./lib folder
-5. `make configure`
-6. `make build`
+The main unique feature of ResourceMod is its own Javascript runtime on v8, which allows you to natively run Javascript code inside your game server.
 
-### How to build v8
-1. Install visual studio 2020
-2. Download Windows SDK [here](https://download.microsoft.com/download/3/6/3/36301F10-B142-46FA-BE8C-728ECFD62EA5/windowssdk/winsdksetup.exe)
-3. Download depot_tools [here](https://storage.googleapis.com/chrome-infra/depot_tools.zip)
-4. Add depot_tools to your PATH environment variable (ex: E:/v8/depot_tools)
-5. Set environment variable `DEPOT_TOOLS_WIN_TOOLCHAIN` to 0
-6. Set environment variable `GYP_MSVS_VERSION` to 2020
-7. Install python3
-8. Install git
-9. Get source code of v8 by `fetch v8`
-10. `cd v8`
-11. `python tools/dev/v8gen.py x64.release`
-12. Open `out.gn\x64.release\args.gn` file and replace everything with values below
-```
-dcheck_always_on = false
-is_debug = false
-target_cpu = "x64"
-is_component_build = false
-v8_monolithic = true
-v8_use_external_startup_data = false
-v8_static_library = true
-is_clang = false
-```
-13. Run build with `ninja -C out.gn/x64.release`
+We use the SourceHooks library, which allows you to natively communicate with the game engine by proxying eventing to the Javascript engine. At this point I would like to thank the AlliedModders community, who have really helped and continue to help with the development of ResourceMod. They are right now continuing to rebuild the SDK to allow the use of the Source engine features. If you know anything about reverse engineering, please help them out.
 
+(Runs on v8 btw)
 
-### How to build external runtime
-1. `git clone --recurse-submodules git@github.com:ResourceMod/resourcemod.git`
-2. run cmake with external_runtime target
+### Links
+[🎓 Our website](https://resourcemod.net)
+[🤔 Documentation](https://docs.resourcemod.net)
+[📫 Discord](https://discord.gg/BWQzP2vmvh)
+
+### Build Guides
+[Official Guide on English](https://github.com/Del1riumpl/funny/blob/main/repostuff/Setup-ENG.md)
+[Фановый Гайд на русском от del1riumpl](https://github.com/Del1riumpl/funny/blob/main/repostuff/Setup-RUS.md)
 
 ### License
 Current project is under GPL-3.0 license.
