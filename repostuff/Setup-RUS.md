@@ -15,7 +15,7 @@
 6. запустите make build
 
 ### Как собрать v8
-1. Установите Visual Studio 2020 [здесь](https://my.visualstudio.com/Downloads) (любая версия, если вам нужна бесплатная версия, используйте сообщество)
+1. Установите Visual Studio 2020 [здесь](https://my.visualstudio.com/Downloads) (любая версия, если вам нужна бесплатная версия, используйте Community)
 2. Загрузите Windows SDK [здесь] (https://download.microsoft.com/download/3/6/3/36301F10-B142-46FA-BE8C-728ECFD62EA5/windowssdk/winsdksetup.exe)
 3. Загрузите depot_tools [здесь](https://storage.googleapis.com/chrome-infra/depot_tools.zip)
 4. Добавьте depot_tools в переменную среды PATH (например: E:/v8/depot_tools).
