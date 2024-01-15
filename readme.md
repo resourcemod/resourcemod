@@ -8,8 +8,8 @@ We use the SourceHooks library, which allows you to natively communicate with th
 (Runs on v8 btw)
 
 ### Links
-[🎓 Our website](https://resourcemod.net)
-[🤔 Documentation](https://docs.resourcemod.net)
+[🎓 Our website](https://resourcemod.net)\
+[🤔 Documentation](https://docs.resourcemod.net)\
 [📫 Discord](https://discord.gg/BWQzP2vmvh)
 
 ### Build Guides
