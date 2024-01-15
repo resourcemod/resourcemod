@@ -13,7 +13,7 @@ We use the SourceHooks library, which allows you to natively communicate with th
 [📫 Discord](https://discord.gg/BWQzP2vmvh)
 
 ### Build Guides
-[Official Guide on English](https://github.com/Del1riumpl/funny/blob/main/repostuff/Setup-ENG.md)
+[Official Guide on English](https://github.com/Del1riumpl/funny/blob/main/repostuff/Setup-ENG.md)\
 [Фановый Гайд на русском от del1riumpl](https://github.com/Del1riumpl/funny/blob/main/repostuff/Setup-RUS.md)
 
 ### License
