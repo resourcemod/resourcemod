@@ -1,5 +1,0 @@
-D:/resourcemod/cmake-build-release-visual-studio/CMakeFiles/resourcemod.dir
-D:/resourcemod/cmake-build-release-visual-studio/CMakeFiles/external_runtime.dir
-D:/resourcemod/cmake-build-release-visual-studio/CMakeFiles/databases.dir
-D:/resourcemod/cmake-build-release-visual-studio/CMakeFiles/ALL_BUILD.dir
-D:/resourcemod/cmake-build-release-visual-studio/CMakeFiles/ZERO_CHECK.dir

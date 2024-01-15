@@ -18,21 +18,6 @@ void Engine::LoadMeta() {
     std::string n = meta["name"];
     logger::log(logger::format("Launching %s", n.c_str()));
 
-    if (meta["features"]["database"]) {
-        this->isDatabaseRequired = true;
-        this->databaseType = meta["database"]["type"];
-        this->databaseHost = meta["database"]["connection"]["host"];
-        this->databasePort = meta["database"]["connection"]["port"];
-        this->databaseUser = meta["database"]["connection"]["user"];
-        this->databasePass = meta["database"]["connection"]["password"];
-        this->databaseName = meta["database"]["connection"]["database"];
-        if (!this->RunDatabaseConnector()) {
-            logger::log("Cannot start the database module, but it is required.");
-            logger::fatal();
-            return;
-        }
-    }
-
     if (meta["features"]["external_runtime"]) {
         std::string externalRuntimePullAddr =
                 meta["external_runtime"]["endpoints"]["pull"].is_null() ?

@@ -134,6 +134,68 @@ public:
         obj->SetInternalField(0, v8::External::New(info.GetIsolate(), p));
         info.GetReturnValue().Set(handle_scope.Escape(obj));
     }
+
+    static void GetAttackerObject(const v8::FunctionCallbackInfo<v8::Value> &info) {
+        v8::EscapableHandleScope handle_scope(info.GetIsolate());
+        v8::Local<v8::Object> self = info.Holder();
+        v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(
+                self->GetInternalField(2)); // if it's from event - internal field of attacker player class is 2
+        void *ptr = wrap->Value();
+        Player *p = static_cast<Player *>(ptr);
+
+        v8::Local<v8::ObjectTemplate> playerClass = v8::ObjectTemplate::New(info.GetIsolate());
+        playerClass->SetInternalFieldCount(1);
+
+        CREATE_FN_PROPERTY("GetName", &Player::GetName);
+        CREATE_FN_PROPERTY("GetSteamID", &Player::GetSteamID);
+        CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
+        CREATE_FN_PROPERTY("Slap", &Player::Slap);
+        CREATE_FN_PROPERTY("SayTeam", &Player::SayTeam);
+        CREATE_FN_PROPERTY("Say", &Player::Say);
+        CREATE_FN_PROPERTY("Slay", &Player::Slay);
+
+        // set values that can be changed in JS (public variables)
+        playerClass->SetAccessor(
+                v8::String::NewFromUtf8(info.GetIsolate(), "hp", v8::NewStringType::kInternalized).ToLocalChecked(),
+                &Player::GetHP,
+                &Player::SetHP
+        );
+
+        v8::Local<v8::Object> obj = playerClass->NewInstance(info.GetIsolate()->GetCurrentContext()).ToLocalChecked();
+        obj->SetInternalField(0, v8::External::New(info.GetIsolate(), p));
+        info.GetReturnValue().Set(handle_scope.Escape(obj));
+    }
+
+    static void GetAssisterObject(const v8::FunctionCallbackInfo<v8::Value> &info) {
+        v8::EscapableHandleScope handle_scope(info.GetIsolate());
+        v8::Local<v8::Object> self = info.Holder();
+        v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(
+                self->GetInternalField(3)); // if it's from event - internal field of attacker player class is 2
+        void *ptr = wrap->Value();
+        Player *p = static_cast<Player *>(ptr);
+
+        v8::Local<v8::ObjectTemplate> playerClass = v8::ObjectTemplate::New(info.GetIsolate());
+        playerClass->SetInternalFieldCount(1);
+
+        CREATE_FN_PROPERTY("GetName", &Player::GetName);
+        CREATE_FN_PROPERTY("GetSteamID", &Player::GetSteamID);
+        CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
+        CREATE_FN_PROPERTY("Slap", &Player::Slap);
+        CREATE_FN_PROPERTY("SayTeam", &Player::SayTeam);
+        CREATE_FN_PROPERTY("Say", &Player::Say);
+        CREATE_FN_PROPERTY("Slay", &Player::Slay);
+
+        // set values that can be changed in JS (public variables)
+        playerClass->SetAccessor(
+                v8::String::NewFromUtf8(info.GetIsolate(), "hp", v8::NewStringType::kInternalized).ToLocalChecked(),
+                &Player::GetHP,
+                &Player::SetHP
+        );
+
+        v8::Local<v8::Object> obj = playerClass->NewInstance(info.GetIsolate()->GetCurrentContext()).ToLocalChecked();
+        obj->SetInternalField(0, v8::External::New(info.GetIsolate(), p));
+        info.GetReturnValue().Set(handle_scope.Escape(obj));
+    }
 };
 
 #endif //RESOURCEMOD_PLAYER_H

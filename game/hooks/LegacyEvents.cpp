@@ -9,7 +9,7 @@ template<typename T> RMEvent * CreateEventObject(IGameEvent* event) { return new
 
 void EventManager::FillLegacyEventsMap() {
     this->events["server_spawn"] = &CreateEventObject<server_spawn>;
-    /*this->events["server_pre_shutdown"] = &CreateEventObject<server_pre_shutdown>;
+    this->events["server_pre_shutdown"] = &CreateEventObject<server_pre_shutdown>;
     this->events["server_shutdown"] = &CreateEventObject<server_shutdown>;
     this->events["server_message"] = &CreateEventObject<server_message>;
     this->events["server_cvar"] = &CreateEventObject<server_cvar>;
@@ -26,7 +26,6 @@ void EventManager::FillLegacyEventsMap() {
     this->events["player_chat"] = &CreateEventObject<player_chat>;
     this->events["teamplay_broadcast_audio"] = &CreateEventObject<teamplay_broadcast_audio>;
     this->events["player_stats_updated"] = &CreateEventObject<player_stats_updated>;
-    this->events["user_data_downloaded"] = &CreateEventObject<user_data_downloaded>;
     this->events["team_info"] = &CreateEventObject<team_info>;
     this->events["team_score"] = &CreateEventObject<team_score>;
     this->events["map_shutdown"] = &CreateEventObject<map_shutdown>;
@@ -97,14 +96,13 @@ void EventManager::FillLegacyEventsMap() {
     this->events["weapon_fire_on_empty"] = &CreateEventObject<weapon_fire_on_empty>;
     this->events["grenade_thrown"] = &CreateEventObject<grenade_thrown>;
     this->events["weapon_outofammo"] = &CreateEventObject<weapon_outofammo>;
-
     this->events["weapon_reload"] = &CreateEventObject<weapon_reload>;
     this->events["weapon_zoom"] = &CreateEventObject<weapon_zoom>;
     this->events["silencer_detach"] = &CreateEventObject<silencer_detach>;
     this->events["inspect_weapon"] = &CreateEventObject<inspect_weapon>;
-    this->events["player_spawned"] = &CreateEventObject<player_spawned>;*/
+    this->events["player_spawned"] = &CreateEventObject<player_spawned>;
     this->events["item_pickup"] = &CreateEventObject<item_pickup>;
-    /*this->events["item_pickup_slerp"] = &CreateEventObject<item_pickup_slerp>;
+    this->events["item_pickup_slerp"] = &CreateEventObject<item_pickup_slerp>;
     this->events["item_pickup_failed"] = &CreateEventObject<item_pickup_failed>;
     this->events["item_remove"] = &CreateEventObject<item_remove>;
     this->events["ammo_pickup"] = &CreateEventObject<ammo_pickup>;
@@ -137,20 +135,11 @@ void EventManager::FillLegacyEventsMap() {
     this->events["player_blind"] = &CreateEventObject<player_blind>;
     this->events["player_falldamage"] = &CreateEventObject<player_falldamage>;
     this->events["door_moving"] = &CreateEventObject<door_moving>;
-    this->events["cs_win_panel_round"] = &CreateEventObject<cs_win_panel_round>;
-    this->events["cs_win_panel_match"] = &CreateEventObject<cs_win_panel_match>;
-    this->events["cs_match_end_restart"] = &CreateEventObject<cs_match_end_restart>;
-    this->events["cs_pre_restart"] = &CreateEventObject<cs_pre_restart>;
-    this->events["show_deathpanel"] = &CreateEventObject<show_deathpanel>;
-    this->events["hide_deathpanel"] = &CreateEventObject<hide_deathpanel>;
-    this->events["player_avenged_teammate"] = &CreateEventObject<player_avenged_teammate>;
-    this->events["match_end_conditions"] = &CreateEventObject<match_end_conditions>;
-    this->events["round_mvp"] = &CreateEventObject<round_mvp>;
     this->events["switch_team"] = &CreateEventObject<switch_team>;
     this->events["player_given_c4"] = &CreateEventObject<player_given_c4>;
     this->events["bot_takeover"] = &CreateEventObject<bot_takeover>;
     this->events["jointeam_failed"] = &CreateEventObject<jointeam_failed>;
     this->events["nextlevel_changed"] = &CreateEventObject<nextlevel_changed>;
     this->events["team_intro_start"] = &CreateEventObject<team_intro_start>;
-    this->events["team_intro_end"] = &CreateEventObject<team_intro_end>;*/
+    this->events["team_intro_end"] = &CreateEventObject<team_intro_end>;
 }

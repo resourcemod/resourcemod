@@ -1,4 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2022.3\bin\cmake\win\x64\bin\cmake.exe" -G "Visual Studio 16 2019" -S D:\resourcemod -B D:\resourcemod\cmake-build-release-visual-studio
--- Configuring done
--- Generating done
--- Build files have been written to: D:/resourcemod/cmake-build-release-visual-studio
