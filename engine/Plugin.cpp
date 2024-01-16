@@ -8,11 +8,12 @@
 #include "../game/hooks/EventManager.h"
 #include "v8/Console.h"
 #include "v8/Events.h"
-#include "v8/Module.h"
 #include "v8/ExternalRuntime.h"
 #include "v8/Timers.h"
 #include "v8/Exception.h"
 #include <filesystem>
+#include "v8/Module.h"
+#include "v8/Chat.h"
 
 extern Engine *g_Engine;
 
@@ -125,11 +126,20 @@ void Plugin::LoadPluginFS() {
             timers
     );
 
+    // Create chat object
+    Chat *ch = new Chat();
+    v8::Local<v8::Object> chatobj = ch->Wrap(g_Engine->isolate);
+    ctx->Global()->Set(
+            ctx,
+            v8::String::NewFromUtf8(g_Engine->isolate, "chat", v8::NewStringType::kNormal).ToLocalChecked(),
+            chatobj
+    );
+
     // this->LoadExtensions(); // will load extensions for the global object (mb we should replace it with commonjs modules? Or even WASM?)
 
     std::string mainModuleName = this->name.c_str();
     std::string file_name = mainModuleName.append("/plugin.js");
-    auto contents = Module::ReadFile(file_name);
+    auto contents = V8Module::ReadFile(file_name);
 
     std::string fullModuleName = g_Engine->pluginsFolder;
     fullModuleName.append("/").append(file_name);

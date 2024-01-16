@@ -2,13 +2,10 @@
 // Created by Twelvee on 13.11.2023.
 //
 
-#ifndef RESOURCEMOD_MODULE_H
-#define RESOURCEMOD_MODULE_H
-
 #include <libplatform/libplatform.h>
 #include <v8.h>
 
-class Module {
+class V8Module {
 public:
     static std::string ReadFile(std::string);
     static v8::MaybeLocal<v8::Module> LoadModule(std::string code,
@@ -42,5 +39,3 @@ public:
     }
 };
 
-
-#endif //RESOURCEMOD_MODULE_H

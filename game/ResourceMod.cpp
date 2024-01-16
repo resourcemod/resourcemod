@@ -74,6 +74,8 @@ bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
     rmod->Init();
     g_Memory = new Memory();
     g_Memory->LoadOffsets(rmod->gameDataPath);
+    g_Memory->LoadSignatures(rmod->gameDataPath);
+    g_Memory->MakeSignaturesCallable();
 
     g_EventManager = new EventManager();
     g_EventManager->StartHooks();

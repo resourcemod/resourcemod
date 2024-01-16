@@ -56,8 +56,8 @@ void Engine::InitV8() {
             v8::ArrayBuffer::Allocator::NewDefaultAllocator();
 
     this->isolate = v8::Isolate::New(this->create_params);
-    this->isolate->SetHostImportModuleDynamicallyCallback(Module::CallDynamic);
-    this->isolate->SetHostInitializeImportMetaObjectCallback(Module::CallMeta);
+    this->isolate->SetHostImportModuleDynamicallyCallback(V8Module::CallDynamic);
+    this->isolate->SetHostInitializeImportMetaObjectCallback(V8Module::CallMeta);
     this->isolate->Enter();
     this->LoadMeta();
     this->LoadPlugins();

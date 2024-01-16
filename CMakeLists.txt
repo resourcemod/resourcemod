@@ -43,7 +43,7 @@ include_directories(third_party)
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
-add_library(external_runtime SHARED modules/external_runtime/ExternalRuntime.cpp)
+add_library(external_runtime SHARED modules/external_runtime/ExternalRuntime.cpp engine/v8/Chat.h)
 
 target_link_libraries(external_runtime
         ${CMAKE_SOURCE_DIR}/lib/libzmq.lib

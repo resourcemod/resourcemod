@@ -645,12 +645,8 @@ public:
         this->hitgroup = event->GetInt("hitgroup");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
         this->attacker_pawn = event->GetPlayerPawn("attacker_pawn");
-
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
-        this->player = new Player(controller);
-
-        CBasePlayerController *a_controller = (CBasePlayerController *) this->attacker;
-        this->attacker_player = new Player(a_controller);
+        this->player = new Player((CBasePlayerController *) this->userid);
+        this->attacker_player = new Player((CBasePlayerController *) this->attacker);
     };
     const char *event_name = "player_hurt";
     CEntityInstance *userid;//playercontroller

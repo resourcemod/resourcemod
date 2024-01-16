@@ -85,25 +85,25 @@ ModuleEmbedderData* GetModuleDataFromContext(v8::Local<v8::Context> context) {
             context->GetAlignedPointerFromEmbedderData(kModuleEmbedderDataIndex));
 }
 
-std::string Module::ReadFile(std::string filename) {
+std::string V8Module::ReadFile(std::string filename) {
     std::string fullModuleName = g_Engine->pluginsFolder;
     fullModuleName.append("/").append(filename);
     return Engine::GetFileContent(fullModuleName);
 }
 
 template <class T>
-v8::MaybeLocal<T> Module::CompileString(v8::Isolate* isolate, v8::Local<v8::Context> context,
+v8::MaybeLocal<T> V8Module::CompileString(v8::Isolate* isolate, v8::Local<v8::Context> context,
                                         v8::Local<v8::String> source,
                                    const v8::ScriptOrigin& origin) {
     v8::ScriptCompiler::CachedData* cached_code = nullptr;
 
     v8::ScriptCompiler::Source script_source(source, origin, cached_code);
     v8::MaybeLocal<T> result =
-            Module::Compile(context, &script_source, v8::ScriptCompiler::kNoCompileOptions);
+            V8Module::Compile(context, &script_source, v8::ScriptCompiler::kNoCompileOptions);
     return result;
 }
 
-v8::MaybeLocal<v8::Module> Module::LoadModule(std::string code, std::string file_name, v8::Local<v8::Context> context) {
+v8::MaybeLocal<v8::Module> V8Module::LoadModule(std::string code, std::string file_name, v8::Local<v8::Context> context) {
     v8::Isolate* isolate = context->GetIsolate();
     v8::Local<v8::String> source_text = v8::String::NewFromUtf8(isolate, code.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
 
@@ -127,7 +127,7 @@ v8::MaybeLocal<v8::Module> Module::LoadModule(std::string code, std::string file
     return module;
 }
 
-v8::Local<v8::Module> Module::CheckModule(v8::MaybeLocal<v8::Module> maybeModule,
+v8::Local<v8::Module> V8Module::CheckModule(v8::MaybeLocal<v8::Module> maybeModule,
                                           v8::Local<v8::Context> cx) {
     v8::TryCatch try_catch(cx->GetIsolate());
     v8::Local<v8::Module> mod;
@@ -136,7 +136,7 @@ v8::Local<v8::Module> Module::CheckModule(v8::MaybeLocal<v8::Module> maybeModule
         exit(EXIT_FAILURE);
     }
 
-    v8::Maybe<bool> result = mod->InstantiateModule(cx, Module::CallResolve);
+    v8::Maybe<bool> result = mod->InstantiateModule(cx, V8Module::CallResolve);
     if (result.IsNothing()) {
         v8Exception::ReportException(cx->GetIsolate(), &try_catch);
         exit(EXIT_FAILURE);
@@ -145,7 +145,7 @@ v8::Local<v8::Module> Module::CheckModule(v8::MaybeLocal<v8::Module> maybeModule
     return mod;
 }
 
-v8::Local<v8::Value> Module::ExecModule(v8::Local<v8::Module> mod,
+v8::Local<v8::Value> V8Module::ExecModule(v8::Local<v8::Module> mod,
                                         v8::Local<v8::Context> cx,
                                         bool nsObject) {
 
@@ -162,17 +162,17 @@ v8::Local<v8::Value> Module::ExecModule(v8::Local<v8::Module> mod,
         return retValue;
 }
 
-v8::MaybeLocal<v8::Module> Module::CallResolve(v8::Local<v8::Context> context,
+v8::MaybeLocal<v8::Module> V8Module::CallResolve(v8::Local<v8::Context> context,
                                                v8::Local<v8::String> specifier,
                                                v8::Local<v8::FixedArray> arr,
                                                v8::Local<v8::Module> referrer) {
 
     v8::String::Utf8Value str(context->GetIsolate(), specifier);
-    return Module::LoadModule(Module::ReadFile(*str), *str, context);
+    return V8Module::LoadModule(V8Module::ReadFile(*str), *str, context);
 }
 
 v8::MaybeLocal<v8::Promise>
-Module::CallDynamic(v8::Local<v8::Context> context, v8::Local<v8::Data> host_defined_options,
+V8Module::CallDynamic(v8::Local<v8::Context> context, v8::Local<v8::Data> host_defined_options,
                     v8::Local<v8::Value> resource_name, v8::Local<v8::String> specifier,
                     v8::Local<v8::FixedArray> import_assertions) {
 
@@ -182,14 +182,14 @@ Module::CallDynamic(v8::Local<v8::Context> context, v8::Local<v8::Data> host_def
 
     v8::String::Utf8Value name(context->GetIsolate(), specifier);
     v8::Local<v8::Module> mod =
-            Module::CheckModule(Module::LoadModule(Module::ReadFile(*name), *name, context), context);
-    v8::Local<v8::Value> retValue = Module::ExecModule(mod, context, true);
+            V8Module::CheckModule(V8Module::LoadModule(V8Module::ReadFile(*name), *name, context), context);
+    v8::Local<v8::Value> retValue = V8Module::ExecModule(mod, context, true);
 
     resolver->Resolve(context, retValue);
     return promise;
 }
 
-void Module::CallMeta(v8::Local<v8::Context> context,
+void V8Module::CallMeta(v8::Local<v8::Context> context,
                       v8::Local<v8::Module> module,
                       v8::Local<v8::Object> meta) {
     // here you can set the import.meta url

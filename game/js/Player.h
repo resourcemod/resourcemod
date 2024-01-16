@@ -8,6 +8,8 @@
 #include "../cs2/cbaseplayercontroller.h"
 #include "../hooks/LegacyEvents.h"
 #include "../../engine/v8/v8_utils.h"
+#include <engine/igameeventsystem.h>
+#include <igameevents.h>
 
 class Player;
 
@@ -23,16 +25,20 @@ class Player;
                 v8::FunctionTemplate::New(info.GetIsolate(), cls)                                                       \
         );
 
+extern IGameEventManager2 *g_gameEventManager;
+
 class Player {
-    CBasePlayerController *controller;
 public:
     Player(CBasePlayerController *c) {
         this->controller = c;
     };
 
+    CBasePlayerController *controller;
+
     static void GetName(const v8::FunctionCallbackInfo<v8::Value> &info) {
         GET_PLAYER_FROM_PROPERTY_CB(info)
         const char *value = p->controller->GetPlayerName();
+        logger::log(logger::format("Get name pointer: %p", p->controller));
         v8::Local<v8::String> name = v8::String::NewFromUtf8(info.GetIsolate(), value).ToLocalChecked();
         info.GetReturnValue().Set(name);
     }
@@ -75,16 +81,6 @@ public:
         info.GetReturnValue().Set(v8::True(info.GetIsolate()));
     }
 
-    static void SayTeam(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-        info.GetReturnValue().Set(v8::True(info.GetIsolate()));
-    }
-
-    static void Say(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-        info.GetReturnValue().Set(v8::True(info.GetIsolate()));
-    }
-
     static void GetHP(v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Value> &info) {
         GET_PLAYER_FROM_PROPERTY_CB(info)
@@ -116,8 +112,6 @@ public:
         CREATE_FN_PROPERTY("GetSteamID", &Player::GetSteamID);
         CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
         CREATE_FN_PROPERTY("Slap", &Player::Slap);
-        CREATE_FN_PROPERTY("SayTeam", &Player::SayTeam);
-        CREATE_FN_PROPERTY("Say", &Player::Say);
         CREATE_FN_PROPERTY("Slay", &Player::Slay);
 
         // set values that can be changed in JS (public variables)
@@ -147,8 +141,6 @@ public:
         CREATE_FN_PROPERTY("GetSteamID", &Player::GetSteamID);
         CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
         CREATE_FN_PROPERTY("Slap", &Player::Slap);
-        CREATE_FN_PROPERTY("SayTeam", &Player::SayTeam);
-        CREATE_FN_PROPERTY("Say", &Player::Say);
         CREATE_FN_PROPERTY("Slay", &Player::Slay);
 
         // set values that can be changed in JS (public variables)
@@ -178,8 +170,6 @@ public:
         CREATE_FN_PROPERTY("GetSteamID", &Player::GetSteamID);
         CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
         CREATE_FN_PROPERTY("Slap", &Player::Slap);
-        CREATE_FN_PROPERTY("SayTeam", &Player::SayTeam);
-        CREATE_FN_PROPERTY("Say", &Player::Say);
         CREATE_FN_PROPERTY("Slay", &Player::Slay);
 
         // set values that can be changed in JS (public variables)
