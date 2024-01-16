@@ -405,27 +405,6 @@ class V8_EXPORT ScriptCompiler {
     CachedData(const uint8_t* data, int length,
                BufferPolicy buffer_policy = BufferNotOwned);
     ~CachedData();
-
-    enum CompatibilityCheckResult {
-      // Don't change order/existing values of this enum since it keys into the
-      // `code_cache_reject_reason` histogram. Append-only!
-      kSuccess = 0,
-      kMagicNumberMismatch = 1,
-      kVersionMismatch = 2,
-      kSourceMismatch = 3,
-      kFlagsMismatch = 5,
-      kChecksumMismatch = 6,
-      kInvalidHeader = 7,
-      kLengthMismatch = 8,
-      kReadOnlySnapshotChecksumMismatch = 9,
-
-      // This should always point at the last real enum value.
-      kLast = kReadOnlySnapshotChecksumMismatch
-    };
-
-    // Check if the CachedData can be loaded in the given isolate.
-    CompatibilityCheckResult CompatibilityCheck(Isolate* isolate);
-
     // TODO(marja): Async compilation; add constructors which take a callback
     // which will be called when V8 no longer needs the data.
     const uint8_t* data;
@@ -470,8 +449,8 @@ class V8_EXPORT ScriptCompiler {
 
     // Origin information
     Local<Value> resource_name;
-    int resource_line_offset = -1;
-    int resource_column_offset = -1;
+    int resource_line_offset;
+    int resource_column_offset;
     ScriptOriginOptions resource_options;
     Local<Value> source_map_url;
     Local<Data> host_defined_options;

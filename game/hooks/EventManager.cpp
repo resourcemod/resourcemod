@@ -55,6 +55,7 @@ bool EventManager::OnEventFired(IGameEvent *event, bool bDontBroadcast = false) 
         RETURN_META_VALUE(MRES_IGNORED, false);
     }
     int prevent = 0;
+    //logger::log(logger::format("Event! %s", event->GetName()));
     if (this->events.count(event->GetName()) > 0) {
         if (g_Engine->FireGameEvent(event)) {
             prevent++;

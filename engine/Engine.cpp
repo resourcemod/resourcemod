@@ -44,6 +44,7 @@ void Engine::Init() {
 }
 
 void Engine::InitV8() {
+    logger::log(logger::format("V8 Version: %s", v8::V8::GetVersion()));
     // todo: i18n support (more here https://v8.dev/docs/embed)
     //v8::V8::InitializeICUDefaultLocation(mainFile);
     //v8::V8::InitializeExternalStartupData(mainFile);
@@ -53,6 +54,7 @@ void Engine::InitV8() {
 
     this->create_params.array_buffer_allocator =
             v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+
     this->isolate = v8::Isolate::New(this->create_params);
     this->isolate->SetHostImportModuleDynamicallyCallback(Module::CallDynamic);
     this->isolate->SetHostInitializeImportMetaObjectCallback(Module::CallMeta);

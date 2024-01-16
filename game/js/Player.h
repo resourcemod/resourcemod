@@ -58,9 +58,6 @@ public:
             return;
         }
         int hp = info[0]->Int32Value(info.GetIsolate()->GetCurrentContext()).ToChecked();
-        logger::log(logger::format("%d", hp));
-        logger::log(logger::format("%d", hp));
-        logger::log(logger::format("%d", hp));
         p->controller->GetPawn()->Slap(hp);
         info.GetReturnValue().Set(v8::True(info.GetIsolate()));
     }
@@ -170,7 +167,7 @@ public:
         v8::EscapableHandleScope handle_scope(info.GetIsolate());
         v8::Local<v8::Object> self = info.Holder();
         v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(
-                self->GetInternalField(3)); // if it's from event - internal field of attacker player class is 2
+                self->GetInternalField(3)); // if it's from event - internal field of attacker player class is 3
         void *ptr = wrap->Value();
         Player *p = static_cast<Player *>(ptr);
 

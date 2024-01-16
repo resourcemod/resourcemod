@@ -11,6 +11,8 @@
 #include "v8/Module.h"
 #include "v8/ExternalRuntime.h"
 #include "v8/Timers.h"
+#include "v8/Exception.h"
+#include <filesystem>
 
 extern Engine *g_Engine;
 
@@ -126,11 +128,32 @@ void Plugin::LoadPluginFS() {
     // this->LoadExtensions(); // will load extensions for the global object (mb we should replace it with commonjs modules? Or even WASM?)
 
     std::string mainModuleName = this->name.c_str();
-    auto contents = Module::ReadFile(mainModuleName.append("/plugin.js"));
-    v8::Local<v8::Module> mod =
-            Module::CheckModule(Module::LoadModule(contents, ctx), ctx);
+    std::string file_name = mainModuleName.append("/plugin.js");
+    auto contents = Module::ReadFile(file_name);
+
+    std::string fullModuleName = g_Engine->pluginsFolder;
+    fullModuleName.append("/").append(file_name);
+
+/*    v8::Local<v8::Module> mod =
+            Module::CheckModule(Module::LoadModule(contents, file_name, ctx), ctx);
     v8::Local<v8::Value> returned = Module::ExecModule(mod, ctx);
-    v8::String::Utf8Value val(g_Engine->isolate, returned);
+    v8::String::Utf8Value val(g_Engine->isolate, returned);*/
+
+    v8::Local<v8::Script> script;
+    v8::Local<v8::String> source =
+            v8::String::NewFromUtf8(g_Engine->isolate, contents.c_str()).ToLocalChecked();
+    v8::TryCatch try_catch(g_Engine->isolate);
+
+    if (!v8::Script::Compile(ctx, source).ToLocal(&script)) {
+        v8Exception::ReportException(g_Engine->isolate, &try_catch);
+        logger::log("Failed to run script");
+    } else {
+        v8::Local<v8::Value> result;
+        if (!script->Run(ctx).ToLocal(&result)) {
+            v8Exception::ReportException(g_Engine->isolate, &try_catch);
+            logger::log("Failed to run script");
+        }
+    }
 }
 
 /*void Plugin::LoadExtensions() {

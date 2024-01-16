@@ -172,6 +172,8 @@ using AccessorNameSetterCallback =
  */
 enum AccessControl {
   DEFAULT = 0,
+  ALL_CAN_READ = 1,
+  ALL_CAN_WRITE = 1 << 1,
 };
 
 /**
@@ -339,20 +341,22 @@ class V8_EXPORT Object : public Value {
   V8_WARN_UNUSED_RESULT Maybe<bool> Delete(Local<Context> context,
                                            uint32_t index);
 
-  V8_DEPRECATE_SOON("Use SetNativeDataProperty instead")
+  /**
+   * Note: SideEffectType affects the getter only, not the setter.
+   */
   V8_WARN_UNUSED_RESULT Maybe<bool> SetAccessor(
       Local<Context> context, Local<Name> name,
       AccessorNameGetterCallback getter,
       AccessorNameSetterCallback setter = nullptr,
       MaybeLocal<Value> data = MaybeLocal<Value>(),
-      AccessControl deprecated_settings = DEFAULT,
-      PropertyAttribute attribute = None,
+      AccessControl settings = DEFAULT, PropertyAttribute attribute = None,
       SideEffectType getter_side_effect_type = SideEffectType::kHasSideEffect,
       SideEffectType setter_side_effect_type = SideEffectType::kHasSideEffect);
 
   void SetAccessorProperty(Local<Name> name, Local<Function> getter,
                            Local<Function> setter = Local<Function>(),
-                           PropertyAttribute attributes = None);
+                           PropertyAttribute attributes = None,
+                           AccessControl settings = DEFAULT);
 
   /**
    * Sets a native data property like Template::SetNativeDataProperty, but

@@ -1211,6 +1211,7 @@ public:
     PREVENT_SUPPORT;
 
     v8::Local<v8::Object> SerializeV8(v8::Local<v8::Context> ctx) override {
+        v8::EscapableHandleScope handle_scope(g_Engine->isolate);
         v8::Local<v8::ObjectTemplate> t = v8::ObjectTemplate::New(g_Engine->isolate);
         t->SetInternalFieldCount(4);
 
@@ -1240,7 +1241,7 @@ public:
         obj->SetInternalField(2, v8::External::New(g_Engine->isolate, this->attacker_player));
         obj->SetInternalField(3, v8::External::New(g_Engine->isolate, this->assister_player));
 
-        return obj;
+        return handle_scope.Escape(obj);
     };
 };
 
@@ -4482,7 +4483,7 @@ public:
         t->SetInternalFieldCount(3);
 
         SET_GETTER(t, GetPlayer, Player::GetPlayerObject)
-        SET_GETTER(t, GetPlayer, Player::GetAttackerObject)
+        SET_GETTER(t, GetAttacker, Player::GetAttackerObject)
 
         SET_GETTER(t, GetEntityID, player_blind::GetEntityID)
         SET_GETTER(t, GetDuration, player_blind::GetDuration)
