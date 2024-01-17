@@ -38,6 +38,10 @@ public:
 
     static void GetName(const v8::FunctionCallbackInfo<v8::Value> &info) {
         GET_PLAYER_FROM_PROPERTY_CB(info)
+        if (!p->controller) {
+            info.GetIsolate()->ThrowError("Player not found.");
+            return;
+        }
         const char *value = p->controller->GetPlayerName();
         v8::Local<v8::String> name = v8::String::NewFromUtf8(info.GetIsolate(), value).ToLocalChecked();
         info.GetReturnValue().Set(name);

@@ -57,6 +57,13 @@ bool EventManager::OnEventFired(IGameEvent *event, bool bDontBroadcast = false) 
     int prevent = 0;
     //logger::log(logger::format("Event! %s", event->GetName()));
     if (this->events.count(event->GetName()) > 0) {
+
+        if (strcmp(event->GetName(), "server_spawn")) {               // todo: is it only player_spawn?
+            if (!event->GetPlayerController("userid")) {
+                return false;
+            }
+        }
+
         if (g_Engine->FireGameEvent(event)) {
             prevent++;
         }

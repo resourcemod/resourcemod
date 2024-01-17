@@ -12,8 +12,9 @@
 #include "v8/Timers.h"
 #include "v8/Exception.h"
 #include <filesystem>
-#include "v8/Module.h"
+#include "v8/V8Module.h"
 #include "v8/Chat.h"
+#include "v8/Config.h"
 
 extern Engine *g_Engine;
 
@@ -135,6 +136,15 @@ void Plugin::LoadPluginFS() {
             ctx,
             v8::String::NewFromUtf8(g_Engine->isolate, "chat", v8::NewStringType::kNormal).ToLocalChecked(),
             chatobj
+    );
+
+    // Create chat object
+    Config *cfg = new Config(this->name);
+    v8::Local<v8::Object> configObject = cfg->Wrap(g_Engine->isolate);
+    ctx->Global()->Set(
+            ctx,
+            v8::String::NewFromUtf8(g_Engine->isolate, "config", v8::NewStringType::kNormal).ToLocalChecked(),
+            configObject
     );
 
     // this->LoadExtensions(); // will load extensions for the global object (mb we should replace it with commonjs modules? Or even WASM?)

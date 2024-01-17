@@ -5,7 +5,7 @@
 #include "Engine.h"
 #include "../logger/logger.h"
 #include "../game/hooks/EventManager.h"
-#include "v8/Module.h"
+#include "v8/V8Module.h"
 #include <direct.h>
 #include "EventLoop.h"
 

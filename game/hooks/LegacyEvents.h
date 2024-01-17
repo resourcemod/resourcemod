@@ -519,9 +519,10 @@ public:
     player_spawn(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
-
-        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
-        this->player = new Player(controller);
+        this->player = new Player((CCSPlayerController *) this->userid);
+        if (!this->player->controller) {
+            this->player->controller = CCSPlayerController::FromPawn((CCSPlayerPawn*) this->userid_pawn);
+        }
     };
     const char *event_name = "player_spawn";
     CEntityInstance *userid; //playercontroller
@@ -530,6 +531,7 @@ public:
     Player *player;
 
     PREVENT_SUPPORT;
+
 
     v8::Local<v8::Object> SerializeV8(v8::Local<v8::Context> ctx) override {
         v8::Local<v8::ObjectTemplate> t = v8::ObjectTemplate::New(g_Engine->isolate);

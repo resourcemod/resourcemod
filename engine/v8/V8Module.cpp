@@ -2,7 +2,7 @@
 // Created by Twelvee on 13.11.2023.
 //
 
-#include "Module.h"
+#include "V8Module.h"
 #include "Exception.h"
 #include "../Engine.h"
 #include "../../logger/logger.h"
