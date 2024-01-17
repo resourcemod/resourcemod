@@ -15,9 +15,10 @@
 #include "cs2/Memory.h"
 #include <direct.h>
 
-ResourceMod g_ResourceMod;
+ResourceMod resourcemod;
+ResourceMod *g_ResourceMod;
 
-PLUGIN_EXPOSE(ResourceMod, g_ResourceMod);
+PLUGIN_EXPOSE(ResourceMod, resourcemod);
 
 IVEngineServer2* g_SourceEngine;
 IGameEventSystem* g_SourceEvents;
@@ -30,8 +31,10 @@ Memory *g_Memory;
 class GameSessionConfiguration_t { };
 
 SH_DECL_HOOK3_void(INetworkServerService, StartupServer, SH_NOATTRIB, 0, const GameSessionConfiguration_t&, ISource2WorldSession*, const char*);
+SH_DECL_HOOK3_void(IServerGameDLL, GameFrame, SH_NOATTRIB, 0, bool, bool, bool);
 
 bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, bool late) {
+    g_ResourceMod = this;
     PLUGIN_SAVEVARS();
     if (late) {
         V_strncpy(error, "Late load is not supported", maxlen);
@@ -49,26 +52,10 @@ bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
     GET_V_IFACE_ANY(GetEngineFactory, g_pNetworkServerService, INetworkServerService, NETWORKSERVERSERVICE_INTERFACE_VERSION);
     GET_V_IFACE_CURRENT(GetEngineFactory, g_GameResourceService, CGameResourceService, GAMERESOURCESERVICESERVER_INTERFACE_VERSION);
 
+    g_SMAPI->AddListener(this, this);
+
     SH_ADD_HOOK_MEMFUNC(INetworkServerService, StartupServer, g_pNetworkServerService, this, &ResourceMod::Hook_StartupServer, true);
-
-    CSchemaSystemTypeScope *scope = g_SchemaSystem->FindTypeScopeForModule("server.dll");
-    logger::log(logger::format("%p", scope));
-    auto a = scope->FindDeclaredClass("CBasePlayerController");
-
-    do
-    {
-        SchemaClassFieldData_t *pFields = a->GetFields();
-        short fieldsSize = a->GetFieldsSize();
-        for (int i = 0; i < fieldsSize; ++i)
-        {
-            SchemaClassFieldData_t &field = pFields[i];
-            logger::log(logger::format("%s: %d", field.m_name, field.m_offset));
-            if (V_strcmp(field.m_name, "__m_pChainEntity") == 0)
-            {
-                return field.m_offset;
-            }
-        }
-    } while ((a = a->GetParent()) != nullptr);
+    SH_ADD_HOOK(IServerGameDLL, GameFrame, g_pSource2Server, SH_MEMBER(this, &ResourceMod::Hook_GameFrame), true);
 
     Engine *rmod = new Engine();
     rmod->Init();
@@ -97,10 +84,27 @@ CGameEntitySystem *GameEntitySystem()
 bool ResourceMod::Unload(char *error, size_t maxlen) {
     // remove hooks
     SH_REMOVE_HOOK_MEMFUNC(INetworkServerService, StartupServer, g_pNetworkServerService, this, &ResourceMod::Hook_StartupServer, true);
+    SH_REMOVE_HOOK(IServerGameDLL, GameFrame, g_pSource2Server, SH_MEMBER(this, &ResourceMod::Hook_GameFrame), true);
     g_EventManager->StopHooks();
     g_Engine->Shutdown();
     ConVar_Unregister();
     return true;
+}
+
+void ResourceMod::Hook_GameFrame(bool simulating, bool bFirstTick, bool bLastTick) {
+    this->RMFrame();
+}
+
+void ResourceMod::RMFrame() {
+    while (!m_nextFrame.empty())
+    {
+        m_nextFrame.front()();
+        m_nextFrame.pop_front();
+    }
+}
+
+void ResourceMod::NextFrame(std::function<void()> fn) {
+    m_nextFrame.push_back(fn);
 }
 
 const char *ResourceMod::GetLicense() {
@@ -108,7 +112,7 @@ const char *ResourceMod::GetLicense() {
 }
 
 const char *ResourceMod::GetVersion() {
-    return "1.0.0";
+    return "1.0.5-alpha";
 }
 
 const char *ResourceMod::GetDate() {

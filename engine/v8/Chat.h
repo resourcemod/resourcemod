@@ -11,8 +11,10 @@
 #include "object.h"
 #include "../Engine.h"
 #include "../../game/js/Player.h"
+#include "../../game/ResourceMod.h"
 
 extern Engine *g_Engine;
+extern ResourceMod *g_ResourceMod;
 
 class Chat : public V8Object {
 public:
@@ -37,13 +39,15 @@ public:
     static void ClientPrint(CCSPlayerController *player, int dest, const char *text, ...) {
         va_list args;
                 va_start(args, text);
+
         char buf[256];
         V_vsnprintf(buf, sizeof(buf), text, args);
                 va_end(args);
-        if (player)
-            SignatureCall::ClientPrint(player, dest, buf, nullptr, nullptr, nullptr, nullptr);
-        else
-            logger::log("Player not found.");
+
+        g_ResourceMod->NextFrame([player, buf]() {
+            if (player->m_hPawn() && player->m_steamID() > 0)
+                SignatureCall::UTIL_ClientPrint(player, HUD_PRINTTALK, buf, nullptr, nullptr, nullptr, nullptr);
+        });
     }
 
     // temporary does not work
@@ -55,6 +59,7 @@ public:
             void *ptr = wrap->Value();
             Player *p = static_cast<Player *>(ptr);
             v8::String::Utf8Value str(args.GetIsolate(), args[1]);
+
             Chat::ClientPrint(p->controller, HUD_PRINTTALK, v8str_to_cstr(str));
         }
     };
