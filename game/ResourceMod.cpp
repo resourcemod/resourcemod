@@ -67,14 +67,6 @@ bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 
     g_EventManager = new EventManager();
     g_EventManager->StartHooks();
-    ConVarHandle h = g_pCVar->FindFirstConVar();
-    while(h.IsValid()) {
-        ConVar *cv = g_pCVar->GetConVar(h);
-        if (cv->m_eVarType == EConVarType_String) {
-            logger::log(logger::format("Cvar: %s = %s", g_pCVar->GetConVar(h)->m_pszName, cv->values));
-        }
-        h = g_pCVar->FindNextConVar(h);
-    }
 
     ConVar_Register(FCVAR_RELEASE | FCVAR_GAMEDLL);
 

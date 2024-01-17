@@ -54,27 +54,6 @@ public:
         info.GetIsolate()->ThrowError("On-the-fly config editing is not yet possible.");
     };
 
-    static void GetServerConfig(v8::Local<v8::String> property,
-                                const v8::PropertyCallbackInfo<v8::Value> &info) {
-        std::map<std::string, const char*> string_cvars;
-        std::map<std::string, const char*> int_cvars;
-        std::map<std::string, const char*> float_cvars;
-        ConVarHandle h = g_pCVar->FindFirstConVar();
-        while(h.IsValid()) {
-            ConVar *cv = g_pCVar->GetConVar(h);
-            if (cv->m_eVarType == EConVarType_String) {
-                logger::log(logger::format("Cvar: %s = %s", g_pCVar->GetConVar(h)->m_pszName, cv->values));
-            }
-            h = g_pCVar->FindNextConVar(h);
-        }
-
-    };
-
-    static void SetServerConfig(v8::Local<v8::String> property, v8::Local<v8::Value> value,
-                                const v8::PropertyCallbackInfo<void> &info) {
-        info.GetIsolate()->ThrowError("On-the-fly config editing is not yet possible.");
-    };
-
     v8::Local<v8::Object> Wrap(v8::Isolate *isolate) override {
         v8::EscapableHandleScope handle_scope(isolate);
 
@@ -84,12 +63,6 @@ public:
                 v8::String::NewFromUtf8(isolate, "plugin", v8::NewStringType::kInternalized).ToLocalChecked(),
                 &Config::GetPluginConfig,
                 &Config::SetPluginConfig
-        );
-
-        data->SetAccessor(
-                v8::String::NewFromUtf8(isolate, "server", v8::NewStringType::kInternalized).ToLocalChecked(),
-                &Config::GetServerConfig,
-                &Config::SetServerConfig
         );
 
         //create instance
