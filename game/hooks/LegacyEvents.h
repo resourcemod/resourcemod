@@ -7,7 +7,7 @@
 
 #include "../cs2/cbaseentity.h"
 #include "../../logger/logger.h"
-#include "../cs2/cbaseplayercontroller.h"
+#include "../cs2/CCSPlayerController.h"
 #include <v8.h>
 #include "../../engine/Engine.h"
 #include "../js/Player.h"
@@ -275,7 +275,7 @@ class player_activate : public RMEvent {
 public:
     player_activate(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_activate";
@@ -304,7 +304,7 @@ class player_connect_full : public RMEvent {
 public:
     player_connect_full(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
 
@@ -334,7 +334,7 @@ class player_full_update : public RMEvent {
 public:
     player_full_update(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_full_update";
@@ -367,7 +367,7 @@ public:
         this->address = event->GetString("address");
         this->bot = event->GetBool("bot");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_connect";
@@ -423,7 +423,7 @@ public:
         this->xuid = event->GetInt("xuid");
         this->PlayerID = event->GetInt("PlayerID");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_disconnect";
@@ -477,7 +477,7 @@ public:
         this->steamid = event->GetInt("steamid");
         this->bot = event->GetBool("bot");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_info";
@@ -520,7 +520,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_spawn";
@@ -557,7 +557,7 @@ public:
         this->isbot = event->GetBool("isbot");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_team";
@@ -645,8 +645,8 @@ public:
         this->hitgroup = event->GetInt("hitgroup");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
         this->attacker_pawn = event->GetPlayerPawn("attacker_pawn");
-        this->player = new Player((CBasePlayerController *) this->userid);
-        this->attacker_player = new Player((CBasePlayerController *) this->attacker);
+        this->player = new Player((CCSPlayerController *) this->userid);
+        this->attacker_player = new Player((CCSPlayerController *) this->attacker);
     };
     const char *event_name = "player_hurt";
     CEntityInstance *userid;//playercontroller
@@ -1138,13 +1138,13 @@ public:
         this->attacker_pawn = event->GetPlayerPawn("attacker_pawn");
         this->assister_pawn = event->GetPlayerPawn("assister_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
 
-        CBasePlayerController *at_controller = (CBasePlayerController *) this->attacker;
+        CCSPlayerController *at_controller = (CCSPlayerController *) this->attacker;
         this->attacker_player = new Player(at_controller);
 
-        CBasePlayerController *as_controller = (CBasePlayerController *) this->assister;
+        CCSPlayerController *as_controller = (CCSPlayerController *) this->assister;
         this->assister_player = new Player(as_controller);
     };
     const char *event_name = "player_death";
@@ -1248,7 +1248,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_footstep";
@@ -1306,7 +1306,7 @@ public:
         this->material = event->GetInt("material");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "break_breakable";
@@ -1347,7 +1347,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "break_prop";
@@ -1424,7 +1424,7 @@ public:
         this->checkpoint = event->GetBool("checkpoint");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "door_close";
@@ -1691,7 +1691,7 @@ public:
         this->player = event->GetPlayerController("player");
         this->achievement = event->GetInt("achievement");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->player;
+        CCSPlayerController *controller = (CCSPlayerController *) this->player;
         this->_player = new Player(controller);
     };
     const char *event_name = "achievement_earned";
@@ -1725,7 +1725,7 @@ public:
         this->target = event->GetInt("target");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "spec_target_updated";
@@ -1759,7 +1759,7 @@ public:
     spec_mode_updated(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "spec_mode_updated";
@@ -1791,7 +1791,7 @@ public:
         this->classname = event->GetString("classname");
         this->entityname = event->GetString("entityname");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "entity_visible";
@@ -1834,7 +1834,7 @@ public:
         this->giftidx = event->GetInt("giftidx");
         this->accountid = event->GetInt("accountid");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->player;
+        CCSPlayerController *controller = (CCSPlayerController *) this->player;
         this->_player = new Player(controller);
     };
     const char *event_name = "items_gifted";
@@ -1879,7 +1879,7 @@ public:
         this->deaths = event->GetInt("deaths");
         this->score = event->GetInt("score");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_score";
@@ -1921,7 +1921,7 @@ public:
         this->mode = event->GetInt("mode");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_shoot";
@@ -2273,7 +2273,7 @@ public:
         this->loadout = event->GetInt("loadout");
         this->weapon = event->GetString("weapon");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "item_purchase";
@@ -2314,7 +2314,7 @@ public:
         this->site = event->GetInt("site");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bomb_beginplant";
@@ -2350,7 +2350,7 @@ public:
         this->site = event->GetInt("site");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bomb_abortplant";
@@ -2386,7 +2386,7 @@ public:
         this->site = event->GetInt("site");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bomb_planted";
@@ -2422,7 +2422,7 @@ public:
         this->site = event->GetInt("site");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bomb_defused";
@@ -2458,7 +2458,7 @@ public:
         this->site = event->GetInt("site");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bomb_exploded";
@@ -2494,7 +2494,7 @@ public:
         this->entindex = event->GetInt("entindex");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bomb_dropped";
@@ -2529,7 +2529,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bomb_pickup";
@@ -2586,7 +2586,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "defuser_pickup";
@@ -2622,7 +2622,7 @@ public:
         this->haskit = event->GetBool("haskit");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bomb_begindefuse";
@@ -2657,7 +2657,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bomb_abortdefuse";
@@ -2689,7 +2689,7 @@ public:
         this->hostage = event->GetInt("hostage");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "hostage_follows";
@@ -2725,7 +2725,7 @@ public:
         this->hostage = event->GetInt("hostage");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "hostage_hurt";
@@ -2761,7 +2761,7 @@ public:
         this->hostage = event->GetInt("hostage");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "hostage_killed";
@@ -2798,7 +2798,7 @@ public:
         this->site = event->GetInt("site");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "hostage_rescued";
@@ -2837,7 +2837,7 @@ public:
         this->hostage = event->GetInt("hostage");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "hostage_stops_following";
@@ -2915,7 +2915,7 @@ public:
         this->slot = event->GetInt("slot");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_radio";
@@ -2977,7 +2977,7 @@ public:
         this->silenced = event->GetBool("silenced");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "weapon_fire";
@@ -3016,7 +3016,7 @@ public:
         this->weapon = event->GetString("weapon");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "weapon_fire_on_empty";
@@ -3052,7 +3052,7 @@ public:
         this->weapon = event->GetString("weapon");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "grenade_thrown";
@@ -3087,7 +3087,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "weapon_outofammo";
@@ -3118,7 +3118,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "weapon_reload";
@@ -3149,7 +3149,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "weapon_zoom";
@@ -3180,7 +3180,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "silencer_detach";
@@ -3211,7 +3211,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "inspect_weapon";
@@ -3243,7 +3243,7 @@ public:
         this->inrestart = event->GetBool("inrestart");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_spawned";
@@ -3281,7 +3281,7 @@ public:
         this->silent = event->GetBool("silent");
         this->defindex = event->GetInt("defindex");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
 
@@ -3322,7 +3322,7 @@ public:
         this->index = event->GetInt("index");
         this->behavior = event->GetInt("behavior");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "item_pickup_slerp";
@@ -3361,7 +3361,7 @@ public:
         this->reason = event->GetInt("reason");
         this->limit = event->GetInt("limit");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "item_pickup_failed";
@@ -3402,7 +3402,7 @@ public:
         this->item = event->GetString("item");
         this->defindex = event->GetInt("defindex");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "item_remove";
@@ -3440,7 +3440,7 @@ public:
         this->item = event->GetString("item");
         this->index = event->GetInt("index");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "ammo_pickup";
@@ -3484,7 +3484,7 @@ public:
         this->weptype = event->GetInt("weptype");
         this->ispainted = event->GetBool("ispainted");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "item_equip";
@@ -3539,7 +3539,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->canbuy = event->GetBool("canbuy");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "enter_buyzone";
@@ -3573,7 +3573,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->canbuy = event->GetBool("canbuy");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "exit_buyzone";
@@ -3630,7 +3630,7 @@ public:
         this->hasbomb = event->GetBool("hasbomb");
         this->isplanted = event->GetBool("isplanted");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "enter_bombzone";
@@ -3668,7 +3668,7 @@ public:
         this->hasbomb = event->GetBool("hasbomb");
         this->isplanted = event->GetBool("isplanted");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "exit_bombzone";
@@ -3704,7 +3704,7 @@ public:
     enter_rescue_zone(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "enter_rescue_zone";
@@ -3733,7 +3733,7 @@ public:
     exit_rescue_zone(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "exit_rescue_zone";
@@ -3762,7 +3762,7 @@ public:
     silencer_off(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "silencer_off";
@@ -3791,7 +3791,7 @@ public:
     silencer_on(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "silencer_on";
@@ -3820,7 +3820,7 @@ public:
     buymenu_open(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "buymenu_open";
@@ -3849,7 +3849,7 @@ public:
     buymenu_close(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "buymenu_close";
@@ -3921,7 +3921,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "grenade_bounce";
@@ -3956,7 +3956,7 @@ public:
         this->z = event->GetFloat("z");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "hegrenade_detonate";
@@ -4004,7 +4004,7 @@ public:
         this->z = event->GetFloat("z");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     }
 
@@ -4053,7 +4053,7 @@ public:
         this->z = event->GetFloat("z");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "smokegrenade_detonate";
@@ -4101,7 +4101,7 @@ public:
         this->z = event->GetFloat("z");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "smokegrenade_expired";
@@ -4148,7 +4148,7 @@ public:
         this->z = event->GetFloat("z");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "molotov_detonate";
@@ -4193,7 +4193,7 @@ public:
         this->z = event->GetFloat("z");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "decoy_detonate";
@@ -4241,7 +4241,7 @@ public:
         this->z = event->GetFloat("z");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "decoy_started";
@@ -4288,7 +4288,7 @@ public:
         this->y = event->GetFloat("y");
         this->z = event->GetFloat("z");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "tagrenade_detonate";
@@ -4335,7 +4335,7 @@ public:
         this->z = event->GetFloat("z");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "decoy_firing";
@@ -4382,7 +4382,7 @@ public:
         this->z = event->GetFloat("z");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bullet_impact";
@@ -4422,7 +4422,7 @@ public:
     player_jump(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_jump";
@@ -4454,10 +4454,10 @@ public:
         this->entityid = event->GetInt("entityid");
         this->blind_duration = event->GetFloat("blind_duration");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
 
-        CBasePlayerController *at_controller = (CBasePlayerController *) this->attacker;
+        CCSPlayerController *at_controller = (CCSPlayerController *) this->attacker;
         this->_attacker = new Player(at_controller);
     };
     const char *event_name = "player_blind";
@@ -4500,7 +4500,7 @@ public:
         this->damage = event->GetFloat("damage");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_falldamage";
@@ -4536,7 +4536,7 @@ public:
         this->entindex = event->GetInt("entindex");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "door_moving";
@@ -4611,7 +4611,7 @@ public:
     player_given_c4(IGameEvent *event) {
         this->userid = event->GetPlayerController("userid");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "player_given_c4";
@@ -4642,7 +4642,7 @@ public:
         this->botid = event->GetPlayerController("botid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "bot_takeover";
@@ -4674,7 +4674,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->reason = event->GetInt("reason");
 
-        CBasePlayerController *controller = (CBasePlayerController *) this->userid;
+        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
         this->player = new Player(controller);
     };
     const char *event_name = "jointeam_failed";

@@ -25,25 +25,33 @@
 #include "mathlib/vector.h"
 #include "ehandle.h"
 #include "Schema.h"
+#include "Memory.h"
 
-class CGameSceneNode
-{
+class CGameSceneNode {
 public:
     DECLARE_SCHEMA_CLASS(CGameSceneNode)
 
     SCHEMA_FIELD(CEntityInstance *, m_pOwner)
+
     SCHEMA_FIELD(CGameSceneNode *, m_pParent)
+
     SCHEMA_FIELD(CGameSceneNode *, m_pChild)
+
     SCHEMA_FIELD(CNetworkOriginCellCoordQuantizedVector, m_vecOrigin)
+
     SCHEMA_FIELD(QAngle, m_angRotation)
+
     SCHEMA_FIELD(float, m_flScale)
+
     SCHEMA_FIELD(float, m_flAbsScale)
+
     SCHEMA_FIELD(Vector, m_vecAbsOrigin)
+
     SCHEMA_FIELD(QAngle, m_angAbsRotation)
+
     SCHEMA_FIELD(Vector, m_vRenderOrigin)
 
-    matrix3x4_t EntityToWorldTransform()
-    {
+    matrix3x4_t EntityToWorldTransform() {
         matrix3x4_t mat;
 
         // issues with this and im tired so hardcoded it
@@ -79,16 +87,16 @@ public:
     }
 };
 
-class CBodyComponent
-{
+class CBodyComponent {
 public:
     DECLARE_SCHEMA_CLASS(CBodyComponent)
 
     SCHEMA_FIELD(CGameSceneNode *, m_pSceneNode)
 };
 
-class Z_CBaseEntity : public CBaseEntity
-{
+extern Memory *g_Memory;
+
+class Z_CBaseEntity : public CBaseEntity {
 public:
     // This is a unique case as CBaseEntity is already defined in the sdk
     typedef Z_CBaseEntity ThisClass;
@@ -96,39 +104,63 @@ public:
     static constexpr bool IsStruct = false;
 
     SCHEMA_FIELD(CBodyComponent *, m_CBodyComponent)
+
     SCHEMA_FIELD(CBitVec<64>, m_isSteadyState)
+
     SCHEMA_FIELD(float, m_lastNetworkChange)
+
     SCHEMA_FIELD_POINTER(CNetworkTransmitComponent, m_NetworkTransmitComponent)
+
     SCHEMA_FIELD(int, m_iHealth)
+
     SCHEMA_FIELD(int, m_iTeamNum)
+
     SCHEMA_FIELD(Vector, m_vecAbsVelocity)
+
     SCHEMA_FIELD(Vector, m_vecBaseVelocity)
+
     SCHEMA_FIELD(CCollisionProperty*, m_pCollision)
+
     SCHEMA_FIELD(MoveType_t, m_MoveType)
+
     SCHEMA_FIELD(uint32, m_spawnflags)
+
     SCHEMA_FIELD(uint32, m_fFlags)
+
     SCHEMA_FIELD(LifeState_t, m_lifeState)
 
     int entindex() { return m_pEntity->m_EHandle.GetEntryIndex(); }
 
     Vector GetAbsOrigin() { return m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin; }
+
     void SetAbsOrigin(Vector vecOrigin) { m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin = vecOrigin; }
 
     void SetAbsVelocity(Vector vecVelocity) { m_vecAbsVelocity = vecVelocity; }
+
     void SetBaseVelocity(Vector vecVelocity) { m_vecBaseVelocity = vecVelocity; }
 
-    void TakeDamage(int iDamage)
-    {
+    void TakeDamage(int iDamage) {
         m_iHealth = m_iHealth() - iDamage;
     }
 
-    bool IsAlive() { return m_lifeState == LifeState_t::LIFE_ALIVE; }
+    bool IsAlive() {
+        return m_lifeState == LifeState_t::LIFE_ALIVE && m_iHealth > 0;
+    }
+
+    bool IsPawn() {
+        static int offset = g_Memory->offsets["IsEntityPawn"];
+        return CALL_VIRTUAL(bool, offset, this);
+    }
+
+    bool IsController() {
+        static int offset = g_Memory->offsets["IsEntityController"];
+        return CALL_VIRTUAL(bool, offset, this);
+    }
 
     CHandle<CBaseEntity> GetHandle() { return m_pEntity->m_EHandle; }
 };
 
-class SpawnPoint : public Z_CBaseEntity
-{
+class SpawnPoint : public Z_CBaseEntity {
 public:
     DECLARE_SCHEMA_CLASS(SpawnPoint);
 

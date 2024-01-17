@@ -48,7 +48,8 @@ bool Plugin::FireEvent(std::string name, std::string data) {
 
 void Plugin::AsyncCallback(v8::Global<v8::Function> cb) {
     v8::HandleScope handle_scope(g_Engine->isolate);
-    auto c = cb.Get(g_Engine->isolate)->Call(this->v8context.Get(g_Engine->isolate), v8::Undefined(g_Engine->isolate), 0, nullptr);
+    auto c = cb.Get(g_Engine->isolate)->Call(this->v8context.Get(g_Engine->isolate), v8::Undefined(g_Engine->isolate),
+                                             0, nullptr);
     if (c.IsEmpty()) {
         logger::log("Call is empty.");
     }
@@ -112,7 +113,8 @@ void Plugin::LoadPluginFS() {
         v8::Local<v8::Object> external = ert->Wrap(g_Engine->isolate);
         ctx->Global()->Set(
                 ctx,
-                v8::String::NewFromUtf8(g_Engine->isolate, "external_runtime", v8::NewStringType::kNormal).ToLocalChecked(),
+                v8::String::NewFromUtf8(g_Engine->isolate, "external_runtime",
+                                        v8::NewStringType::kNormal).ToLocalChecked(),
                 external
         );
     }
@@ -194,7 +196,7 @@ void *Plugin::LoadExtension(std::string path, v8::Isolate *isolate) {
         return nullptr;
     }
 
-    typedef void(*InitExtension)(Engine*, Plugin*);
+    typedef void(*InitExtension)(Engine *, Plugin *);
     const auto InitJsModule = reinterpret_cast<InitExtension>(init);
     InitJsModule(g_Engine, this);
     return nullptr;

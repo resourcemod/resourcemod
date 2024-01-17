@@ -34,7 +34,7 @@ public:
         ConMsg("%s\n", buf);
     }
 
-    static void ClientPrint(CBasePlayerController *player, int dest, const char *text, ...) {
+    static void ClientPrint(CCSPlayerController *player, int dest, const char *text, ...) {
         va_list args;
                 va_start(args, text);
         char buf[256];
@@ -54,7 +54,6 @@ public:
             v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(self->GetInternalField(0));
             void *ptr = wrap->Value();
             Player *p = static_cast<Player *>(ptr);
-            logger::log(p->controller->GetPlayerName());
             v8::String::Utf8Value str(args.GetIsolate(), args[1]);
             Chat::ClientPrint(p->controller, HUD_PRINTTALK, v8str_to_cstr(str));
         }

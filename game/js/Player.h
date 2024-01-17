@@ -6,6 +6,7 @@
 #define RESOURCEMOD_PLAYER_H
 
 #include "../cs2/cbaseplayercontroller.h"
+#include "../cs2/ccsplayercontroller.h"
 #include "../hooks/LegacyEvents.h"
 #include "../../engine/v8/v8_utils.h"
 #include <engine/igameeventsystem.h>
@@ -29,16 +30,15 @@ extern IGameEventManager2 *g_gameEventManager;
 
 class Player {
 public:
-    Player(CBasePlayerController *c) {
+    Player(CCSPlayerController *c) {
         this->controller = c;
     };
 
-    CBasePlayerController *controller;
+    CCSPlayerController *controller;
 
     static void GetName(const v8::FunctionCallbackInfo<v8::Value> &info) {
         GET_PLAYER_FROM_PROPERTY_CB(info)
         const char *value = p->controller->GetPlayerName();
-        logger::log(logger::format("Get name pointer: %p", p->controller));
         v8::Local<v8::String> name = v8::String::NewFromUtf8(info.GetIsolate(), value).ToLocalChecked();
         info.GetReturnValue().Set(name);
     }
@@ -55,6 +55,13 @@ public:
         bool value = p->controller->GetPawn()->IsAlive();
         v8::Local<v8::Boolean> alive = v8::Boolean::New(info.GetIsolate(), value);
         info.GetReturnValue().Set(alive);
+    }
+
+    static void GetTeam(const v8::FunctionCallbackInfo<v8::Value> &info) {
+        GET_PLAYER_FROM_PROPERTY_CB(info)
+        int value = p->controller->GetPawn()->m_iTeamNum;
+        v8::Local<v8::Integer> team = v8::Integer::New(info.GetIsolate(), value);
+        info.GetReturnValue().Set(team);
     }
 
     static void Slap(const v8::FunctionCallbackInfo<v8::Value> &info) {
@@ -79,6 +86,39 @@ public:
 
         p->controller->GetPawn()->CommitSuicide(true, true);
         info.GetReturnValue().Set(v8::True(info.GetIsolate()));
+    }
+
+    static void Respawn(const v8::FunctionCallbackInfo<v8::Value> &info) {
+        GET_PLAYER_FROM_PROPERTY_CB(info)
+
+        bool result = p->controller->Respawn();
+        if (result)
+            info.GetReturnValue().Set(v8::True(info.GetIsolate()));
+        return info.GetReturnValue().Set(v8::False(info.GetIsolate()));
+    }
+
+    static void ChangeTeam(const v8::FunctionCallbackInfo<v8::Value> &info) {
+        GET_PLAYER_FROM_PROPERTY_CB(info)
+        if (!info[0]->IsInt32()) {
+            info.GetIsolate()->ThrowError("Invalid team parameter. 0-3 range expected.");
+            return;
+        }
+        int team = info[0]->Int32Value(info.GetIsolate()->GetCurrentContext()).ToChecked();
+        if (team < 0 || team > 3) {
+            info.GetIsolate()->ThrowError("Invalid team parameter. 0-3 range expected.");
+            return;
+        }
+        if (info[1].IsEmpty() || info[1]->IsUndefined()) {
+            p->controller->SwitchTeam(team);
+        } else {
+            if (info[1]->IsBoolean() && info[1]->BooleanValue(info.GetIsolate())) {
+                p->controller->ChangeTeam(team);
+            } else {
+                p->controller->SwitchTeam(team);
+            }
+        }
+
+        return info.GetReturnValue().Set(v8::True(info.GetIsolate()));
     }
 
     static void GetHP(v8::Local<v8::String> property,
@@ -113,6 +153,9 @@ public:
         CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
         CREATE_FN_PROPERTY("Slap", &Player::Slap);
         CREATE_FN_PROPERTY("Slay", &Player::Slay);
+        CREATE_FN_PROPERTY("Respawn", &Player::Respawn);
+        CREATE_FN_PROPERTY("GetTeam", &Player::GetTeam);
+        CREATE_FN_PROPERTY("ChangeTeam", &Player::ChangeTeam);
 
         // set values that can be changed in JS (public variables)
         playerClass->SetAccessor(
@@ -142,6 +185,9 @@ public:
         CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
         CREATE_FN_PROPERTY("Slap", &Player::Slap);
         CREATE_FN_PROPERTY("Slay", &Player::Slay);
+        CREATE_FN_PROPERTY("Respawn", &Player::Respawn);
+        CREATE_FN_PROPERTY("GetTeam", &Player::GetTeam);
+        CREATE_FN_PROPERTY("ChangeTeam", &Player::ChangeTeam);
 
         // set values that can be changed in JS (public variables)
         playerClass->SetAccessor(
@@ -171,6 +217,9 @@ public:
         CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
         CREATE_FN_PROPERTY("Slap", &Player::Slap);
         CREATE_FN_PROPERTY("Slay", &Player::Slay);
+        CREATE_FN_PROPERTY("Respawn", &Player::Respawn);
+        CREATE_FN_PROPERTY("GetTeam", &Player::GetTeam);
+        CREATE_FN_PROPERTY("ChangeTeam", &Player::ChangeTeam);
 
         // set values that can be changed in JS (public variables)
         playerClass->SetAccessor(
