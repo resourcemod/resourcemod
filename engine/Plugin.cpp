@@ -138,7 +138,7 @@ void Plugin::LoadPluginFS() {
             chatobj
     );
 
-    // Create chat object
+    // Create config object
     Config *cfg = new Config(this->name);
     v8::Local<v8::Object> configObject = cfg->Wrap(g_Engine->isolate);
     ctx->Global()->Set(

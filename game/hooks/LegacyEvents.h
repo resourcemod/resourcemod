@@ -520,7 +520,7 @@ public:
         this->userid = event->GetPlayerController("userid");
         this->userid_pawn = event->GetPlayerPawn("userid_pawn");
         this->player = new Player((CCSPlayerController *) this->userid);
-        if (!this->player->controller) {
+        if (!this->player->controller && this->userid_pawn != nullptr) {
             this->player->controller = CCSPlayerController::FromPawn((CCSPlayerPawn*) this->userid_pawn);
         }
     };
@@ -3229,42 +3229,6 @@ public:
         t->SetInternalFieldCount(2);
 
         SET_GETTER(t, GetPlayer, Player::GetPlayerObject)
-
-        v8::Local<v8::Object> obj = t->NewInstance(ctx).ToLocalChecked();
-        obj->SetInternalField(0, v8::External::New(g_Engine->isolate, this));
-        obj->SetInternalField(1, v8::External::New(g_Engine->isolate, this->player));
-
-        return obj;
-    };
-};
-
-class player_spawned : public RMEvent {
-public:
-    player_spawned(IGameEvent *event) {
-        this->userid = event->GetPlayerController("userid");
-        this->inrestart = event->GetBool("inrestart");
-        this->userid_pawn = event->GetPlayerPawn("userid_pawn");
-
-        CCSPlayerController *controller = (CCSPlayerController *) this->userid;
-        this->player = new Player(controller);
-    };
-    const char *event_name = "player_spawned";
-    CEntityInstance *userid; //playercontroller
-    bool inrestart;
-    CEntityInstance *userid_pawn;//strict_ehandle
-
-    Player* player;
-
-    INT_GETTER(InRestart, player_spawned, inrestart)
-
-    PREVENT_SUPPORT;
-
-    v8::Local<v8::Object> SerializeV8(v8::Local<v8::Context> ctx) override {
-        v8::Local<v8::ObjectTemplate> t = v8::ObjectTemplate::New(g_Engine->isolate);
-        t->SetInternalFieldCount(2);
-
-        SET_GETTER(t, GetPlayer, Player::GetPlayerObject)
-        SET_GETTER(t, InRestart, player_spawned::GetInRestart)
 
         v8::Local<v8::Object> obj = t->NewInstance(ctx).ToLocalChecked();
         obj->SetInternalField(0, v8::External::New(g_Engine->isolate, this));

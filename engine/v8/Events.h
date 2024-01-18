@@ -51,7 +51,6 @@ public:
     v8::Local<v8::Object> Wrap(v8::Isolate *isolate) override {
         v8::EscapableHandleScope handle_scope(isolate);
 
-        v8::Local<v8::ObjectTemplate> class_t;
         v8::Local<v8::ObjectTemplate> raw_t = v8::ObjectTemplate::New(isolate);
         raw_t->SetInternalFieldCount(1);
         raw_t->Set(
@@ -60,9 +59,8 @@ public:
         raw_t->Set(
                 v8::String::NewFromUtf8(isolate, "unsubscribe", v8::NewStringType::kNormal).ToLocalChecked(),
                 v8::FunctionTemplate::New(isolate, &Events::unsubscribe));
-        class_t = v8::Local<v8::ObjectTemplate>::New(isolate, raw_t);
         //create instance
-        v8::Local<v8::Object> result = class_t->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
+        v8::Local<v8::Object> result = raw_t->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
         //create wrapper
         v8::Local<v8::External> ptr = v8::External::New(isolate, this);
         result->SetInternalField(0, ptr);

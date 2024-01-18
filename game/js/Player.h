@@ -38,7 +38,8 @@ public:
 
     static void GetName(const v8::FunctionCallbackInfo<v8::Value> &info) {
         GET_PLAYER_FROM_PROPERTY_CB(info)
-        if (!p->controller) {
+        if (p->controller == nullptr) {
+            logger::log("CONTROLLER IS EMPTY!");
             info.GetIsolate()->ThrowError("Player not found.");
             return;
         }

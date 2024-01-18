@@ -100,7 +100,6 @@ void EventManager::FillLegacyEventsMap() {
     this->events["weapon_zoom"] = &CreateEventObject<weapon_zoom>;
     this->events["silencer_detach"] = &CreateEventObject<silencer_detach>;
     this->events["inspect_weapon"] = &CreateEventObject<inspect_weapon>;
-    this->events["player_spawned"] = &CreateEventObject<player_spawned>;
     this->events["item_pickup"] = &CreateEventObject<item_pickup>;
     this->events["item_pickup_slerp"] = &CreateEventObject<item_pickup_slerp>;
     this->events["item_pickup_failed"] = &CreateEventObject<item_pickup_failed>;

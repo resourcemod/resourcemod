@@ -58,9 +58,9 @@ bool EventManager::OnEventFired(IGameEvent *event, bool bDontBroadcast = false) 
     //logger::log(logger::format("Event! %s", event->GetName()));
     if (this->events.count(event->GetName()) > 0) {
 
-        if (strcmp(event->GetName(), "server_spawn")) {               // todo: is it only player_spawn?
+        if (strcmp(event->GetName(), "player_spawn") == 0) {               // todo: is it only player_spawn?
             if (!event->GetPlayerController("userid")) {
-                return false;
+                RETURN_META_VALUE(MRES_IGNORED, false);
             }
         }
 
