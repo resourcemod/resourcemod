@@ -26,6 +26,7 @@ IGameEventSystem* g_SourceEvents;
 EventManager *g_EventManager;
 CSchemaSystem* g_SchemaSystem;
 CEntitySystem* g_pEntitySystem;
+
 CGameResourceService* g_GameResourceService;
 Memory *g_Memory;
 
@@ -37,18 +38,13 @@ SH_DECL_HOOK3_void(IServerGameDLL, GameFrame, SH_NOATTRIB, 0, bool, bool, bool);
 bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, bool late) {
     g_ResourceMod = this;
     PLUGIN_SAVEVARS();
-    if (late) {
-        V_strncpy(error, "Late load is not supported", maxlen);
-        ConColorMsg(Color(250, 0, 0, 255), "[%s] %s\n", GetLogTag(), error);
-        return false;
-    }
 
     GET_V_IFACE_ANY(GetEngineFactory, g_SourceEngine, IVEngineServer2, INTERFACEVERSION_VENGINESERVER);
     GET_V_IFACE_CURRENT(GetEngineFactory, g_pCVar, ICvar, CVAR_INTERFACE_VERSION);
     GET_V_IFACE_CURRENT(GetServerFactory, g_pSource2Server, ISource2Server, INTERFACEVERSION_SERVERGAMEDLL);
     GET_V_IFACE_CURRENT(GetServerFactory, g_pSource2ServerConfig, ISource2ServerConfig, INTERFACEVERSION_SERVERCONFIG);
-    GET_V_IFACE_CURRENT(GetServerFactory, g_pSource2GameClients, ISource2GameClients, INTERFACEVERSION_SERVERCONFIG);
-    GET_V_IFACE_CURRENT(GetEngineFactory, g_SourceEvents, IGameEventSystem, GAMEEVENTSYSTEM_INTERFACE_VERSION);
+    GET_V_IFACE_ANY(GetServerFactory, g_pSource2GameClients, IServerGameClients, SOURCE2GAMECLIENTS_INTERFACE_VERSION);
+    GET_V_IFACE_ANY(GetEngineFactory, g_SourceEvents, IGameEventSystem, GAMEEVENTSYSTEM_INTERFACE_VERSION);
     GET_V_IFACE_CURRENT(GetEngineFactory, g_SchemaSystem, CSchemaSystem, SCHEMASYSTEM_INTERFACE_VERSION);
     GET_V_IFACE_ANY(GetEngineFactory, g_pNetworkServerService, INetworkServerService, NETWORKSERVERSERVICE_INTERFACE_VERSION);
     GET_V_IFACE_CURRENT(GetEngineFactory, g_GameResourceService, CGameResourceService, GAMERESOURCESERVICESERVER_INTERFACE_VERSION);

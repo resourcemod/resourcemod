@@ -34,6 +34,11 @@ public:
     int GetPlayerSlot() { return entindex() - 1; }
 
     bool IsConnected() { return m_iConnected() == PlayerConnectedState::PlayerConnected; }
+    bool IsConnecting() { return m_iConnected() == PlayerConnectedState::PlayerConnecting; }
+    bool IsReconnecting() { return m_iConnected() == PlayerConnectedState::PlayerReconnecting; }
+    bool IsDisconnected() { return m_iConnected() == PlayerConnectedState::PlayerDisconnected; }
+    bool IsDisconnecting() { return m_iConnected() == PlayerConnectedState::PlayerDisconnecting; }
+    bool IsReserved() { return m_iConnected() == PlayerConnectedState::PlayerReserved; }
 
     void SetPawn(CCSPlayerPawn *pawn) {
         SignatureCall::CBasePlayerController_SetPawn(this, pawn, true, false);
