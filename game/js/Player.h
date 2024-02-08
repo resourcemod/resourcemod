@@ -71,6 +71,17 @@ public:
         return metacall_value_create_bool(c->Respawn());
     }
 
+    static void *SetModel(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+
+        std::string modelPath = metacall_value_to_string(args[1]);
+        g_ResourceMod->NextFrame([c, modelPath]() {
+            if (c->GetPawn() != nullptr)
+                c->GetPawn()->SetModel(modelPath.c_str());
+        });
+        return metacall_value_create_bool(true);
+    }
+
     static void *GetTeam(size_t argc, void *args[], void *data) {
         CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
         return metacall_value_create_int(c->m_iTeamNum.Get());

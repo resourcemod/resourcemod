@@ -41,6 +41,9 @@ public:
     std::string pluginsFolder = "";
     std::string gameDataPath = "";
     std::string metaPath = "";
+
+    std::vector<std::string> precacheList;
+
     bool isRunning = false;
 
     void Init();

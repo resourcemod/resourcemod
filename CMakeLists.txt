@@ -19,7 +19,8 @@ add_library(resourcemod SHARED
         game/hooks/EventManager.cpp
         engine/Engine.cpp
         engine/Utils.cpp
-        game/ResourceMod.cpp game/cs2/signaturecall.h)
+        game/ResourceMod.cpp
+        game/GameSystem.cpp)
 
 target_link_libraries(resourcemod
         ${CMAKE_SOURCE_DIR}/third_party/sourcehook/sourcehook.lib

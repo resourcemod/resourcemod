@@ -64,6 +64,7 @@ void Engine::InitMetacall() {
     metacall_register("_PlayerSlap", Player::Slap, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
     metacall_register("_PlayerSlay", Player::Slay, nullptr, METACALL_BOOL, 1, METACALL_INT);
     metacall_register("_PlayerRespawn", Player::Respawn, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerSetModel", Player::SetModel, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
     metacall_register("_PlayerGetTeam", Player::GetTeam, nullptr, METACALL_INT, 1, METACALL_INT);
     metacall_register("_PlayerChangeTeam", Player::ChangeTeam, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
                       METACALL_BOOL);
@@ -84,15 +85,21 @@ void Engine::InitMetacall() {
                     "../../csgo/addons/resourcemod/core/node/player.js",
                     "../../csgo/addons/resourcemod/core/node/events.js",
                     "../../csgo/addons/resourcemod/core/node/chat.js",
+                    "../../csgo/addons/resourcemod/core/node/precache.js",
                     "../../csgo/addons/resourcemod/src/server.js",
             };
-    logger::log(js_scripts[0]);
-    logger::log(js_scripts[1]);
     // Load scripts
     int s = metacall_load_from_file("node", js_scripts, sizeof(js_scripts) / sizeof(js_scripts[0]), NULL);
     if (s != 0) {
         logger::log(logger::format("Cannot load scripts, code: %d, last error: %d", s, GetLastError()));
         return;
+    }
+
+    void* precache = metacall("_LoadPrecache");
+    void** cacheList = metacall_value_to_array(precache);
+    for(int i = 0; i<metacall_value_size(precache)/sizeof(cacheList[0]);i++) {
+        logger::log("pushing");
+        this->precacheList.push_back(metacall_value_to_string(cacheList[i]));
     }
 }
 

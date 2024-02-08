@@ -33,6 +33,9 @@ public:
 
     void SetModel(const char *szModel)
     {
-
+        logger::log(logger::format("This ptr: %p", this));
+        logger::log("Setting model: ");
+        logger::log(szModel);
+        SignatureCall::CBaseModelEntity_SetModel(this, szModel);
     }
 };

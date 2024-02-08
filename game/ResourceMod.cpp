@@ -13,26 +13,35 @@
 #include "cs2/cgameresourceserviceserver.h"
 #include <sourcehook/sourcehook.h>
 #include "cs2/Memory.h"
+#include "GameDLL.h"
+#include "GameSystem.h"
 #include <icvar.h>
 #include <direct.h>
+#include <tier1/utlstring.h>
+#include <tier1/utlvector.h>
 
 ResourceMod resourcemod;
 ResourceMod *g_ResourceMod;
 
 PLUGIN_EXPOSE(ResourceMod, resourcemod);
 
-IVEngineServer2* g_SourceEngine;
-IGameEventSystem* g_SourceEvents;
+IVEngineServer2 *g_SourceEngine;
+IGameEventSystem *g_SourceEvents;
 EventManager *g_EventManager;
-CSchemaSystem* g_SchemaSystem;
-CEntitySystem* g_pEntitySystem;
+CSchemaSystem *g_SchemaSystem;
+CEntitySystem *g_pEntitySystem;
 
-CGameResourceService* g_GameResourceService;
+CGameResourceService *g_GameResourceService;
 Memory *g_Memory;
+class CGameEventListener;
+CUtlVector<CGameEventListener *> g_vecEventListeners;
 
-class GameSessionConfiguration_t { };
+class GameSessionConfiguration_t {
+};
 
-SH_DECL_HOOK3_void(INetworkServerService, StartupServer, SH_NOATTRIB, 0, const GameSessionConfiguration_t&, ISource2WorldSession*, const char*);
+SH_DECL_HOOK3_void(INetworkServerService, StartupServer, SH_NOATTRIB, 0, const GameSessionConfiguration_t&,
+                   ISource2WorldSession*, const char*);
+
 SH_DECL_HOOK3_void(IServerGameDLL, GameFrame, SH_NOATTRIB, 0, bool, bool, bool);
 
 bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, bool late) {
@@ -46,12 +55,15 @@ bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
     GET_V_IFACE_ANY(GetServerFactory, g_pSource2GameClients, IServerGameClients, SOURCE2GAMECLIENTS_INTERFACE_VERSION);
     GET_V_IFACE_ANY(GetEngineFactory, g_SourceEvents, IGameEventSystem, GAMEEVENTSYSTEM_INTERFACE_VERSION);
     GET_V_IFACE_CURRENT(GetEngineFactory, g_SchemaSystem, CSchemaSystem, SCHEMASYSTEM_INTERFACE_VERSION);
-    GET_V_IFACE_ANY(GetEngineFactory, g_pNetworkServerService, INetworkServerService, NETWORKSERVERSERVICE_INTERFACE_VERSION);
-    GET_V_IFACE_CURRENT(GetEngineFactory, g_GameResourceService, CGameResourceService, GAMERESOURCESERVICESERVER_INTERFACE_VERSION);
+    GET_V_IFACE_ANY(GetEngineFactory, g_pNetworkServerService, INetworkServerService,
+                    NETWORKSERVERSERVICE_INTERFACE_VERSION);
+    GET_V_IFACE_CURRENT(GetEngineFactory, g_GameResourceService, CGameResourceService,
+                        GAMERESOURCESERVICESERVER_INTERFACE_VERSION);
 
     g_SMAPI->AddListener(this, this);
 
-    SH_ADD_HOOK_MEMFUNC(INetworkServerService, StartupServer, g_pNetworkServerService, this, &ResourceMod::Hook_StartupServer, true);
+    SH_ADD_HOOK_MEMFUNC(INetworkServerService, StartupServer, g_pNetworkServerService, this,
+                        &ResourceMod::Hook_StartupServer, true);
     SH_ADD_HOOK(IServerGameDLL, GameFrame, g_pSource2Server, SH_MEMBER(this, &ResourceMod::Hook_GameFrame), true);
 
     Engine *rmod = new Engine();
@@ -61,6 +73,14 @@ bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
     g_Memory->LoadSignatures(rmod->gameDataPath);
     g_Memory->MakeSignaturesCallable();
 
+    g_gameEventManager = (IGameEventManager2 *) (
+            CALL_VIRTUAL(uintptr_t, g_Memory->offsets["GameEventManager"], g_pSource2Server) - 8);
+
+    if (!InitGameSystems(rmod->precacheList)) {
+        logger::log("Failed to init game systems");
+        return false;
+    }
+
     g_EventManager = new EventManager();
     g_EventManager->StartHooks();
 
@@ -69,18 +89,19 @@ bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
     return true;
 }
 
-void ResourceMod::Hook_StartupServer(const GameSessionConfiguration_t& config, ISource2WorldSession*, const char*) {
+void ResourceMod::Hook_StartupServer(const GameSessionConfiguration_t &config, ISource2WorldSession *, const char *) {
     g_pEntitySystem = g_GameResourceService->GetGameEntitySystem();
 }
 
-CGameEntitySystem *GameEntitySystem()
-{
-    return *reinterpret_cast<CGameEntitySystem **>((uintptr_t)(g_GameResourceService) + g_Memory->offsets["GameEntitySystem"]);
+CGameEntitySystem *GameEntitySystem() {
+    return *reinterpret_cast<CGameEntitySystem **>((uintptr_t) (g_GameResourceService) +
+                                                   g_Memory->offsets["GameEntitySystem"]);
 }
 
 bool ResourceMod::Unload(char *error, size_t maxlen) {
     // remove hooks
-    SH_REMOVE_HOOK_MEMFUNC(INetworkServerService, StartupServer, g_pNetworkServerService, this, &ResourceMod::Hook_StartupServer, true);
+    SH_REMOVE_HOOK_MEMFUNC(INetworkServerService, StartupServer, g_pNetworkServerService, this,
+                           &ResourceMod::Hook_StartupServer, true);
     SH_REMOVE_HOOK(IServerGameDLL, GameFrame, g_pSource2Server, SH_MEMBER(this, &ResourceMod::Hook_GameFrame), true);
     g_EventManager->StopHooks();
     g_Engine->Shutdown();
@@ -93,8 +114,7 @@ void ResourceMod::Hook_GameFrame(bool simulating, bool bFirstTick, bool bLastTic
 }
 
 void ResourceMod::RMFrame() {
-    while (!m_nextFrame.empty())
-    {
+    while (!m_nextFrame.empty()) {
         m_nextFrame.front()();
         m_nextFrame.pop_front();
     }

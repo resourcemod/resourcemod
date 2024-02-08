@@ -18,7 +18,7 @@
 
 typedef std::map<std::string, RMEvent *(*)(IGameEvent *)> events_map_t;
 
-class EventManager {
+class EventManager{
 public:
     void StartHooks();
 
@@ -52,7 +52,7 @@ public:
 
     void StartupServer_hk(const GameSessionConfiguration_t &config, ISource2WorldSession *, const char *);
 
-    void DispatchConCommand_hk(ConCommandHandle cmdHandle, const CCommandContext& ctx, const CCommand& args);
+    void DispatchConCommand_hk(ConCommandHandle cmdHandle, const CCommandContext &ctx, const CCommand &args);
 
     bool OnEventFired(IGameEvent *event, bool bDontBroadcast);
 };

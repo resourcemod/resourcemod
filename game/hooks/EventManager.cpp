@@ -7,10 +7,11 @@
 #include "../GameDLL.h"
 #include "Structs.h"
 #include <tier1/KeyValues.h>
+#include <tier1/utlstring.h>
 #include <igameevents.h>
 #include <iserver.h>
-#include "../../protobuf/generated/network_connection.pb.h"
 #include "eiface.h"
+#include "../GameSystem.h"
 
 extern PluginId g_PLID;
 extern SourceHook::ISourceHook *g_SHPtr;
@@ -46,10 +47,9 @@ SH_DECL_HOOK3_void(ICvar, DispatchConCommand, SH_NOATTRIB, 0, ConCommandHandle, 
 SH_DECL_HOOK2(IGameEventManager2, FireEvent, SH_NOATTRIB, 0, bool, IGameEvent *, bool);
 
 void EventManager::StartHooks() {
-    // make event calls with O1
+    // make event calls with o1 overhead
     this->FillLegacyEventsMap();
-    g_gameEventManager = (IGameEventManager2 *) (
-            CALL_VIRTUAL(uintptr_t, g_Memory->offsets["GameEventManager"], g_pSource2Server) - 8);
+
     SH_ADD_HOOK(IGameEventManager2, FireEvent, g_gameEventManager,
                 SH_MEMBER(this, &EventManager::OnEventFired), false);
     SH_ADD_HOOK_MEMFUNC(IServerGameClients, ClientDisconnect, g_pSource2GameClients, this,
@@ -69,7 +69,7 @@ void EventManager::StartHooks() {
 
 void EventManager::StopHooks() {
     SH_REMOVE_HOOK(IGameEventManager2, FireEvent, g_gameEventManager,
-                   SH_MEMBER(this, &EventManager::OnEventFired), false);
+                   SH_MEMBER(this, &EventManager::OnEventFired), true);
     SH_REMOVE_HOOK_MEMFUNC(IServerGameClients, ClientDisconnect, g_pSource2GameClients, this,
                            &EventManager::OnClientDisconnect_hk, true);
     SH_REMOVE_HOOK_MEMFUNC(IServerGameClients, ClientPutInServer, g_pSource2GameClients, this,
@@ -110,7 +110,6 @@ void EventManager::OnPostEventAbstract(CSplitScreenSlot nSlot, bool bLocalOnly, 
                                        INetworkSerializable *pEvent, const void *pData, unsigned long nSize,
                                        NetChannelBufType_t bufType) {
     NetMessageInfo_t *info = pEvent->GetNetMessageInfo();
-
     //Engine::FireEvent();
 }
 
@@ -135,15 +134,13 @@ bool EventManager::OnClientConnect_hk(CPlayerSlot slot, const char *pszName, uin
         RETURN_META_VALUE(MRES_SUPERCEDE, false);
     }
     delete e;
-    logger::log("Client connect");
 }
 
 void EventManager::OnClientCommand_hk(CPlayerSlot slot, const CCommand &args) {
 
 }
 
-void EventManager::DispatchConCommand_hk(ConCommandHandle cmdHandle, const CCommandContext& ctx, const CCommand& args)
-{
+void EventManager::DispatchConCommand_hk(ConCommandHandle cmdHandle, const CCommandContext &ctx, const CCommand &args) {
     if (!g_pEntitySystem)
         return;
 
@@ -151,15 +148,12 @@ void EventManager::DispatchConCommand_hk(ConCommandHandle cmdHandle, const CComm
 
     bool bSay = !V_strcmp(args.Arg(0), "say");
     bool bTeamSay = !V_strcmp(args.Arg(0), "say_team");
-    if (iCommandPlayerSlot != -1 && (bSay || bTeamSay))
-    {
+    if (iCommandPlayerSlot != -1 && (bSay || bTeamSay)) {
         auto pController = CCSPlayerController::FromSlot(iCommandPlayerSlot);
-        if (pController)
-        {
+        if (pController) {
             IGameEvent *pEvent = g_gameEventManager->CreateEvent("player_chat");
 
-            if (pEvent)
-            {
+            if (pEvent) {
                 pEvent->SetBool("teamonly", bTeamSay);
                 pEvent->SetInt("userid", pController->GetPlayerSlot());
                 pEvent->SetString("text", args[1]);
@@ -176,7 +170,11 @@ void EventManager::DispatchConCommand_hk(ConCommandHandle cmdHandle, const CComm
 }
 
 void EventManager::OnClientPutInServer_hk(CPlayerSlot slot, char const *pszName, int type, uint64 xuid) {
-    logger::log("Client put in server");
+    auto e = new client_put_in_server(slot.Get());
+    if (e->Emit()) {
+        RETURN_META(MRES_SUPERCEDE);
+    }
+    delete e;
 }
 
 void EventManager::StartupServer_hk(const GameSessionConfiguration_t &config, ISource2WorldSession *, const char *) {
