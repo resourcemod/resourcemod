@@ -65,6 +65,7 @@ void Engine::InitMetacall() {
     metacall_register("_PlayerSlay", Player::Slay, nullptr, METACALL_BOOL, 1, METACALL_INT);
     metacall_register("_PlayerRespawn", Player::Respawn, nullptr, METACALL_BOOL, 1, METACALL_INT);
     metacall_register("_PlayerSetModel", Player::SetModel, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    metacall_register("_PlayerSetColor", Player::SetColor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_OBJECT);
     metacall_register("_PlayerGetTeam", Player::GetTeam, nullptr, METACALL_INT, 1, METACALL_INT);
     metacall_register("_PlayerChangeTeam", Player::ChangeTeam, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
                       METACALL_BOOL);
@@ -98,7 +99,6 @@ void Engine::InitMetacall() {
     void* precache = metacall("_LoadPrecache");
     void** cacheList = metacall_value_to_array(precache);
     for(int i = 0; i<metacall_value_size(precache)/sizeof(cacheList[0]);i++) {
-        logger::log("pushing");
         this->precacheList.push_back(metacall_value_to_string(cacheList[i]));
     }
 }

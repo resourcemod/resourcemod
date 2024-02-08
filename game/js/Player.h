@@ -71,6 +71,17 @@ public:
         return metacall_value_create_bool(c->Respawn());
     }
 
+    static void *PlaySound(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+
+        std::string soundPath = metacall_value_to_string(args[1]);
+        g_ResourceMod->NextFrame([c, soundPath]() {
+            if (c->GetPawn() != nullptr && c->m_steamID > 0)
+                c->GetPawn()->EmitSound(soundPath.c_str());
+        });
+        return metacall_value_create_bool(true);
+    }
+
     static void *SetModel(size_t argc, void *args[], void *data) {
         CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
 
@@ -78,6 +89,34 @@ public:
         g_ResourceMod->NextFrame([c, modelPath]() {
             if (c->GetPawn() != nullptr)
                 c->GetPawn()->SetModel(modelPath.c_str());
+        });
+        return metacall_value_create_bool(true);
+    }
+
+    static void *SetColor(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        void **v_module_map = static_cast<void **>(metacall_value_to_map(args[1]));
+        int red = 0;
+        int green = 0;
+        int blue = 0;
+        int alpha = 0;
+        // fucked up but metacall can't work with classes objects properly for now
+        for (int i = 0; i < metacall_value_size(args[1])/sizeof(v_module_map[0]); ++i) {
+            auto v = metacall_value_to_array(v_module_map[i]);
+            if (V_strcmp(metacall_value_to_string(v[0]), "red") == 0) {
+                red = int(metacall_value_to_double(v[1]));
+            } else if (V_strcmp(metacall_value_to_string(v[0]), "green") == 0) {
+                green = int(metacall_value_to_double(v[1]));
+            } else if (V_strcmp(metacall_value_to_string(v[0]), "blue") == 0) {
+                blue = int(metacall_value_to_double(v[1]));
+            }else if (V_strcmp(metacall_value_to_string(v[0]), "alpha") == 0) {
+                alpha = int(metacall_value_to_double(v[1]));
+            }
+        }
+        Color color = Color(red, green, blue, alpha);
+        g_ResourceMod->NextFrame([c, color]() {
+            if (c->GetPawn() != nullptr)
+                c->GetPawn()->SetColor(color);
         });
         return metacall_value_create_bool(true);
     }
