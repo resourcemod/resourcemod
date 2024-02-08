@@ -17,7 +17,7 @@ class Player;
 
 extern ResourceMod *g_ResourceMod;
 extern IGameEventManager2 *g_gameEventManager;
-
+extern IVEngineServer2 *g_SourceEngine;
 class Player {
 public:
     Player(CCSPlayerController *c) {
@@ -71,14 +71,13 @@ public:
         return metacall_value_create_bool(c->Respawn());
     }
 
-    static void *PlaySound(size_t argc, void *args[], void *data) {
+    static void *Play(size_t argc, void *args[], void *data) {
         CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
 
-        std::string soundPath = metacall_value_to_string(args[1]);
-        g_ResourceMod->NextFrame([c, soundPath]() {
-            if (c->GetPawn() != nullptr && c->m_steamID > 0)
-                c->GetPawn()->EmitSound(soundPath.c_str());
-        });
+        std::string soundPath = "play ";
+        soundPath.append(metacall_value_to_string(args[1]));
+        if (c->GetPawn() != nullptr && c->m_steamID > 0)
+            g_SourceEngine->ClientCommand(c->GetPlayerSlot(), soundPath.c_str());
         return metacall_value_create_bool(true);
     }
 
