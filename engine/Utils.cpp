@@ -10,16 +10,6 @@ using json = nlohmann::json;
 
 extern Engine *g_Engine;
 
-void Engine::LoadMeta() {
-    std::ifstream f(this->metaPath);
-    json meta = json::parse(f);
-
-    std::string n = meta["name"];
-    logger::log(logger::format("Launching %s", n.c_str()));
-
-    this->isRunning = true;
-}
-
 std::string Engine::GetFileContent(std::string filePath) {
     std::ifstream input_file(filePath);
     if (!input_file.is_open()) {

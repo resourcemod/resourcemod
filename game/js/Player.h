@@ -12,7 +12,7 @@
 #include <engine/igameeventsystem.h>
 #include <igameevents.h>
 #include <metacall/metacall.h>
-
+#include "../../protobuf/generated/network_connection.pb.h"
 class Player;
 
 extern ResourceMod *g_ResourceMod;
@@ -89,6 +89,13 @@ public:
             if (c->GetPawn() != nullptr)
                 c->GetPawn()->SetModel(modelPath.c_str());
         });
+        return metacall_value_create_bool(true);
+    }
+
+    static void *Kick(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+
+        g_SourceEngine->DisconnectClient(c->GetPlayerSlot(), NETWORK_DISCONNECT_KICKED); //disconnect by server
         return metacall_value_create_bool(true);
     }
 

@@ -98,6 +98,12 @@ CGameEntitySystem *GameEntitySystem() {
                                                    g_Memory->offsets["GameEntitySystem"]);
 }
 
+void ResourceMod::OnLevelInit(char const *pMapName, char const *pMapEntities, char const *pOldLevel, char const *pLandmarkName, bool loadGame, bool background) {
+    auto e = new map_loaded(pMapName, pOldLevel);
+    e->Emit();
+    delete e;
+}
+
 bool ResourceMod::Unload(char *error, size_t maxlen) {
     // remove hooks
     SH_REMOVE_HOOK_MEMFUNC(INetworkServerService, StartupServer, g_pNetworkServerService, this,

@@ -14,7 +14,6 @@ void EventManager::FillLegacyEventsMap() {
     this->events["player_team"] = &CreateEventObject<player_team>;
     this->events["player_hurt"] = &CreateEventObject<player_hurt>;
     this->events["game_message"] = &CreateEventObject<game_message>;
-    this->events["game_newmap"] = &CreateEventObject<game_newmap>;
     this->events["round_end"] = &CreateEventObject<round_end>;
     this->events["round_start"] = &CreateEventObject<round_start>;
     this->events["round_freeze_end"] = &CreateEventObject<round_freeze_end>;

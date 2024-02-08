@@ -22,11 +22,8 @@ void Engine::Init() {
 
     this->resourcemodFolder = "../../csgo/addons/resourcemod";
 
-    this->metaPath = this->resourcemodFolder.c_str();
-    this->metaPath.append("/").append(RESOURCEMOD_META);
-
     this->gameDataPath = this->resourcemodFolder.c_str();
-    this->gameDataPath.append("/").append("core").append("/").append("gamedata").append("/").append("rmod.cs2.json");
+    this->gameDataPath.append("/node_modules/resourcemod/core/gamedata/rmod.cs2.json");
 
     this->InitMetacall();
 }
@@ -64,6 +61,7 @@ void Engine::InitMetacall() {
     metacall_register("_PlayerSlap", Player::Slap, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
     metacall_register("_PlayerSlay", Player::Slay, nullptr, METACALL_BOOL, 1, METACALL_INT);
     metacall_register("_PlayerRespawn", Player::Respawn, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerKick", Player::Kick, nullptr, METACALL_BOOL, 1, METACALL_INT);
     metacall_register("_PlayerSetModel", Player::SetModel, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
     metacall_register("_PlayerSetColor", Player::SetColor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_OBJECT);
     metacall_register("_PlayerPlaySound", Player::Play, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);

@@ -1,0 +1,12 @@
+{
+	"name": "resourcemod",
+	"version": "1.0.6-beta",
+	"description": "Create CS2 Content with NodeJS runtime",
+	"repository": "github:resourcemod/resourcemod",
+	"homepage": "https://rmod.dev",
+	"author": "Twelvee",
+	"license": "GPL-3.0",
+	"dependencies": {
+		"metacall": "^0.4.3"
+	}
+}

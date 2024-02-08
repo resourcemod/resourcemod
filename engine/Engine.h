@@ -40,16 +40,12 @@ public:
     std::string resourcemodFolder = "";
     std::string pluginsFolder = "";
     std::string gameDataPath = "";
-    std::string metaPath = "";
 
     std::vector<std::string> precacheList;
-
-    bool isRunning = false;
 
     void Init();
 
     void InitMetacall();
-    void LoadMeta();
 
     // Utils
     static std::string GetFileContent(std::string);

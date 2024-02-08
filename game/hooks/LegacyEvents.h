@@ -279,8 +279,8 @@ public:
         }
         metacall_value_destroy(objptr);
         metacall_value_destroy(ret);
-
-        return result == "event_prevent_default";
+        logger::log(logger::format("Event hurt: %d", V_strcmp(result.c_str(), "event_prevent_default")));
+        return V_strcmp(result.c_str(), "event_prevent_default") == 0;
     };
 };
 
@@ -380,21 +380,24 @@ public:
     };
 };
 
-class game_newmap : public RMEvent {
+class map_loaded {
 public:
-    game_newmap(IGameEvent *event) {
-        this->mapname = event->GetString("mapname");
+    map_loaded(std::string mapName, std::string oldMapName) {
+        this->mapName = mapName;
+        this->oldMapName = oldMapName;
     };
-    std::string event_name = "game_newmap";
-    std::string mapname;
+    std::string event_name = "map_loaded";
+    std::string mapName;
+    std::string oldMapName;
 
-    bool Emit() override {
+    bool Emit() {
         void *args[] = {
                 metacall_value_create_string(this->event_name.c_str(), this->event_name.length()),
-                metacall_value_create_string(this->mapname.c_str(), this->mapname.length()),
+                metacall_value_create_string(this->mapName.c_str(), this->mapName.length()),
+                metacall_value_create_string(this->oldMapName.c_str(), this->oldMapName.length()),
         };
 
-        void *objptr = metacallv("_NewMapLoadedEvent", args);
+        void *objptr = metacallv("_MapLoadedEvent", args);
         void *call[] = {
                 objptr
         };
@@ -1823,6 +1826,53 @@ public:
 
         std::string result = metacall_value_to_string(ret);
 
+        for (int i = 0; i < sizeof(args) / sizeof(args[0]); i++) {
+            metacall_value_destroy(args[i]);
+        }
+        metacall_value_destroy(objptr);
+        metacall_value_destroy(ret);
+
+        return result == "event_prevent_default";
+    };
+};
+
+class client_disconnected {
+public:
+    client_disconnected(int slot) {
+        this->event_name = "client_disconnected";
+        this->slot = slot;
+        this->controller = CCSPlayerController::FromSlot(slot);
+        this->player = new Player(controller);
+    };
+    std::string event_name = "client_disconnected";
+    int slot;
+    CCSPlayerController *controller;
+    Player *player;
+
+    bool Emit() {
+        void *playerArgs[] = {
+                metacall_value_create_string(this->player->controller->GetPlayerName(),
+                                             strlen(this->player->controller->GetPlayerName())),
+                metacall_value_create_long(this->player->controller->m_steamID),
+                metacall_value_create_int(this->slot)
+        };
+
+        void *playerObj = metacallv("_Player", playerArgs);
+
+        void *args[] = {
+                metacall_value_create_string(this->event_name.c_str(), this->event_name.length()),
+                playerObj,
+        };
+
+        void *objptr = metacallv("_ClientDisconnectedEvent", args);
+        void *call[] = {
+                objptr
+        };
+        void *ret = metacallv("_onEventCall", call);
+
+        std::string result = metacall_value_to_string(ret);
+        metacall_value_destroy(playerArgs[0]);
+        metacall_value_destroy(playerArgs[1]);
         for (int i = 0; i < sizeof(args) / sizeof(args[0]); i++) {
             metacall_value_destroy(args[i]);
         }

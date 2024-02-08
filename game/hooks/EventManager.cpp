@@ -98,7 +98,7 @@ bool EventManager::OnEventFired(IGameEvent *event, bool bDontBroadcast = false) 
         bool prevent = e->Emit();
         if (prevent) {
             delete e;
-            RETURN_META_VALUE(MRES_SUPERCEDE, false);
+            RETURN_META_VALUE_NEWPARAMS(MRES_IGNORED, true, &IGameEventManager2::FireEvent, (event, false));
         }
         delete e;
     }
@@ -115,7 +115,9 @@ void EventManager::OnPostEventAbstract(CSplitScreenSlot nSlot, bool bLocalOnly, 
 
 void EventManager::OnClientDisconnect_hk(CPlayerSlot slot, ENetworkDisconnectionReason reason, const char *pszName,
                                          uint64 xuid, const char *pszNetworkID) {
-    logger::log("Client disconnected");
+    auto e = new client_disconnected(slot.Get());
+    e->Emit();
+    delete e;
 }
 
 void EventManager::OnClientConnected_hk(CPlayerSlot slot, const char *pszName, uint64 xuid, const char *pszNetworkID,
