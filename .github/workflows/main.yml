@@ -1,4 +1,7 @@
 name: ci
+env:
+  HL2SDKCS2: ${{ github.workspace }}/resourcemod/alliedmodders/hl2sdk
+  MMS_PATH: ${{ github.workshpace }/resourcemod/alliedmodders/metamod-source
 
 on:
   push:
@@ -15,9 +18,6 @@ jobs:
   build:
     name: Build
     runs-on: ${{ matrix.os }}
-    env:
-      HL2SDKCS2: ${{ github.workspace }}/resourcemod/alliedmodders/hl2sdk
-      MMS_PATH: ${{ github.workshpace }/resourcemod/alliedmodders/metamod-source
     container: ${{ matrix.container }}
     strategy:
       fail-fast: false
@@ -49,7 +49,7 @@ jobs:
         shell: bash
         run: |
           mkdir build && cd build
-          python ../configure.py --enable-optimize --symbol-files --sdks cs2 --mms_path=${MMS_PATH}
+          python ../configure.py --enable-optimize --symbol-files --sdks cs2 --mms_path=$MMS_PATH
           ambuild
 
       - name: Upload artifact
