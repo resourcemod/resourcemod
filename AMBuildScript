@@ -12,8 +12,6 @@ additional_defines = [
 additional_includes = [
   # Path should be absolute only!
   #'D:/absolute/path/to/include/folder/'
-  'D:/resourcemod/third_party/',
-  'D:/resourcemod/third_party/metacall/'
 ]
 
 class SDK(object):

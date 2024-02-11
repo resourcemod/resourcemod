@@ -20,6 +20,8 @@ for sdk_name in MMSPlugin.sdks:
       os.path.join(builder.sourcePath, 'third_party', 'google', 'protobuf', 'third_party', 'abseil-cpp'),
       os.path.join(builder.sourcePath, 'third_party', 'google', 'protobuf', 'src'),
       os.path.join(builder.sourcePath, 'protobuf', 'generated'),
+      os.path.join(builder.sourcePath, 'third_party'),
+      os.path.join(builder.sourcePath, 'third_party', 'metacall'),
     ]
     target_protobuf = 'libprotobufd' if builder.options.debug else 'libprotobuf'
 
