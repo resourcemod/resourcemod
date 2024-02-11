@@ -16,7 +16,7 @@ jobs:
     name: Build
     runs-on: ${{ matrix.os }}
     env:
-      HL2SDKCS2: ${{ github.workspace }}/alliedmodders/hl2sdk
+      HL2SDKCS2: ${{ github.workspace }}/resourcemod/alliedmodders/hl2sdk
     container: ${{ matrix.container }}
     strategy:
       fail-fast: false
@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          path: /
+          path: resourcemod
           submodules: recursive
 
       - name: Checkout Metamod
@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}
-          path: build/package
+          path: resourcemod/build/package
 
   release:
     name: Release
