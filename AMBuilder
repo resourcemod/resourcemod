@@ -21,6 +21,17 @@ for sdk_name in MMSPlugin.sdks:
       os.path.join(builder.sourcePath, 'third_party', 'google', 'protobuf', 'src'),
       os.path.join(builder.sourcePath, 'protobuf', 'generated'),
     ]
+    target_protobuf = 'libprotobufd' if builder.options.debug else 'libprotobuf'
+
+    if binary.compiler.target.platform == 'linux':
+      binary.compiler.postlink += [
+      ]
+      binary.sources += ['game/cs2/plat_unix.cpp']
+    elif binary.compiler.target.platform == 'windows':
+      binary.compiler.postlink += [
+ 	    os.path.join(builder.sourcePath, 'lib', 'metacall.lib')
+      ]
+      binary.sources += ['src/utils/plat_win.cpp']
 
     if binary.compiler.family == 'clang':
       binary.compiler.cxxflags += ['-Wno-register']
