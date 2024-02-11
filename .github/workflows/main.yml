@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          path: resourcemod
+          path: /
           submodules: recursive
 
       - name: Checkout Metamod
@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}
-          path: resourcemod/build/package
+          path: build/package
 
   release:
     name: Release
