@@ -40,7 +40,8 @@ void *msg(size_t argc, void *args[], void *data) {
 
 void Engine::InitMetacall() {
     _putenv_s("LOADER_LIBRARY_PATH",
-              std::filesystem::absolute("../../csgo/addons/resourcemod/node_modules/resourcemod/bin/metacall").string().c_str());
+              std::filesystem::absolute(
+                      "../../csgo/addons/resourcemod/node_modules/resourcemod/bin/metacall").string().c_str());
 
     // Initialize MetaCall
     if (metacall_initialize() != 0) {
@@ -51,7 +52,8 @@ void Engine::InitMetacall() {
     metacall_register("log", msg, nullptr, METACALL_BOOL, 1, METACALL_STRING);
 
     metacall_register("_AllPrint", Player::PrintAll, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
-    metacall_register("_PlayerPrint", Player::Print, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT, METACALL_STRING);
+    metacall_register("_PlayerPrint", Player::Print, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
+                      METACALL_STRING);
 
     metacall_register("_PlayerGetHP", Player::GetHP, nullptr, METACALL_INT, 1, METACALL_INT);
     metacall_register("_PlayerSetHP", Player::SetHP, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
@@ -86,7 +88,7 @@ void Engine::InitMetacall() {
                     "../../csgo/addons/resourcemod/node_modules/resourcemod/node/events.js",
                     "../../csgo/addons/resourcemod/node_modules/resourcemod/node/chat.js",
                     "../../csgo/addons/resourcemod/node_modules/resourcemod/node/precache.js",
-                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/entrypoint.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/entrypoint.js"
             };
 
     int s = metacall_load_from_file("node", js_scripts, sizeof(js_scripts) / sizeof(js_scripts[0]), NULL);
@@ -95,7 +97,7 @@ void Engine::InitMetacall() {
         return;
     }
 
-    void* entrp = metacall("_LoadEntrypoint");
+    void *entrp = metacall("_LoadEntrypoint");
     std::string entryPoint = this->resourcemodFolder.c_str();
     entryPoint.append("/").append(metacall_value_to_string(entrp));
 
@@ -110,10 +112,9 @@ void Engine::InitMetacall() {
         logger::log(logger::format("Cannot load scripts, code: %d, last error: %d", s, GetLastError()));
         return;
     }
-
-    void* precache = metacall("_LoadPrecache");
-    void** cacheList = metacall_value_to_array(precache);
-    for(int i = 0; i<metacall_value_size(precache)/sizeof(cacheList[0]);i++) {
+    void *precache = metacall("_LoadPrecache");
+    void **cacheList = metacall_value_to_array(precache);
+    for (int i = 0; i < metacall_value_size(precache) / sizeof(cacheList[0]); i++) {
         this->precacheList.push_back(metacall_value_to_string(cacheList[i]));
     }
 }

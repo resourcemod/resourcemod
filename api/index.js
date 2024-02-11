@@ -5,7 +5,6 @@ const {Color} = require('./node/color')
 const constants = require('./node/constants')
 require('./node/exceptions')
 const {Player} = require('./node/player')
-require('./node/precache')
 
 module.exports = {
     events,
