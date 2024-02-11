@@ -17,6 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       HL2SDKCS2: ${{ github.workspace }}/resourcemod/alliedmodders/hl2sdk
+      MMS_PATH: ${{ github.workshpace }/resourcemod/alliedmodders/metamod-source
     container: ${{ matrix.container }}
     strategy:
       fail-fast: false
@@ -31,14 +32,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: resourcemod
-          submodules: recursive
-
-      - name: Checkout Metamod
-        uses: actions/checkout@v4
-        with:
-          repository: alliedmodders/metamod-source
-          ref: master
-          path: mmsource-2.0
           submodules: recursive
 
       - name: Checkout AMBuild
@@ -56,7 +49,7 @@ jobs:
         shell: bash
         run: |
           mkdir build && cd build
-          python ../configure.py --enable-optimize --symbol-files --sdks cs2
+          python ../configure.py --enable-optimize --symbol-files --sdks cs2 --mms_path=${MMS_PATH}
           ambuild
 
       - name: Upload artifact
