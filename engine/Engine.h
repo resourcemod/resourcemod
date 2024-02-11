@@ -20,8 +20,6 @@
 
 #endif
 
-#define EXPORT __declspec(dllexport)
-
 #define CS_TEAM_NONE        0
 #define CS_TEAM_SPECTATOR   1
 #define CS_TEAM_T           2
@@ -32,7 +30,7 @@
 #define HUD_PRINTTALK        3
 #define HUD_PRINTCENTER        4
 
-EXPORT class Engine {
+class Engine {
 public:
     const std::string RESOURCEMOD_META = "resourcemod.config.js";
 
