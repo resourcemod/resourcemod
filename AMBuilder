@@ -33,7 +33,7 @@ for sdk_name in MMSPlugin.sdks:
       binary.compiler.postlink += [
  	    os.path.join(builder.sourcePath, 'lib', 'metacall.lib')
       ]
-      binary.sources += ['src/utils/plat_win.cpp']
+      binary.sources += ['game/cs2/plat_win.cpp']
 
     if binary.compiler.family == 'clang':
       binary.compiler.cxxflags += ['-Wno-register']
