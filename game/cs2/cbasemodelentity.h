@@ -22,11 +22,21 @@
 #include "cbaseentity.h"
 #include "globaltypes.h"
 
-class CBaseModelEntity : public Z_CBaseEntity
-{
+class CBaseModelEntity : public Z_CBaseEntity {
 public:
     DECLARE_SCHEMA_CLASS(CBaseModelEntity);
 
-    SCHEMA_FIELD(CCollisionProperty , m_Collision)
+    SCHEMA_FIELD(CCollisionProperty, m_Collision)
+
     SCHEMA_FIELD(CGlowProperty, m_Glow)
+
+    SCHEMA_FIELD(Color, m_clrRender)
+
+    void SetColor(Color c) {
+        this->m_clrRender.Set(c);
+    }
+
+    void SetModel(const char *szModel) {
+        SignatureCall::CBaseModelEntity_SetModel(this, szModel);
+    }
 };

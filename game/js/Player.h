@@ -8,26 +8,16 @@
 #include "../cs2/cbaseplayercontroller.h"
 #include "../cs2/ccsplayercontroller.h"
 #include "../hooks/LegacyEvents.h"
-#include "../../engine/v8/v8_utils.h"
+#include "../ResourceMod.h"
 #include <engine/igameeventsystem.h>
 #include <igameevents.h>
-
+#include <metacall/metacall.h>
+#include "../../protobuf/generated/network_connection.pb.h"
 class Player;
 
-#define GET_PLAYER_FROM_PROPERTY_CB(info)                                                       \
-    v8::Local<v8::Object> self = info.Holder();                                                 \
-    v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(self->GetInternalField(0));    \
-    void *ptr = wrap->Value();                                                                  \
-    Player *p = static_cast<Player *>(ptr);
-
-#define CREATE_FN_PROPERTY(name, cls)                                                                                   \
-        playerClass->Set(                                                                                               \
-                v8::String::NewFromUtf8(info.GetIsolate(), name, v8::NewStringType::kInternalized).ToLocalChecked(),    \
-                v8::FunctionTemplate::New(info.GetIsolate(), cls)                                                       \
-        );
-
+extern ResourceMod *g_ResourceMod;
 extern IGameEventManager2 *g_gameEventManager;
-
+extern IVEngineServer2 *g_SourceEngine;
 class Player {
 public:
     Player(CCSPlayerController *c) {
@@ -36,201 +26,209 @@ public:
 
     CCSPlayerController *controller;
 
-    static void GetName(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-        const char *value = p->controller->GetPlayerName();
-        v8::Local<v8::String> name = v8::String::NewFromUtf8(info.GetIsolate(), value).ToLocalChecked();
-        info.GetReturnValue().Set(name);
+    static void *GetHP(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_int(c->GetPawn()->GetHP());
     }
 
-    static void GetSteamID(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-        uint64 value = p->controller->m_steamID;
-        v8::Local<v8::BigInt> steamid = v8::BigInt::NewFromUnsigned(info.GetIsolate(), value);
-        info.GetReturnValue().Set(steamid);
+    static void *SetHP(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        c->GetPawn()->SetHP(metacall_value_to_int(args[1]));
+        return metacall_value_create_bool(true);
     }
 
-    static void IsAlive(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-        bool value = p->controller->GetPawn()->IsAlive();
-        v8::Local<v8::Boolean> alive = v8::Boolean::New(info.GetIsolate(), value);
-        info.GetReturnValue().Set(alive);
+    static void *GetName(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        std::string name = c->GetPlayerName();
+        return metacall_value_create_string(name.c_str(), name.length());
     }
 
-    static void GetTeam(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-        int value = p->controller->GetPawn()->m_iTeamNum;
-        v8::Local<v8::Integer> team = v8::Integer::New(info.GetIsolate(), value);
-        info.GetReturnValue().Set(team);
+    static void *GetSteamID(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        uint64 value = c->m_steamID;
+        return metacall_value_create_long(value);
     }
 
-    static void Slap(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-        if (!p->controller->GetPawn()->IsAlive()) {
-            info.GetReturnValue().Set(v8::False(info.GetIsolate()));
-            return;
-        }
-        int hp = info[0]->Int32Value(info.GetIsolate()->GetCurrentContext()).ToChecked();
-        p->controller->GetPawn()->Slap(hp);
-        info.GetReturnValue().Set(v8::True(info.GetIsolate()));
+    static void *GetIsAlive(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_bool(c->IsAlive());
     }
 
-    // 💅
-    static void Slay(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-
-        if (!p->controller->GetPawn()->IsAlive()) {
-            info.GetReturnValue().Set(v8::False(info.GetIsolate()));
-            return;
-        }
-
-        p->controller->GetPawn()->CommitSuicide(true, true);
-        info.GetReturnValue().Set(v8::True(info.GetIsolate()));
+    static void *Slap(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        c->GetPawn()->Slap(metacall_value_to_int(args[1]));
+        return metacall_value_create_bool(true);
     }
 
-    static void Respawn(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-
-        bool result = p->controller->Respawn();
-        if (result)
-            info.GetReturnValue().Set(v8::True(info.GetIsolate()));
-        return info.GetReturnValue().Set(v8::False(info.GetIsolate()));
+    static void *Slay(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        c->GetPawn()->CommitSuicide(true, true);
+        return metacall_value_create_bool(true);
     }
 
-    static void ChangeTeam(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-        if (!info[0]->IsInt32()) {
-            info.GetIsolate()->ThrowError("Invalid team parameter. 0-3 range expected.");
-            return;
-        }
-        int team = info[0]->Int32Value(info.GetIsolate()->GetCurrentContext()).ToChecked();
-        if (team < 0 || team > 3) {
-            info.GetIsolate()->ThrowError("Invalid team parameter. 0-3 range expected.");
-            return;
-        }
-        if (info[1].IsEmpty() || info[1]->IsUndefined()) {
-            p->controller->SwitchTeam(team);
-        } else {
-            if (info[1]->IsBoolean() && info[1]->BooleanValue(info.GetIsolate())) {
-                p->controller->ChangeTeam(team);
-            } else {
-                p->controller->SwitchTeam(team);
+    static void *Respawn(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_bool(c->Respawn());
+    }
+
+    static void *Play(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+
+        std::string soundPath = "play ";
+        soundPath.append(metacall_value_to_string(args[1]));
+        if (c->GetPawn() != nullptr && c->m_steamID > 0)
+            g_SourceEngine->ClientCommand(c->GetPlayerSlot(), soundPath.c_str());
+        return metacall_value_create_bool(true);
+    }
+
+    static void *SetModel(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+
+        std::string modelPath = metacall_value_to_string(args[1]);
+        g_ResourceMod->NextFrame([c, modelPath]() {
+            if (c->GetPawn() != nullptr)
+                c->GetPawn()->SetModel(modelPath.c_str());
+        });
+        return metacall_value_create_bool(true);
+    }
+
+    static void *Kick(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+
+        g_SourceEngine->DisconnectClient(c->GetPlayerSlot(), NETWORK_DISCONNECT_KICKED); //disconnect by server
+        return metacall_value_create_bool(true);
+    }
+
+    static void *SetColor(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        void **v_module_map = static_cast<void **>(metacall_value_to_map(args[1]));
+        int red = 0;
+        int green = 0;
+        int blue = 0;
+        int alpha = 0;
+        // fucked up but metacall can't work with classes objects properly for now
+        for (int i = 0; i < metacall_value_size(args[1])/sizeof(v_module_map[0]); ++i) {
+            auto v = metacall_value_to_array(v_module_map[i]);
+            if (V_strcmp(metacall_value_to_string(v[0]), "red") == 0) {
+                red = int(metacall_value_to_double(v[1]));
+            } else if (V_strcmp(metacall_value_to_string(v[0]), "green") == 0) {
+                green = int(metacall_value_to_double(v[1]));
+            } else if (V_strcmp(metacall_value_to_string(v[0]), "blue") == 0) {
+                blue = int(metacall_value_to_double(v[1]));
+            }else if (V_strcmp(metacall_value_to_string(v[0]), "alpha") == 0) {
+                alpha = int(metacall_value_to_double(v[1]));
             }
         }
-
-        return info.GetReturnValue().Set(v8::True(info.GetIsolate()));
+        Color color = Color(red, green, blue, alpha);
+        g_ResourceMod->NextFrame([c, color]() {
+            if (c->GetPawn() != nullptr)
+                c->GetPawn()->SetColor(color);
+        });
+        return metacall_value_create_bool(true);
     }
 
-    static void GetHP(v8::Local<v8::String> property,
-                      const v8::PropertyCallbackInfo<v8::Value> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-        int value = p->controller->GetPawn()->GetHP();
-        v8::Local<v8::Integer> hp = v8::Integer::New(info.GetIsolate(), value);
-        info.GetReturnValue().Set(hp);
+    static void *GetTeam(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_int(c->m_iTeamNum.Get());
     }
 
-    static void SetHP(v8::Local<v8::String> property, v8::Local<v8::Value> value,
-                      const v8::PropertyCallbackInfo<void> &info) {
-        GET_PLAYER_FROM_PROPERTY_CB(info)
-        int newHp = value->Int32Value(info.GetIsolate()->GetCurrentContext()).ToChecked();
-        p->controller->GetPawn()->SetHP(newHp);
-        info.GetReturnValue().Set(v8::True(info.GetIsolate()));
+    static void *ChangeTeam(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+
+        int team = metacall_value_to_int(args[1]);
+        if (team < 0 || team > 3) {
+            void *throwArgs[] = {
+                    metacall_value_create_string("Invalid team parameter. 0-3 range expected.",
+                                                 strlen("Invalid team parameter. 0-3 range expected.")),
+            };
+            metacallv("_throw_exception", throwArgs);
+            return metacall_value_create_bool(false);
+        }
+        if (argc > 2) {
+            bool kill = metacall_value_to_bool(args[2]);
+            if (kill) {
+                c->ChangeTeam(team);
+            } else {
+                c->SwitchTeam(team);
+            }
+        } else {
+            c->SwitchTeam(team);
+        }
+
+        return metacall_value_create_bool(true);
     }
 
-    static void GetPlayerObject(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        v8::EscapableHandleScope handle_scope(info.GetIsolate());
-        v8::Local<v8::Object> self = info.Holder();
-        v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(
-                self->GetInternalField(1)); // if it's from event - internal field of player class is 1
-        void *ptr = wrap->Value();
-        Player *p = static_cast<Player *>(ptr);
-
-        v8::Local<v8::ObjectTemplate> playerClass = v8::ObjectTemplate::New(info.GetIsolate());
-        playerClass->SetInternalFieldCount(1);
-
-        CREATE_FN_PROPERTY("GetName", &Player::GetName);
-        CREATE_FN_PROPERTY("GetSteamID", &Player::GetSteamID);
-        CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
-        CREATE_FN_PROPERTY("Slap", &Player::Slap);
-        CREATE_FN_PROPERTY("Slay", &Player::Slay);
-        CREATE_FN_PROPERTY("Respawn", &Player::Respawn);
-        CREATE_FN_PROPERTY("GetTeam", &Player::GetTeam);
-        CREATE_FN_PROPERTY("ChangeTeam", &Player::ChangeTeam);
-
-        // set values that can be changed in JS (public variables)
-        playerClass->SetAccessor(
-                v8::String::NewFromUtf8(info.GetIsolate(), "hp", v8::NewStringType::kInternalized).ToLocalChecked(),
-                &Player::GetHP,
-                &Player::SetHP
-        );
-
-        v8::Local<v8::Object> obj = playerClass->NewInstance(info.GetIsolate()->GetCurrentContext()).ToLocalChecked();
-        obj->SetInternalField(0, v8::External::New(info.GetIsolate(), p));
-        info.GetReturnValue().Set(handle_scope.Escape(obj));
+    static void *GetIsConnected(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_bool(c->IsConnected());
     }
 
-    static void GetAttackerObject(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        v8::EscapableHandleScope handle_scope(info.GetIsolate());
-        v8::Local<v8::Object> self = info.Holder();
-        v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(
-                self->GetInternalField(2)); // if it's from event - internal field of attacker player class is 2
-        void *ptr = wrap->Value();
-        Player *p = static_cast<Player *>(ptr);
-
-        v8::Local<v8::ObjectTemplate> playerClass = v8::ObjectTemplate::New(info.GetIsolate());
-        playerClass->SetInternalFieldCount(1);
-
-        CREATE_FN_PROPERTY("GetName", &Player::GetName);
-        CREATE_FN_PROPERTY("GetSteamID", &Player::GetSteamID);
-        CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
-        CREATE_FN_PROPERTY("Slap", &Player::Slap);
-        CREATE_FN_PROPERTY("Slay", &Player::Slay);
-        CREATE_FN_PROPERTY("Respawn", &Player::Respawn);
-        CREATE_FN_PROPERTY("GetTeam", &Player::GetTeam);
-        CREATE_FN_PROPERTY("ChangeTeam", &Player::ChangeTeam);
-
-        // set values that can be changed in JS (public variables)
-        playerClass->SetAccessor(
-                v8::String::NewFromUtf8(info.GetIsolate(), "hp", v8::NewStringType::kInternalized).ToLocalChecked(),
-                &Player::GetHP,
-                &Player::SetHP
-        );
-
-        v8::Local<v8::Object> obj = playerClass->NewInstance(info.GetIsolate()->GetCurrentContext()).ToLocalChecked();
-        obj->SetInternalField(0, v8::External::New(info.GetIsolate(), p));
-        info.GetReturnValue().Set(handle_scope.Escape(obj));
+    static void *GetIsConnecting(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_bool(c->IsConnecting());
     }
 
-    static void GetAssisterObject(const v8::FunctionCallbackInfo<v8::Value> &info) {
-        v8::EscapableHandleScope handle_scope(info.GetIsolate());
-        v8::Local<v8::Object> self = info.Holder();
-        v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(
-                self->GetInternalField(3)); // if it's from event - internal field of attacker player class is 3
-        void *ptr = wrap->Value();
-        Player *p = static_cast<Player *>(ptr);
+    static void *GetIsDisconnected(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_bool(c->IsDisconnected());
+    }
 
-        v8::Local<v8::ObjectTemplate> playerClass = v8::ObjectTemplate::New(info.GetIsolate());
-        playerClass->SetInternalFieldCount(1);
+    static void ClientPrintAll(int hud_dest, const char *msg, ...) {
+        va_list args;
+                va_start(args, msg);
+        char buf[256];
+        V_vsnprintf(buf, sizeof(buf), msg, args);
+                va_end(args);
 
-        CREATE_FN_PROPERTY("GetName", &Player::GetName);
-        CREATE_FN_PROPERTY("GetSteamID", &Player::GetSteamID);
-        CREATE_FN_PROPERTY("IsAlive", &Player::IsAlive);
-        CREATE_FN_PROPERTY("Slap", &Player::Slap);
-        CREATE_FN_PROPERTY("Slay", &Player::Slay);
-        CREATE_FN_PROPERTY("Respawn", &Player::Respawn);
-        CREATE_FN_PROPERTY("GetTeam", &Player::GetTeam);
-        CREATE_FN_PROPERTY("ChangeTeam", &Player::ChangeTeam);
+        SignatureCall::UTIL_ClientPrintAll(hud_dest, buf, nullptr, nullptr, nullptr, nullptr);
+    }
 
-        // set values that can be changed in JS (public variables)
-        playerClass->SetAccessor(
-                v8::String::NewFromUtf8(info.GetIsolate(), "hp", v8::NewStringType::kInternalized).ToLocalChecked(),
-                &Player::GetHP,
-                &Player::SetHP
-        );
+    static void ClientPrint(CCSPlayerController *player, int dest, const char *text, ...) {
+        va_list args;
+                va_start(args, text);
 
-        v8::Local<v8::Object> obj = playerClass->NewInstance(info.GetIsolate()->GetCurrentContext()).ToLocalChecked();
-        obj->SetInternalField(0, v8::External::New(info.GetIsolate(), p));
-        info.GetReturnValue().Set(handle_scope.Escape(obj));
+        char buf[256];
+        V_vsnprintf(buf, sizeof(buf), text, args);
+                va_end(args);
+        g_ResourceMod->NextFrame([player, buf, dest]() {
+            if (player->m_hPawn() && player->m_steamID() > 0)
+                SignatureCall::UTIL_ClientPrint(player, dest, buf, nullptr, nullptr, nullptr, nullptr);
+        });
+    }
+
+    static void *PrintAll(size_t argc, void *args[], void *data) {
+        int dest = metacall_value_to_int(args[0]);
+        std::string msg = metacall_value_to_string(args[1]);
+
+        Player::ClientPrintAll(dest, msg.c_str());
+
+        return metacall_value_create_bool(true);
+    }
+
+    static void *Print(size_t argc, void *args[], void *data) {
+        int slot = metacall_value_to_int(args[0]);
+        int dest = metacall_value_to_int(args[1]);
+        std::string msg = metacall_value_to_string(args[2]);
+
+        CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+        Player::ClientPrint(c, dest, msg.c_str());
+
+        return metacall_value_create_bool(true);
+    }
+
+    static void *GetIsDisconnecting(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_bool(c->IsDisconnecting());
+    }
+
+    static void *GetIsReserved(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_bool(c->IsReserved());
+    }
+
+    static void *GetIsReconnecting(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_bool(c->IsReconnecting());
     }
 };
 

@@ -5,9 +5,12 @@
 #include "GameDLL.h"
 #include "../logger/logger.h"
 #include "cs2/cschemasystem.h"
+#include "igamesystem.h"
+#include "igamesystemfactory.h"
+#include "cs2/Memory.h"
 
 template<typename T>
-T* GetInGameInterface(const char* name, const char * library) {
+T *GetInGameInterface(const char *name, const char *library) {
     const auto handle = GetModuleHandle(library);
     if (!handle) {
         logger::log("No handle found.");
@@ -20,7 +23,7 @@ T* GetInGameInterface(const char* name, const char * library) {
         return nullptr;
     }
 
-    using Fn = T*(*)(const char*, int*);
+    using Fn = T *(*)(const char *, int *);
     const auto CreateInterface = reinterpret_cast<Fn>(functionAddress);
     if (CreateInterface == nullptr) {
         return nullptr;

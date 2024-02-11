@@ -3,25 +3,17 @@ import os, sys
 
 additional_libs = [
   # Path should be relative either to hl2sdk folder or to build folder
-  '../../../lib/WinMM.lib',
-  '../../../lib/DbgHelp.lib',
-  '../../../lib/WS2_32.Lib',
-  '../../../lib/v8_monolith.lib',
-  '../../../lib/v8_libbase.lib',
-  '../../../lib/v8_libplatform.lib',
+  '../../../lib/metacall.lib'
 ]
 
 additional_defines = [
-  'V8_COMPRESS_POINTERS',
-  'V8_ENABLE_SANDBOX',
-  'IS_INTERNAL_RUNTIME'
 ]
 
 additional_includes = [
   # Path should be absolute only!
   #'D:/absolute/path/to/include/folder/'
   'D:/resourcemod/third_party/',
-  'D:/resourcemod/third_party/google/v8/',
+  'D:/resourcemod/third_party/metacall/'
 ]
 
 class SDK(object):

@@ -5,85 +5,122 @@
 #include "Engine.h"
 #include "../logger/logger.h"
 #include "../game/hooks/EventManager.h"
-#include "v8/Module.h"
+#include "../game/ResourceMod.h"
 #include <direct.h>
-#include "EventLoop.h"
+#include <metacall/metacall.h>
+#include <cstdlib>
+#include <windows.h>
 
 Engine *g_Engine;
-EventLoop *g_EventLoop;
+
 void Engine::Init() {
     // Get current exe path
     char cwd[MAX_PATH];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
         this->rootPath = cwd;
     }
+
     this->resourcemodFolder = "../../csgo/addons/resourcemod";
 
-    this->pluginsFolder = this->resourcemodFolder.c_str();
-    this->pluginsFolder.append("/plugins");
-
-    //this->extensionsFolder = this->resourcemodFolder.c_str();
-    //this->extensionsFolder.append("/extensions");
-
-    this->metaPath = this->resourcemodFolder.c_str();
-    this->metaPath.append("/").append(RESOURCEMOD_META);
-
-    this->pluginsPath = this->resourcemodFolder.c_str();
-    this->pluginsPath.append("/").append(RESOURCEMOD_PLUGINS);
-
-    //this->extensionsPath = this->resourcemodFolder.c_str();
-    //this->extensionsPath.append("/").append(RESOURCEMOD_EXTENSIONS);
-
     this->gameDataPath = this->resourcemodFolder.c_str();
-    this->gameDataPath.append("/").append("gamedata").append("/").append("rmod.cs2.json");
+    this->gameDataPath.append("/node_modules/resourcemod/gamedata/rmod.cs2.json");
 
-    g_Engine = this;
-    g_EventLoop = new EventLoop();
-    g_EventLoop->Run();
-    this->InitV8();
+    this->InitMetacall();
 }
 
-void Engine::InitV8() {
-    logger::log(logger::format("V8 Version: %s", v8::V8::GetVersion()));
-    // todo: i18n support (more here https://v8.dev/docs/embed)
-    //v8::V8::InitializeICUDefaultLocation(mainFile);
-    //v8::V8::InitializeExternalStartupData(mainFile);
-    this->platform = v8::platform::NewDefaultPlatform();
-    v8::V8::InitializePlatform(this->platform.get());
-    v8::V8::Initialize();
+void *msg(size_t argc, void *args[], void *data) {
+    for (int i = 0; i < argc; i++) {
+        ConMsg(metacall_value_to_string(args[i]));
+    }
 
-    this->create_params.array_buffer_allocator =
-            v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+    (void) argc;
+    (void) data;
+    return metacall_value_create_bool(true);
+}
 
-    this->isolate = v8::Isolate::New(this->create_params);
-    this->isolate->SetHostImportModuleDynamicallyCallback(V8Module::CallDynamic);
-    this->isolate->SetHostInitializeImportMetaObjectCallback(V8Module::CallMeta);
-    this->isolate->Enter();
-    this->LoadMeta();
-    this->LoadPlugins();
+void Engine::InitMetacall() {
+    _putenv_s("LOADER_LIBRARY_PATH",
+              std::filesystem::absolute(
+                      "../../csgo/addons/resourcemod/node_modules/resourcemod/bin/metacall").string().c_str());
+
+    // Initialize MetaCall
+    if (metacall_initialize() != 0) {
+        logger::log("Cannot initialize metacall");
+        return;
+    }
+
+    metacall_register("log", msg, nullptr, METACALL_BOOL, 1, METACALL_STRING);
+
+    metacall_register("_AllPrint", Player::PrintAll, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    metacall_register("_PlayerPrint", Player::Print, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
+                      METACALL_STRING);
+
+    metacall_register("_PlayerGetHP", Player::GetHP, nullptr, METACALL_INT, 1, METACALL_INT);
+    metacall_register("_PlayerSetHP", Player::SetHP, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    metacall_register("_PlayerGetName", Player::GetName, nullptr, METACALL_STRING, 1, METACALL_INT);
+    metacall_register("_PlayerGetSteamID", Player::GetSteamID, nullptr, METACALL_STRING, 1, METACALL_INT);
+    metacall_register("_PlayerGetIsAlive", Player::GetIsAlive, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerSlap", Player::Slap, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    metacall_register("_PlayerSlay", Player::Slay, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerRespawn", Player::Respawn, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerKick", Player::Kick, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerSetModel", Player::SetModel, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    metacall_register("_PlayerSetColor", Player::SetColor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_OBJECT);
+    metacall_register("_PlayerPlaySound", Player::Play, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    metacall_register("_PlayerGetTeam", Player::GetTeam, nullptr, METACALL_INT, 1, METACALL_INT);
+    metacall_register("_PlayerChangeTeam", Player::ChangeTeam, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
+                      METACALL_BOOL);
+
+    metacall_register("_PlayerGetIsConnected", Player::GetIsConnected, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerGetIsConnecting", Player::GetIsConnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerGetIsDisconnected", Player::GetIsDisconnected, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerGetIsDisconnecting", Player::GetIsDisconnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerGetIsReserved", Player::GetIsReserved, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_PlayerGetIsReconnecting", Player::GetIsReconnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
+
+    // Array of scripts to be loaded by MetaCall
+    const char *js_scripts[] =
+            {
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/stdout.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/exceptions.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/constants.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/player.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/events.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/chat.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/precache.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/entrypoint.js"
+            };
+
+    int s = metacall_load_from_file("node", js_scripts, sizeof(js_scripts) / sizeof(js_scripts[0]), NULL);
+    if (s != 0) {
+        logger::log(logger::format("Cannot load initial scripts, code: %d, last error: %d", s, GetLastError()));
+        return;
+    }
+
+    void *entrp = metacall("_LoadEntrypoint");
+    std::string entryPoint = this->resourcemodFolder.c_str();
+    entryPoint.append("/").append(metacall_value_to_string(entrp));
+
+    // Array of scripts to be loaded by MetaCall
+    const char *actualScript[] =
+            {
+                    entryPoint.c_str(),
+            };
+    // Load server scripts
+    s = metacall_load_from_file("node", actualScript, sizeof(actualScript) / sizeof(actualScript[0]), NULL);
+    if (s != 0) {
+        logger::log(logger::format("Cannot load scripts, code: %d, last error: %d", s, GetLastError()));
+        return;
+    }
+    void *precache = metacall("_LoadPrecache");
+    void **cacheList = metacall_value_to_array(precache);
+    for (int i = 0; i < metacall_value_size(precache) / sizeof(cacheList[0]); i++) {
+        this->precacheList.push_back(metacall_value_to_string(cacheList[i]));
+    }
 }
 
 extern EventManager *g_EventManager;
 
-void Engine::FireEvent(std::string name, std::string json) {
-    for (auto item: g_Engine->plugins) {
-        item->FireEvent(name, json);
-    }
-}
-
-bool Engine::FireGameEvent(IGameEvent *event) {
-    int prevent = 0;
-    for (auto item: g_Engine->plugins) {
-        if (item->FireGameEvent(event)) {
-            prevent++;
-        }
-    }
-    if (prevent > 0) {
-        return true;
-    }
-    return false;
-}
-
 void Engine::Shutdown() {
-    // todo: properly shutdown v8
+    // todo: properly shutdown metacall
 }

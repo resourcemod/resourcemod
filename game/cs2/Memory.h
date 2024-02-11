@@ -35,12 +35,14 @@ using json = nlohmann::json;
 class CBasePlayerController;
 class CCSPlayerController;
 class CCSPlayerPawn;
+class CBaseModelEntity;
 
 namespace SignatureCall {
     inline void(FASTCALL *UTIL_ClientPrint)(CBasePlayerController *player, int msg_dest, const char *msg_name, const char *param1, const char *param2, const char *param3, const char *param4);
     inline void(FASTCALL *UTIL_ClientPrintAll)(int msg_dest, const char *msg_name, const char *param1, const char *param2, const char *param3, const char *param4);
     inline void(FASTCALL *CBasePlayerController_SetPawn)(CBasePlayerController *pController, CCSPlayerPawn *pPawn, bool a3, bool a4);
     inline void(FASTCALL *CCSPlayerController_SwitchTeam)(CCSPlayerController *pController, uint32 team);
+    inline void(FASTCALL *CBaseModelEntity_SetModel)(CBaseModelEntity *pModel, const char *szModel);
 }
 
 class Memory {
@@ -82,6 +84,7 @@ public:
         RESOLVE_SIG(this, "UTIL_ClientPrintAll", SignatureCall::UTIL_ClientPrintAll);
         RESOLVE_SIG(this, "CBasePlayerController_SetPawn", SignatureCall::CBasePlayerController_SetPawn);
         RESOLVE_SIG(this, "CCSPlayerController_SwitchTeam", SignatureCall::CCSPlayerController_SwitchTeam);
+        RESOLVE_SIG(this, "CBaseModelEntity_SetModel", SignatureCall::CBaseModelEntity_SetModel);
     }
 
     bool IsSymbol(const char *name) {
@@ -105,12 +108,9 @@ public:
 
     CModule **GetModule(std::string name) {
         const char *library = this->libraries[name].c_str();
-        logger::log(library);
         if (strcmp(library, "engine") == 0)
             return &_engineModule;
         else if (strcmp(library, "server") == 0) {
-            logger::log("Server!");
-            logger::log(logger::format("ServerModule ptr: %p", &_serverModule));
             return &_serverModule;
         }else if (strcmp(library, "vscript") == 0)
             return &_vscriptModule;
@@ -122,8 +122,6 @@ public:
     void *ResolveSignature(std::string name) {
         CModule **module = this->GetModule(name);
         if (!module || !(*module)) {
-            logger::log(logger::format("Module ptr: %p", module));
-            logger::log(logger::format("Failed: Invalid module (%s)", name.c_str()));
             return nullptr;
         }
 

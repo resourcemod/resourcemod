@@ -22,6 +22,7 @@ public:
     bool Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, bool late);
     void Hook_StartupServer(const GameSessionConfiguration_t& config, ISource2WorldSession*, const char*);
     void Hook_GameFrame(bool simulating, bool bFirstTick, bool bLastTick);
+    void OnLevelInit(char const *pMapName, char const *pMapEntities, char const *pOldLevel, char const *pLandmarkName, bool loadGame, bool background);
     bool Unload(char* error, size_t maxlen);
     void LoadDependencies();
     void NextFrame(std::function<void()> fn);

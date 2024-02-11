@@ -30,13 +30,10 @@ for sdk_name in MMSPlugin.sdks:
         'game/GameDLL.cpp',
         'game/hooks/EventManager.cpp',
         'engine/Engine.cpp',
-        'engine/EventLoop.cpp',
         'engine/Utils.cpp',
-        'engine/Plugin.cpp',
-        'engine/ExternalRuntime.cpp',
         'game/cs2/Schema.cpp',
         'game/hooks/LegacyEvents.cpp',
-        'engine/v8/Module.cpp'
+        'game/GameSystem.cpp'
     ]
 
     if sdk_name in ['dota', 'cs2']:

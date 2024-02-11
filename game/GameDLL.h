@@ -19,6 +19,8 @@ public:
     static ISource2GameClients* getSource2GameClients();
 
     static void BootResourceMod();
+
+    static bool InitGameSystems();
 };
 
 #endif //RESOURCEMOD_GAMEDLL_H
