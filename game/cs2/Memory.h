@@ -108,12 +108,9 @@ public:
 
     CModule **GetModule(std::string name) {
         const char *library = this->libraries[name].c_str();
-        logger::log(library);
         if (strcmp(library, "engine") == 0)
             return &_engineModule;
         else if (strcmp(library, "server") == 0) {
-            logger::log("Server!");
-            logger::log(logger::format("ServerModule ptr: %p", &_serverModule));
             return &_serverModule;
         }else if (strcmp(library, "vscript") == 0)
             return &_vscriptModule;
@@ -125,8 +122,6 @@ public:
     void *ResolveSignature(std::string name) {
         CModule **module = this->GetModule(name);
         if (!module || !(*module)) {
-            logger::log(logger::format("Module ptr: %p", module));
-            logger::log(logger::format("Failed: Invalid module (%s)", name.c_str()));
             return nullptr;
         }
 

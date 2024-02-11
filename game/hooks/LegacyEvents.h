@@ -279,7 +279,6 @@ public:
         }
         metacall_value_destroy(objptr);
         metacall_value_destroy(ret);
-        logger::log(logger::format("Event hurt: %d", V_strcmp(result.c_str(), "event_prevent_default")));
         return V_strcmp(result.c_str(), "event_prevent_default") == 0;
     };
 };

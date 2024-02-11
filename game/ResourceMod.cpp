@@ -135,7 +135,7 @@ const char *ResourceMod::GetLicense() {
 }
 
 const char *ResourceMod::GetVersion() {
-    return "1.0.5-alpha";
+    return "1.0.13-beta";
 }
 
 const char *ResourceMod::GetDate() {
@@ -159,5 +159,5 @@ const char *ResourceMod::GetName() {
 }
 
 const char *ResourceMod::GetURL() {
-    return "https://resourcemod.net/";
+    return "https://rmod.dev/";
 }

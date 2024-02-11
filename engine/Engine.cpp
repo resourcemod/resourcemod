@@ -23,7 +23,7 @@ void Engine::Init() {
     this->resourcemodFolder = "../../csgo/addons/resourcemod";
 
     this->gameDataPath = this->resourcemodFolder.c_str();
-    this->gameDataPath.append("/node_modules/resourcemod/core/gamedata/rmod.cs2.json");
+    this->gameDataPath.append("/node_modules/resourcemod/gamedata/rmod.cs2.json");
 
     this->InitMetacall();
 }
@@ -40,7 +40,7 @@ void *msg(size_t argc, void *args[], void *data) {
 
 void Engine::InitMetacall() {
     _putenv_s("LOADER_LIBRARY_PATH",
-              std::filesystem::absolute("../../csgo/addons/resourcemod/core/bin/metacall").string().c_str());
+              std::filesystem::absolute("../../csgo/addons/resourcemod/node_modules/resourcemod/bin/metacall").string().c_str());
 
     // Initialize MetaCall
     if (metacall_initialize() != 0) {
@@ -79,17 +79,33 @@ void Engine::InitMetacall() {
     // Array of scripts to be loaded by MetaCall
     const char *js_scripts[] =
             {
-                    "../../csgo/addons/resourcemod/core/node/stdout.js",
-                    "../../csgo/addons/resourcemod/core/node/exceptions.js",
-                    "../../csgo/addons/resourcemod/core/node/constants.js",
-                    "../../csgo/addons/resourcemod/core/node/player.js",
-                    "../../csgo/addons/resourcemod/core/node/events.js",
-                    "../../csgo/addons/resourcemod/core/node/chat.js",
-                    "../../csgo/addons/resourcemod/core/node/precache.js",
-                    "../../csgo/addons/resourcemod/src/server.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/stdout.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/exceptions.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/constants.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/player.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/events.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/chat.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/precache.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/entrypoint.js",
             };
-    // Load scripts
+
     int s = metacall_load_from_file("node", js_scripts, sizeof(js_scripts) / sizeof(js_scripts[0]), NULL);
+    if (s != 0) {
+        logger::log(logger::format("Cannot load initial scripts, code: %d, last error: %d", s, GetLastError()));
+        return;
+    }
+
+    void* entrp = metacall("_LoadEntrypoint");
+    std::string entryPoint = this->resourcemodFolder.c_str();
+    entryPoint.append("/").append(metacall_value_to_string(entrp));
+
+    // Array of scripts to be loaded by MetaCall
+    const char *actualScript[] =
+            {
+                    entryPoint.c_str(),
+            };
+    // Load server scripts
+    s = metacall_load_from_file("node", actualScript, sizeof(actualScript) / sizeof(actualScript[0]), NULL);
     if (s != 0) {
         logger::log(logger::format("Cannot load scripts, code: %d, last error: %d", s, GetLastError()));
         return;

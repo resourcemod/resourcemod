@@ -1,4 +1,4 @@
-const config = require('../../resourcemod.config')
+const config = require('../../../resourcemod.config')
 
 const _LoadPrecache = () => {
     return config.precache

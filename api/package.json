@@ -1,12 +1,19 @@
 {
-	"name": "resourcemod",
-	"version": "1.0.6-beta",
-	"description": "Create CS2 Content with NodeJS runtime",
-	"repository": "github:resourcemod/resourcemod",
-	"homepage": "https://rmod.dev",
-	"author": "Twelvee",
-	"license": "GPL-3.0",
-	"dependencies": {
-		"metacall": "^0.4.3"
-	}
+  "name": "resourcemod",
+  "version": "1.0.13",
+  "description": "Create CS2 Content with NodeJS runtime",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/resourcemod/resourcemod.git"
+  },
+  "homepage": "https://rmod.dev",
+  "author": "Twelvee",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "metacall": "^0.4.3"
+  },
+  "bugs": {
+    "url": "https://github.com/resourcemod/resourcemod/issues"
+  },
+  "main": "index.js"
 }

@@ -23,7 +23,7 @@ bool _resourcemod_loader::Load(PluginId id, ISmmAPI *ismm, char *error, size_t m
 }
 
 void _resourcemod_loader::LoadDependencies() {
-    std::string path = "../../csgo/addons/resourcemod/core/bin/metacall/metacall.dll"; //todo: linux
+    std::string path = "../../csgo/addons/resourcemod/node_modules/resourcemod/bin/metacall/metacall.dll"; //todo: linux
     const auto metacall = LoadLibraryA(path.c_str());
     if (!metacall) {
         printf("\n\n%lu\n\n", GetLastError());
