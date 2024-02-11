@@ -1,7 +1,7 @@
 name: ci
 env:
   HL2SDKCS2: ${{ github.workspace }}/resourcemod/alliedmodders/hl2sdk
-  MMS_PATH: ${{ github.workshpace }}/resourcemod/alliedmodders/metamod-source
+  MMS_PATH: ${{ github.workspace }}/resourcemod/alliedmodders/metamod-source
 
 on:
   push:
