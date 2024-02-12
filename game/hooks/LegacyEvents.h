@@ -748,14 +748,23 @@ public:
     Player *player;
 
     bool Emit() override {
-        void *playerArgs[] = {
-                metacall_value_create_string(this->player->controller->GetPlayerName(),
-                                             strlen(this->player->controller->GetPlayerName())),
-                metacall_value_create_long(this->player->controller->m_steamID),
-                metacall_value_create_int(this->player->controller->GetPlayerSlot())
-        };
+        void *playerObj;
+        if (this->player->controller != nullptr) {
+            void *playerArgs[] = {
+                    metacall_value_create_string(this->player->controller->GetPlayerName(),
+                                                 strlen(this->player->controller->GetPlayerName())),
+                    metacall_value_create_long(this->player->controller->m_steamID),
+                    metacall_value_create_int(this->player->controller->GetPlayerSlot())
+            };
 
-        void *playerObj = metacallv("_Player", playerArgs);
+            playerObj = metacallv("_Player", playerArgs);
+
+            metacall_value_destroy(playerArgs[0]);
+            metacall_value_destroy(playerArgs[1]);
+            metacall_value_destroy(playerArgs[2]);
+        } else {
+            playerObj = metacall_value_create_null();
+        }
 
         void *args[] = {
                 metacall_value_create_string(this->event_name.c_str(), this->event_name.length()),
@@ -770,9 +779,6 @@ public:
         void *ret = metacallv("_onEventCall", call);
 
         std::string result = metacall_value_to_string(ret);
-        metacall_value_destroy(playerArgs[0]);
-        metacall_value_destroy(playerArgs[1]);
-        metacall_value_destroy(playerArgs[2]);
 
         for (int i = 0; i < sizeof(args) / sizeof(args[0]); i++) {
             metacall_value_destroy(args[i]);
