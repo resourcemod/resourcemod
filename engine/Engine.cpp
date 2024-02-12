@@ -38,6 +38,16 @@ void *msg(size_t argc, void *args[], void *data) {
     return metacall_value_create_bool(true);
 }
 
+void *err(size_t argc, void *args[], void *data) {
+    for (int i = 0; i < argc; i++) {
+        ConColorMsg(Color(255,0,0,1), metacall_value_to_string(args[i]));
+    }
+
+    (void) argc;
+    (void) data;
+    return metacall_value_create_bool(true);
+}
+
 void Engine::InitMetacall() {
     _putenv_s("LOADER_LIBRARY_PATH",
               std::filesystem::absolute(
@@ -50,6 +60,7 @@ void Engine::InitMetacall() {
     }
 
     metacall_register("log", msg, nullptr, METACALL_BOOL, 1, METACALL_STRING);
+    metacall_register("err", err, nullptr, METACALL_BOOL, 1, METACALL_STRING);
 
     metacall_register("_AllPrint", Player::PrintAll, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
     metacall_register("_PlayerPrint", Player::Print, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
