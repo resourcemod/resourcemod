@@ -71,13 +71,11 @@ export const _onEventCall = (data: any) => {
     return prevent;
 }
 export function onEvent<T extends keyof IEvents>(name: T, callback: IEvents[T]) {
-    if (typeof callback !== 'function') {
-        throw 'Callback must be a function.'
-    }
+    if (typeof callback !== 'function') throw 'Callback must be a function.'
 
+    console.log(`[NodeJS] Registered event: ${name}`)
     if (events.has(name) && Array.isArray(events.get(name))) {
-        events.get(name).push(callback)
-        return
+        return events.get(name).push(callback)
     }
     events.set(name, [callback])
 }
