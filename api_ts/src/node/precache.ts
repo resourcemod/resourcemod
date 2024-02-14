@@ -7,3 +7,5 @@ const config = fs.existsSync(mainPath) ? require(mainPath) : {}
 export const _LoadPrecache = () => {
     return config.precache
 }
+
+export default _LoadPrecache

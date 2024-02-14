@@ -7,3 +7,5 @@ const config = fs.existsSync(mainPath) ? require(mainPath) : {}
 export const _LoadEntrypoint = () => {
     return config.entrypoint ?? "src/server.js"
 }
+
+export default _LoadEntrypoint
