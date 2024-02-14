@@ -1,9 +1,7 @@
 const config = require('../../../resourcemod.config')
 
-const _LoadPrecache = () => {
+export const _LoadPrecache = () => {
     return config.precache
 }
 
-module.exports = {
-    _LoadPrecache
-}
+export default _LoadPrecache
