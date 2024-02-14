@@ -1,5 +1,6 @@
 import { Player } from './player';
 import { PREVENT_EVENT } from "./constants"
+import { STEAM_USER_HIGH_VALUE } from './consts'
 const events = new Map();
 
 type IEvents = {
@@ -45,23 +46,23 @@ type IEvents = {
 
 // actual source engine callback
 export const _onEventCall = (data: any) => {
-    if (data.name === undefined) {
+    if (!data.name) {
         return "undefined_event";
     } 
     let prevent = "event_no_prevent";
     if (events.has(data.name)) {
         // temporary hack (cuz classes works weird)
-        if (data.player !== undefined && data.player !== null) {
+        if (data.player) {
             data.player = new Player(data.player.name, data.player.steamId, data.player.slot)
         }
-        if (data.attacker !== undefined && data.attacker !== null) {
+        if (data.attacker) {
             data.attacker = new Player(data.attacker.name, data.attacker.steamId, data.attacker.slot)
         }
-        if (data.assister !== undefined && data.assister !== null) {
+        if (data.assister) {
             data.assister = new Player(data.assister.name, data.assister.steamId, data.assister.slot)
         }
         events.get(data.name).forEach((listener: Function) => {
-            if(typeof listener === 'function') {
+            if (typeof listener === 'function') {
                 if (listener(data) === PREVENT_EVENT) {
                     prevent = PREVENT_EVENT
                 }
@@ -71,7 +72,7 @@ export const _onEventCall = (data: any) => {
     return prevent;
 }
 export function onEvent<T extends keyof IEvents>(name: T, callback: IEvents[T]) {
-    if(typeof callback !== 'function') {
+    if (typeof callback !== 'function') {
         throw 'Callback must be a function.'
     }
 
@@ -176,7 +177,7 @@ export class ClientDisconnectedEvent {
 
 export class ClientConnectEvent {
     private readonly _name: string;
-    private readonly _steamId?: string;
+    private readonly _steamId: string;
 
     constructor(name: string, steamId: string) {
         this._name = name
@@ -188,12 +189,13 @@ export class ClientConnectEvent {
     }
 
     get steamId() {
-        return this._steamId ?? undefined
+        return this._steamId
     }
 
     get steamId64() {
-        if (this.steamId == undefined) return undefined // bots
-        return (BigInt(this.steamId) + BigInt(76561197960265728)).toString();
+        const steamid = this.steamId;
+        if (!steamid) return // bots
+        return (BigInt(steamid) + STEAM_USER_HIGH_VALUE).toString();
     }
 }
 
@@ -219,8 +221,9 @@ export class ClientConnectedEvent {
     }
 
     get steamId64() {
-        if (this.steamId == undefined) return undefined // bots
-        return (BigInt(this.steamId) + BigInt(76561197960265728)).toString();
+        const steamid = this.steamId;
+        if (!steamid) return // bots
+        return (BigInt(steamid) + STEAM_USER_HIGH_VALUE).toString();
     }
 
     get ip() {
@@ -606,11 +609,9 @@ export class PlayerDeathEvent {
             itemId: this._weaponItemId,
             fauxId: this._weaponFauxItemId,
             originalOwnerSteamId: this._weaponOriginalOwnerSteamId,
-            originalOwnerSteamId64: () => {
-                if (this._weaponOriginalOwnerSteamId === 0) {
-                    return 0;
-                }
-                return (BigInt(this._weaponOriginalOwnerSteamId) + BigInt(76561197960265728)).toString();
+            originalOwnerSteamId64: function() {
+                if (this.originalOwnerSteamId === 0) return this.originalOwnerSteamId;
+                return (BigInt(this.originalOwnerSteamId) + STEAM_USER_HIGH_VALUE).toString();
             }
         }
     }

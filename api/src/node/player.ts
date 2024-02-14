@@ -2,6 +2,7 @@
 import { metacall } from "metacall"
 import { sayToSlot } from "./chat"
 import { HUD_PRINT_CENTER } from "./constants"
+import { STEAM_USER_HIGH_VALUE } from './consts'
 
 export class Player {
     private readonly _name: string;
@@ -35,8 +36,8 @@ export class Player {
     }
 
     get steamId64() {
-        if (this.steamId === undefined) return undefined;
-        return (BigInt(this.steamId) + BigInt(76561197960265728)).toString();
+        if (!this.steamId) return; // bots
+        return (BigInt(this.steamId) + STEAM_USER_HIGH_VALUE).toString();
     }
 
     get isAlive() {
