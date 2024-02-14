@@ -1,6 +1,6 @@
 {
   "name": "create-resourcemod-app",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Bootstrap your cs2 plugins system.",
   "bin": "cli/rmod.js",
   "author": "Twelvee",
