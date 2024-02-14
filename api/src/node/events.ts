@@ -84,11 +84,11 @@ export function onEvent<T extends keyof IEvents>(name: T, callback: IEvents[T]) 
 
 // Event classes
 export class ItemPickupEvent {
-    private _name: string;
-    private _item: string;
-    private _player: Player;
-    private _silent: boolean;
-    private _defindex: number;
+    private readonly _name: string;
+    private readonly _item: string;
+    private readonly _player: Player;
+    private readonly _silent: boolean;
+    private readonly _defindex: number;
 
     constructor(name: string, item: string, silent: boolean, defindex: number, player: Player) {
         this._name = name
@@ -139,8 +139,8 @@ export class ItemPickupEvent {
 }
 
 export class ClientPutInServerEvent {
-    private _name: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _player: Player;
 
     constructor(name: string, player: Player) {
         this._name = name
@@ -157,8 +157,8 @@ export class ClientPutInServerEvent {
 }
 
 export class ClientDisconnectedEvent {
-    private _name: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _player: Player;
 
     constructor(name: string, player: Player) {
         this._name = name
@@ -175,8 +175,8 @@ export class ClientDisconnectedEvent {
 }
 
 export class ClientConnectEvent {
-    private _name: string;
-    private _steamId?: string;
+    private readonly _name: string;
+    private readonly _steamId?: string;
 
     constructor(name: string, steamId: string) {
         this._name = name
@@ -198,10 +198,10 @@ export class ClientConnectEvent {
 }
 
 export class ClientConnectedEvent {
-    private _name: string;
-    private _steamId?: string;
-    private _ip: string;
-    private _bot: boolean;
+    private readonly _name: string;
+    private readonly _steamId?: string;
+    private readonly _ip: string;
+    private readonly _bot: boolean;
 
     constructor(name: string, steamId: string, ip: string, isBot: boolean) {
         this._name = name
@@ -229,8 +229,8 @@ export class ClientConnectedEvent {
 }
 
 export class PlayerActivateEvent {
-    private _name: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _player: Player;
 
     constructor(name: string, player: Player) {
         this._name = name
@@ -247,8 +247,8 @@ export class PlayerActivateEvent {
 }
 
 export class PlayerSpawnEvent {
-    private _name: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _player: Player;
 
     constructor(name: string, player: Player) {
         this._name = name
@@ -265,12 +265,12 @@ export class PlayerSpawnEvent {
 }
 
 export class PlayerChangeTeamEvent {
-    private _name: string;
-    private _team: string;
-    private _oldTeam: string;
-    private _disconnect: boolean;
-    private _silent: boolean;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _team: string;
+    private readonly _oldTeam: string;
+    private readonly _disconnect: boolean;
+    private readonly _silent: boolean;
+    private readonly _player: Player;
 
     constructor(name: string, team: string, oldTeam: string, disconnect: boolean, silent: boolean, player: Player) {
         this._name = name
@@ -307,15 +307,15 @@ export class PlayerChangeTeamEvent {
 }
 
 export class PlayerHurtEvent {
-    private _name: string;
-    private _hp: number;
-    private _armor: number;
-    private _weapon: string;
-    private _damageHp: number;
-    private _damageArmor: number;
-    private _hitGoup: number;
-    private _player: Player;
-    private _attacker: Player;
+    private readonly _name: string;
+    private readonly _hp: number;
+    private readonly _armor: number;
+    private readonly _weapon: string;
+    private readonly _damageHp: number;
+    private readonly _damageArmor: number;
+    private readonly _hitGoup: number;
+    private readonly _player: Player;
+    private readonly _attacker: Player;
 
     constructor(name: string, hp: number, armor: number, weapon: string, damageHp: number, damageArmor: number, hitGoup: number, player: Player, attacker: Player) {
         this._name = name
@@ -366,7 +366,7 @@ export class PlayerHurtEvent {
 }
 
 export class MapShutdownEvent {
-    private _name: string;
+    private readonly _name: string;
 
     constructor(name: string) {
         this._name = name
@@ -378,10 +378,10 @@ export class MapShutdownEvent {
 }
 
 export class PlayerChatEvent {
-    private _name: string;
-    private _message: string;
-    private _teamOnly: boolean;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _message: string;
+    private readonly _teamOnly: boolean;
+    private readonly _player: Player;
 
     constructor(name: string, text: string, teamOnly: boolean, player: Player) {
         this._name = name
@@ -408,9 +408,9 @@ export class PlayerChatEvent {
 }
 
 export class GameMessageEvent {
-    private _name: string;
-    private _message: string;
-    private _target: string;
+    private readonly _name: string;
+    private readonly _message: string;
+    private readonly _target: string;
 
     constructor(name: string, text: string, target: string) {
         this._name = name
@@ -432,9 +432,9 @@ export class GameMessageEvent {
 }
 
 export class MapLoadedEvent {
-    private _name: string;
-    private _map: string;
-    private _oldMap: string;
+    private readonly _name: string;
+    private readonly _map: string;
+    private readonly _oldMap: string;
 
     constructor(name: string, map: string, oldMap: string) {
         this._name = name
@@ -456,13 +456,13 @@ export class MapLoadedEvent {
 }
 
 export class RoundEndEvent {
-    private _name: string;
-    private _winner: string;
-    private _reason: string;
-    private _message: string;
-    private _legacy: boolean;
-    private _playerCount: number;
-    private _noMusic: boolean;
+    private readonly _name: string;
+    private readonly _winner: string;
+    private readonly _reason: string;
+    private readonly _message: string;
+    private readonly _legacy: boolean;
+    private readonly _playerCount: number;
+    private readonly _noMusic: boolean;
 
     constructor(name: string, winner: string, reason: string, message: string, legacy: boolean, playerCount: number, noMusic: boolean) {
         this._name = name
@@ -504,10 +504,10 @@ export class RoundEndEvent {
 }
 
 export class RoundStartEvent {
-    private _name: string;
-    private _timeLimit: number;
-    private _fragLimit: number;
-    private _objective: string;
+    private readonly _name: string;
+    private readonly _timeLimit: number;
+    private readonly _fragLimit: number;
+    private readonly _objective: string;
 
     constructor(name: string, timeLimit: number, fragLimit: number, objective: string) {
         this._name = name
@@ -534,7 +534,7 @@ export class RoundStartEvent {
 }
 
 export class FreezeTimeEndedEvent {
-    private _name: string;
+    private readonly _name: string;
 
     constructor(name: string) {
         this._name = name
@@ -546,25 +546,25 @@ export class FreezeTimeEndedEvent {
 }
 
 export class PlayerDeathEvent {
-    private _name: string;
-    private _assistFlash: boolean;
-    private _weapon: string;
-    private _weaponItemId: number;
-    private _weaponFauxItemId: number;
-    private _weaponOriginalOwnerSteamId: number;
-    private _headshot: boolean;
-    private _dominated: boolean;
-    private _revenge: boolean;
-    private _wipe: boolean;
-    private _penetrated: boolean;
-    private _noReplay: boolean;
-    private _noScope: boolean;
-    private _throughSmoke: boolean;
-    private _attackerBlind: boolean;
-    private _distance: number;
-    private _player: Player;
-    private _attacker: Player;
-    private _assister: Player;
+    private readonly _name: string;
+    private readonly _assistFlash: boolean;
+    private readonly _weapon: string;
+    private readonly _weaponItemId: number;
+    private readonly _weaponFauxItemId: number;
+    private readonly _weaponOriginalOwnerSteamId: number;
+    private readonly _headshot: boolean;
+    private readonly _dominated: boolean;
+    private readonly _revenge: boolean;
+    private readonly _wipe: boolean;
+    private readonly _penetrated: boolean;
+    private readonly _noReplay: boolean;
+    private readonly _noScope: boolean;
+    private readonly _throughSmoke: boolean;
+    private readonly _attackerBlind: boolean;
+    private readonly _distance: number;
+    private readonly _player: Player;
+    private readonly _attacker: Player;
+    private readonly _assister: Player;
 
     constructor(name: string, assistFlash: boolean, weapon: string, weaponItemId: number, weaponFauxItemId: number, weaponOriginalOwnerSteamId: number, headshot: boolean, dominated: boolean, revenge: boolean, wipe: boolean, penetrated: boolean, noReplay: boolean, noScope: boolean, throughSmoke: boolean, attackerBlind: boolean, distance: number, player: Player, attacker: Player, assister: Player) {
         this._name = name
@@ -669,8 +669,8 @@ export class PlayerDeathEvent {
 }
 
 export class PlayerFootstepEvent {
-    private _name: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _player: Player;
 
     constructor(name: string, player: Player) {
         this._name = name
@@ -687,10 +687,10 @@ export class PlayerFootstepEvent {
 }
 
 export class BreakableBrokeEvent {
-    private _name: string;
-    private _entityId: number;
-    private _material: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _entityId: number;
+    private readonly _material: string;
+    private readonly _player: Player;
 
     constructor(name: string, entityId: number, material: string, player: Player) {
         this._name = name
@@ -717,9 +717,9 @@ export class BreakableBrokeEvent {
 }
 
 export class BreakPropEvent {
-    private _name: string;
-    private _entityId: number;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _entityId: number;
+    private readonly _player: Player;
 
     constructor(name: string, entityId: number, player: Player) {
         this._name = name
@@ -741,11 +741,11 @@ export class BreakPropEvent {
 }
 
 export class ItemPurchaseEvent {
-    private _name: string;
-    private _team: string;
-    private _loadout: string;
-    private _weapon: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _team: string;
+    private readonly _loadout: string;
+    private readonly _weapon: string;
+    private readonly _player: Player;
 
     constructor(name: string, team: string, loadout: string, weapon: string, player: Player) {
         this._name = name
@@ -777,9 +777,9 @@ export class ItemPurchaseEvent {
 }
 
 export class BombBeginPlantEvent {
-    private _name: string;
-    private _site: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _site: string;
+    private readonly _player: Player;
 
     constructor(name: string, site: string, player: Player) {
         this._name = name
@@ -801,9 +801,9 @@ export class BombBeginPlantEvent {
 }
 
 export class BombPlantedEvent {
-    private _name: string;
-    private _site: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _site: string;
+    private readonly _player: Player;
 
     constructor(name: string, site: string, player: Player) {
         this._name = name
@@ -825,9 +825,9 @@ export class BombPlantedEvent {
 }
 
 export class BombDefusedEvent {
-    private _name: string;
-    private _site: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _site: string;
+    private readonly _player: Player;
 
     constructor(name: string, site: string, player: Player) {
         this._name = name
@@ -849,9 +849,9 @@ export class BombDefusedEvent {
 }
 
 export class BombExplodedEvent {
-    private _name: string;
-    private _site: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _site: string;
+    private readonly _player: Player;
 
     constructor(name: string, site: string, player: Player) {
         this._name = name
@@ -873,9 +873,9 @@ export class BombExplodedEvent {
 }
 
 export class BombDroppedEvent {
-    private _name: string;
-    private _entityId: number;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _entityId: number;
+    private readonly _player: Player;
 
     constructor(name: string, entityId: number, player: Player) {
         this._name = name
@@ -897,8 +897,8 @@ export class BombDroppedEvent {
 }
 
 export class BombPickedUpEvent {
-    private _name: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _player: Player;
 
     constructor(name: string, player: Player) {
         this._name = name
@@ -915,8 +915,8 @@ export class BombPickedUpEvent {
 }
 
 export class DefuserDroppedEvent {
-    private _name: string;
-    private _entityId: number;
+    private readonly _name: string;
+    private readonly _entityId: number;
 
     constructor(name: string, entityId: number) {
         this._name = name
@@ -933,9 +933,9 @@ export class DefuserDroppedEvent {
 }
 
 export class DefuserPickupEvent {
-    private _name: string;
-    private _entityId: number;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _entityId: number;
+    private readonly _player: Player;
 
     constructor(name: string, entityId: number, player: Player) {
         this._name = name
@@ -957,9 +957,9 @@ export class DefuserPickupEvent {
 }
 
 export class BeginDefuseEvent {
-    private _name: string;
-    private _hasKit: boolean;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _hasKit: boolean;
+    private readonly _player: Player;
 
     constructor(name: string, hasKit: boolean, player: Player) {
         this._name = name
@@ -981,8 +981,8 @@ export class BeginDefuseEvent {
 }
 
 export class AbortDefuseEvent {
-    private _name: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _player: Player;
 
     constructor(name: string, player: Player) {
         this._name = name
@@ -999,9 +999,9 @@ export class AbortDefuseEvent {
 }
 
 export class HostageBeginsFollowingEvent {
-    private _name: string;
-    private _hostage: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _hostage: string;
+    private readonly _player: Player;
 
     constructor(name: string, hostage: string, player: Player) {
         this._name = name
@@ -1023,9 +1023,9 @@ export class HostageBeginsFollowingEvent {
 }
 
 export class HostageHurtEvent {
-    private _name: string;
-    private _hostage: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _hostage: string;
+    private readonly _player: Player;
 
     constructor(name: string, hostage: string, player: Player) {
         this._name = name
@@ -1047,10 +1047,10 @@ export class HostageHurtEvent {
 }
 
 export class HostageRescuedEvent {
-    private _name: string;
-    private _hostage: string;
-    private _site: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _hostage: string;
+    private readonly _site: string;
+    private readonly _player: Player;
 
     constructor(name: string, hostage: string, site: string, player: Player) {
         this._name = name
@@ -1077,9 +1077,9 @@ export class HostageRescuedEvent {
 }
 
 export class HostageStopsFollowingEvent {
-    private _name: string;
-    private _hostage: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _hostage: string;
+    private readonly _player: Player;
 
     constructor(name: string, hostage: string, player: Player) {
         this._name = name
@@ -1101,10 +1101,10 @@ export class HostageStopsFollowingEvent {
 }
 
 export class WeaponFireEvent {
-    private _name: string;
-    private _weapon: string;
-    private _silenced: boolean;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _weapon: string;
+    private readonly _silenced: boolean;
+    private readonly _player: Player;
 
     constructor(name: string, weapon: string, silenced: boolean, player: Player) {
         this._name = name
@@ -1131,8 +1131,8 @@ export class WeaponFireEvent {
 }
 
 export class WeaponReloadEvent {
-    private _name: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _player: Player;
 
     constructor(name: string, player: Player) {
         this._name = name
@@ -1149,8 +1149,8 @@ export class WeaponReloadEvent {
 }
 
 export class WeaponZoomEvent {
-    private _name: string;
-    private _player: Player;
+    private readonly _name: string;
+    private readonly _player: Player;
 
     constructor(name: string, player: Player) {
         this._name = name
@@ -1167,11 +1167,11 @@ export class WeaponZoomEvent {
 }
 
 export class PlayerBlindEvent {
-    private _name: string;
-    private _entityId: number;
-    private _blindDuration: number;
-    private _player: Player;
-    private _attacker: Player;
+    private readonly _name: string;
+    private readonly _entityId: number;
+    private readonly _blindDuration: number;
+    private readonly _player: Player;
+    private readonly _attacker: Player;
 
     constructor(name: string, entityId: number, blindDuration: number, player: Player, attacker: Player) {
         this._name = name

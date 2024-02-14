@@ -4,9 +4,9 @@ import { sayToSlot } from "./chat"
 import { HUD_PRINT_CENTER } from "./constants"
 
 export class Player {
-    private _name: string;
-    private _steamId: string;
-    private _slot: any;
+    private readonly _name: string;
+    private readonly _steamId: string;
+    private readonly _slot: any;
 
     constructor(name: string, steamId: string, slot: any) {
         this._name = name;
