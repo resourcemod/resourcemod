@@ -4,7 +4,6 @@ import { onEvent } from './events';
 const players = new Map<number, Player>();
 
 onEvent('client_put_in_server', (event) => {
-    console.log(`[Metamod] Player (${event.player.slot}) has connected.`);
     if (players.has(event.player.slot)) {
         console.error(`[Metamod] Slot (${event.player.slot}) already exists in players map. This should not happen.`)
     }
@@ -12,7 +11,6 @@ onEvent('client_put_in_server', (event) => {
 });
 
 onEvent('client_disconnected', (event) => {
-    console.log(`[Metamod] Player (${event.player.slot}) has disconnected.`);
     if (!players.has(event.player.slot)) {
         return console.error(`[Metamod] Slot (${event.player.slot}) does not exist in players map. This should not happen.`)
     }
