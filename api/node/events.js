@@ -1,26 +1,27 @@
 const { Player } = require('./player');
-const {PREVENT_EVENT} = require('./constants')
+const { PREVENT_EVENT } = require('./constants');
+const { STEAM_USER_HIGH_VALUE } = require('./consts');
 const events = new Map();
 
 // actual source engine callback
 const _onEventCall = (data) => {
-    if (data.name === undefined) {
+    if (!data.name) {
         return "undefined_event";
-    } 
+    }
     let prevent = "event_no_prevent";
     if (events.has(data.name)) {
         // temporary hack (cuz classes works weird)
-        if (data.player !== undefined && data.player !== null) {
+        if (data.player) {
             data.player = new Player(data.player.name, data.player.steamId, data.player.slot)
         }
-        if (data.attacker !== undefined && data.attacker !== null) {
+        if (data.attacker) {
             data.attacker = new Player(data.attacker.name, data.attacker.steamId, data.attacker.slot)
         }
-        if (data.assister !== undefined && data.assister !== null) {
+        if (data.assister) {
             data.assister = new Player(data.assister.name, data.assister.steamId, data.assister.slot)
         }
         events.get(data.name).forEach(listener => {
-            if(typeof listener === 'function') {
+            if (typeof listener === 'function') {
                 if (listener(data) === PREVENT_EVENT) {
                     prevent = PREVENT_EVENT
                 }
@@ -30,7 +31,7 @@ const _onEventCall = (data) => {
     return prevent;
 }
 const onEvent = (name, callback) => {
-    if(typeof callback !== 'function') {
+    if (typeof callback !== 'function') {
         throw 'Callback must be a function.'
     }
 
@@ -206,19 +207,19 @@ class ItemPickupEvent {
         this.getName = () => {
             return this.name
         }
-    
+
         this.getItem = () => {
             return this.item
         }
-    
+
         this.getPlayer = () => {
             return this.player
         }
-    
+
         this.isSilent = () => {
             return this.isSilent
         }
-    
+
         this.getDefIndex = () => {
             return this.defindex
         }
@@ -232,7 +233,7 @@ class ClientPutInServerEvent {
         this.getName = () => {
             return this.name
         }
-    
+
         this.getPlayer = () => {
             return this.player
         }
@@ -246,7 +247,7 @@ class ClientDisconnectedEvent {
         this.getName = () => {
             return this.name
         }
-    
+
         this.getPlayer = () => {
             return this.player
         }
@@ -260,14 +261,15 @@ class ClientConnectEvent {
         this.getName = () => {
             return this.name
         }
-    
+
         this.getSteamId = () => {
-            return this.steamId ?? undefined
+            return this.steamId
         }
-    
+
         this.getSteamId64 = () => {
-            if (this.getSteamId() == undefined) return undefined // bots
-            return (BigInt(this.getSteamId()) + BigInt(76561197960265728)).toString();
+            const steamid = this.getSteamId();
+            if (!steamid) return // bots
+            return (BigInt(steamid) + STEAM_USER_HIGH_VALUE).toString();
         }
     }
 }
@@ -281,16 +283,16 @@ class ClientConnectedEvent {
         this.isBot = () => {
             return this._bot
         }
-    
+
         this.getSteamId = () => {
-            return this.steamId ?? undefined
+            return this.steamId
         }
-        
+
         this.getSteamId64 = () => {
-            if (this.getSteamId() == undefined) return undefined // bots
-            return (BigInt(this.getSteamId()) + BigInt(76561197960265728)).toString();
+            if (!this.getSteamId()) return // bots
+            return (BigInt(this.getSteamId()) + STEAM_USER_HIGH_VALUE).toString();
         }
-    
+
         this.getIp = () => {
             return this.ip
         }
@@ -305,7 +307,7 @@ class PlayerActivateEvent {
         this.getName = () => {
             return this.name
         }
-    
+
         this.getPlayer = () => {
             return this.player
         }
@@ -320,7 +322,7 @@ class PlayerSpawnEvent {
         this.getName = () => {
             return this.name
         }
-    
+
         this.getPlayer = () => {
             return this.player
         }
@@ -339,23 +341,23 @@ class PlayerChangeTeamEvent {
         this.getName = () => {
             return this.name
         }
-    
+
         this.getTeam = () => {
             return this.team
         }
-    
+
         this.getOldTeam = () => {
             return this.oldTeam
         }
-    
+
         this.isBecauseDisconnected = () => {
             return this.disconnect
         }
-    
+
         this.isSilent = () => {
             return this.silent
         }
-    
+
         this.getPlayer = () => {
             return this.player
         }
@@ -377,34 +379,34 @@ class PlayerHurtEvent {
         this.getName = () => {
             return this.name
         }
-    
+
         this.getHp = () => {
             return this.hp
         }
-    
+
         this.getArmor = () => {
             return this.armor
         }
-        
+
         this.getWeapon = () => {
             return this.weapon
         }
-    
+
         this.getDamage = () => {
             return {
                 hp: this.damageHp,
                 armor: this.damageArmor
             }
         }
-    
+
         this.getHitGroup = () => {
             return this.hitGoup
         }
-    
+
         this.getPlayer = () => {
             return this.player
         }
-    
+
         this.getAttacker = () => {
             return this.attacker
         }
@@ -586,7 +588,7 @@ class PlayerDeathEvent {
         this.getName = () => {
             return this.name
         }
-    
+
         this.isFlashAssisted = () => {
             return this.assistFlash
         }
@@ -603,9 +605,9 @@ class PlayerDeathEvent {
                 originalOwnerSteamId: this.originalOwnerSteamId,
                 originalOwnerSteamId64: () => {
                     if (this.originalOwnerSteamId === 0) {
-                        return 0;
+                        return this.originalOwnerSteamId;
                     }
-                    return (BigInt(this.originalOwnerSteamId) + BigInt(76561197960265728)).toString();
+                    return (BigInt(this.originalOwnerSteamId) + STEAM_USER_HIGH_VALUE).toString();
                 }
             }
         }
@@ -1276,7 +1278,7 @@ module.exports = {
     _ClientConnectedEvent,
     ClientConnectedEvent,
     onClientConnected,
-    
+
     _ClientConnectEvent,
     ClientConnectEvent,
     onClientConnect,
@@ -1296,11 +1298,11 @@ module.exports = {
     _PlayerHurtEvent,
     PlayerHurtEvent,
     onPlayerHurt,
-    
+
     _MapShutdownEvent,
     MapShutdownEvent,
     onMapShutdown,
-    
+
     _PlayerChatEvent,
     PlayerChatEvent,
     onPlayerChat,
