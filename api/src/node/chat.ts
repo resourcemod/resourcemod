@@ -6,7 +6,7 @@ export const sayToEveryone = (message: string, destination = HUD_PRINT_TALK) => 
     metacall('_AllPrint', destination, message)
 }
 
-export const sayToSlot = (slot: any, message: string, destination = HUD_PRINT_TALK) => {
+export const sayToSlot = (slot: number, message: string, destination = HUD_PRINT_TALK) => {
     metacall('_PlayerPrint', slot, destination, message)
 }
 

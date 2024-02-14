@@ -6,9 +6,9 @@ import { HUD_PRINT_CENTER, STEAM_USER_HIGH_VALUE } from "./constants"
 export class Player {
     private readonly _name: string;
     private readonly _steamId: string;
-    private readonly _slot: any;
+    private readonly _slot: number;
 
-    constructor(name: string, steamId: string, slot: any) {
+    constructor(name: string, steamId: string, slot: number) {
         this._name = name;
         this._steamId = steamId;
         this._slot = slot;
@@ -112,7 +112,7 @@ export class Player {
     }
 }
 
-export const _Player = (name: string, steamId: string, slot: any) => {
+export const _Player = (name: string, steamId: string, slot: number) => {
     return new Player(name, steamId, slot)
 }
 

@@ -51,21 +51,12 @@ export const _onEventCall = (data: any) => {
     let prevent = "event_no_prevent";
     if (events.has(data.name)) {
         // temporary hack (cuz classes works weird)
-        if (data.player) {
-            data.player = new Player(data.player.name, data.player.steamId, data.player.slot)
-        }
-        if (data.attacker) {
-            data.attacker = new Player(data.attacker.name, data.attacker.steamId, data.attacker.slot)
-        }
-        if (data.assister) {
-            data.assister = new Player(data.assister.name, data.assister.steamId, data.assister.slot)
-        }
+        if (data.player) data.player = new Player(data.player.name, data.player.steamId, data.player.slot)
+        if (data.attacker) data.attacker = new Player(data.attacker.name, data.attacker.steamId, data.attacker.slot)
+        if (data.assister) data.assister = new Player(data.assister.name, data.assister.steamId, data.assister.slot)
         events.get(data.name).forEach((listener: Function) => {
-            if (typeof listener === 'function') {
-                if (listener(data) === PREVENT_EVENT) {
-                    prevent = PREVENT_EVENT
-                }
-            }
+            if (typeof listener !== 'function') return
+            if (listener(data) === PREVENT_EVENT) prevent = PREVENT_EVENT
         });
     }
     return prevent;
@@ -246,6 +237,10 @@ export class ClientConnectedEvent {
         this._steamId = steamId
         this._ip = ip
         this._bot = isBot
+    }
+
+    get name() {
+        return this._name
     }
 
     get isBot() {
