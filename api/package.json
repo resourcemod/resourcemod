@@ -6,14 +6,26 @@
     "type": "git",
     "url": "git+https://github.com/resourcemod/resourcemod.git"
   },
+  "main": "dist/index.js",
   "homepage": "https://rmod.dev",
   "author": "Twelvee",
   "license": "GPL-3.0",
-  "dependencies": {
-    "metacall": "^0.4.3"
-  },
   "bugs": {
     "url": "https://github.com/resourcemod/resourcemod/issues"
   },
-  "main": "index.js"
+  "scripts": {
+    "build": "webpack --config webpack.config.js --mode production",
+    "build:dev": "webpack --config webpack.config.js --mode development --watch",
+    "start": "node dist/index.js",
+    "build:ts": "tsc"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "metacall": "^0.4.3"
+  }
 }
