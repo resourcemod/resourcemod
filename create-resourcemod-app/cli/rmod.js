@@ -31,11 +31,12 @@ rl.question(
   (answer) => {
     let repository;
     if (answer === "" || answer === "javascript") {
-      var tag = "v1.0.10";
+      var tag = "v1.0.22";
       repository = "https://github.com/resourcemod/package-template.git";
     } else if (answer === "typescript") {
-      // var tag = 'v1.0.10';
-      repository = "https://github.com/resourcemod/package-template-typescript.git";
+      var tag = "v1.0.22";
+      repository =
+        "https://github.com/resourcemod/package-template-typescript.git";
     } else {
       console.error(
         "Invalid option. Please choose either javascript or typescript."
@@ -70,11 +71,7 @@ rl.question(
     );
 
     try {
-      if (tag) {
-        execSync(`git clone --depth 1 --branch ${tag} ${repository} resourcemod`);
-      } else {
-        execSync(`git clone --depth 1 ${repository} resourcemod`);
-      }
+      execSync(`git clone --depth 1 --branch ${tag} ${repository} resourcemod`);
     } catch (e) {
       console.error("Failed to clone resourcemod package.");
       return false;
