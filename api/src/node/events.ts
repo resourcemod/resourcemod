@@ -1399,117 +1399,155 @@ export default {
 
     _ItemPickupEvent,
     ItemPickupEvent,
+    onItemPickup,
 
     _ClientPutInServerEvent,
     ClientPutInServerEvent,
+    onClientPutInServer,
 
     _ClientConnectedEvent,
     ClientConnectedEvent,
+    onClientConnected,
     
     _ClientConnectEvent,
     ClientConnectEvent,
+    onClientConnect,
 
     _PlayerActivateEvent,
     PlayerActivateEvent,
+    onPlayerActivate,
 
     _PlayerSpawnEvent,
     PlayerSpawnEvent,
+    onPlayerSpawn,
 
     _PlayerChangeTeamEvent,
     PlayerChangeTeamEvent,
+    onPlayerChangeTeam,
 
     _PlayerHurtEvent,
     PlayerHurtEvent,
+    onPlayerHurt,
     
     _MapShutdownEvent,
     MapShutdownEvent,
+    onMapShutdown,
     
     _PlayerChatEvent,
     PlayerChatEvent,
+    onPlayerChat,
 
     _GameMessageEvent,
     GameMessageEvent,
+    onGameMessage,
 
     _MapLoadedEvent,
     MapLoadedEvent,
+    onMapLoaded,
 
     _RoundEndEvent,
     RoundEndEvent,
+    onRoundEnded,
 
     _RoundStartEvent,
     RoundStartEvent,
+    onRoundStarted,
 
     _FreezeTimeEndedEvent,
     FreezeTimeEndedEvent,
+    onFreezeTimeEnded,
 
     _PlayerDeathEvent,
     PlayerDeathEvent,
+    onPlayerDeath,
 
     _PlayerFootstepEvent,
     PlayerFootstepEvent,
+    onPlayerFootstep,
 
     _BreakPropEvent,
     BreakPropEvent,
+    onPropBreak,
 
     _ItemPurchaseEvent,
     ItemPurchaseEvent,
+    onItemPurchase,
 
     _BombBeginPlantEvent,
     BombBeginPlantEvent,
+    onBombBeginPlant,
 
     _BombPlantedEvent,
     BombPlantedEvent,
+    onBombPlanted,
 
     _BombExplodedEvent,
     BombExplodedEvent,
+    onBombExploded,
 
     _BombDefusedEvent,
     BombDefusedEvent,
+    onBombDefused,
 
     _BombPickedUpEvent,
     BombPickedUpEvent,
+    onBombPickup,
 
     _BombDroppedEvent,
     BombDroppedEvent,
+    onBombDropped,
 
     _DefuserDroppedEvent,
     DefuserDroppedEvent,
+    onDefuserDropped,
 
     _DefuserPickupEvent,
     DefuserPickupEvent,
+    onDefuserPickup,
 
     _BeginDefuseEvent,
     BeginDefuseEvent,
+    onBeginDefuse,
 
     _AbortDefuseEvent,
     AbortDefuseEvent,
+    onAbortDefuse,
 
     _HostageBeginsFollowingEvent,
     HostageBeginsFollowingEvent,
+    onHostageFollows,
 
     _HostageHurtEvent,
     HostageHurtEvent,
+    onHostageHurt,
 
     _HostageRescuedEvent,
     HostageRescuedEvent,
+    onHostageRescued,
 
     _HostageStopsFollowingEvent,
     HostageStopsFollowingEvent,
+    onHostageStopsFollowing,
 
     _WeaponFireEvent,
     WeaponFireEvent,
+    onWeaponFire,
 
     _WeaponReloadEvent,
     WeaponReloadEvent,
+    onWeaponReload,
 
     _WeaponZoomEvent,
     WeaponZoomEvent,
+    onWeaponZoom,
 
     _PlayerBlindEvent,
     PlayerBlindEvent,
+    onPlayerBlind,
 
     _ClientDisconnectedEvent,
     ClientDisconnectedEvent,
+    onClientDisconnected,
 
     onEvent,
 }
