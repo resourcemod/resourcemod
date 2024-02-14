@@ -3,60 +3,73 @@ import { PREVENT_EVENT, STEAM_USER_HIGH_VALUE } from "./constants"
 const events = new Map();
 
 type IEvents = {
-    'item_pickup': (event: ItemPickupEvent) => void;
-    'client_put_in_server': (event: ClientPutInServerEvent) => void;
-    'client_connected': (event: ClientConnectedEvent) => void;
-    'client_connect': (event: ClientConnectEvent) => void;
-    'player_activate': (event: PlayerActivateEvent) => void;
-    'player_spawn': (event: PlayerSpawnEvent) => void;
-    'player_team': (event: PlayerChangeTeamEvent) => void;
-    'player_hurt': (event: PlayerHurtEvent) => void;
-    'map_shutdown': (event: MapShutdownEvent) => void;
-    'player_chat': (event: PlayerChatEvent) => void;
-    'game_message': (event: GameMessageEvent) => void;
-    'map_loaded': (event: MapLoadedEvent) => void;
-    'round_end': (event: RoundEndEvent) => void;
-    'round_start': (event: RoundStartEvent) => void;
-    'round_freeze_end': (event: FreezeTimeEndedEvent) => void;
-    'player_death': (event: PlayerDeathEvent) => void;
-    'player_footstep': (event: PlayerFootstepEvent) => void;
-    'break_prop': (event: BreakPropEvent) => void;
-    'item_purchase': (event: ItemPurchaseEvent) => void;
-    'bomb_beginplant': (event: BombBeginPlantEvent) => void;
-    'bomb_planted': (event: BombPlantedEvent) => void;
-    'bomb_defused': (event: BombDefusedEvent) => void;
-    'bomb_exploded': (event: BombExplodedEvent) => void;
-    'bomb_dropped': (event: BombDroppedEvent) => void;
-    'bomb_pickup': (event: BombPickedUpEvent) => void;
-    'defuser_dropped': (event: DefuserDroppedEvent) => void;
-    'defuser_pickup': (event: DefuserPickupEvent) => void;
-    'bomb_begindefuse': (event: BeginDefuseEvent) => void;
-    'bomb_abortdefuse': (event: AbortDefuseEvent) => void;
-    'hostage_follows': (event: HostageBeginsFollowingEvent) => void;
-    'hostage_hurt': (event: HostageHurtEvent) => void;
-    'hostage_rescued': (event: HostageRescuedEvent) => void;
-    'hostage_stops_following': (event: HostageStopsFollowingEvent) => void;
-    'weapon_fire': (event: WeaponFireEvent) => void;
-    'weapon_reload': (event: WeaponReloadEvent) => void;
-    'weapon_zoom': (event: WeaponZoomEvent) => void;
-    'player_blind': (event: PlayerBlindEvent) => void;
-    'client_disconnected': (event: ClientDisconnectedEvent) =>void;
+    item_pickup: (event: ItemPickupEvent) => void;
+    client_put_in_server: (event: ClientPutInServerEvent) => void;
+    client_connected: (event: ClientConnectedEvent) => void;
+    client_connect: (event: ClientConnectEvent) => void;
+    player_activate: (event: PlayerActivateEvent) => void;
+    player_spawn: (event: PlayerSpawnEvent) => void;
+    player_team: (event: PlayerChangeTeamEvent) => void;
+    player_hurt: (event: PlayerHurtEvent) => void;
+    map_shutdown: (event: MapShutdownEvent) => void;
+    player_chat: (event: PlayerChatEvent) => void;
+    game_message: (event: GameMessageEvent) => void;
+    map_loaded: (event: MapLoadedEvent) => void;
+    round_end: (event: RoundEndEvent) => void;
+    round_start: (event: RoundStartEvent) => void;
+    round_freeze_end: (event: FreezeTimeEndedEvent) => void;
+    player_death: (event: PlayerDeathEvent) => void;
+    player_footstep: (event: PlayerFootstepEvent) => void;
+    break_prop: (event: BreakPropEvent) => void;
+    item_purchase: (event: ItemPurchaseEvent) => void;
+    bomb_beginplant: (event: BombBeginPlantEvent) => void;
+    bomb_planted: (event: BombPlantedEvent) => void;
+    bomb_defused: (event: BombDefusedEvent) => void;
+    bomb_exploded: (event: BombExplodedEvent) => void;
+    bomb_dropped: (event: BombDroppedEvent) => void;
+    bomb_pickup: (event: BombPickedUpEvent) => void;
+    defuser_dropped: (event: DefuserDroppedEvent) => void;
+    defuser_pickup: (event: DefuserPickupEvent) => void;
+    bomb_begindefuse: (event: BeginDefuseEvent) => void;
+    bomb_abortdefuse: (event: AbortDefuseEvent) => void;
+    hostage_follows: (event: HostageBeginsFollowingEvent) => void;
+    hostage_hurt: (event: HostageHurtEvent) => void;
+    hostage_rescued: (event: HostageRescuedEvent) => void;
+    hostage_stops_following: (event: HostageStopsFollowingEvent) => void;
+    weapon_fire: (event: WeaponFireEvent) => void;
+    weapon_reload: (event: WeaponReloadEvent) => void;
+    weapon_zoom: (event: WeaponZoomEvent) => void;
+    player_blind: (event: PlayerBlindEvent) => void;
+    client_disconnected: (event: ClientDisconnectedEvent) =>void;
 }
 
 // actual source engine callback
 export const _onEventCall = (data: any) => {
-    if (!data.name) {
+    if (!data._name) {
         return "undefined_event";
-    } 
+    }
     let prevent = "event_no_prevent";
-    if (events.has(data.name)) {
+    if (events.has(data._name)) {
         // temporary hack (cuz classes works weird)
-        if (data.player) data.player = new Player(data.player.name, data.player.steamId, data.player.slot)
-        if (data.attacker) data.attacker = new Player(data.attacker.name, data.attacker.steamId, data.attacker.slot)
-        if (data.assister) data.assister = new Player(data.assister.name, data.assister.steamId, data.assister.slot)
-        events.get(data.name).forEach((listener: Function) => {
-            if (typeof listener !== 'function') return
-            if (listener(data) === PREVENT_EVENT) prevent = PREVENT_EVENT
+        try {
+            // @ts-expect-error
+            data = Object.assign(new constructors[data._name], data);
+            if (data._player) data._player = new Player(data._player._name, data._player._steamId, data._player._slot)
+            if (data._attacker) data._attacker = new Player(data._attacker._name, data._attacker._steamId, data._attacker._slot)
+            if (data._assister) data._assister = new Player(data._assister._name, data._assister._steamId, data._assister._slot)
+        } catch (e: any) {
+            console.error(e)
+        }
+        events.get(data._name).forEach((listener: Function) => {
+            if (typeof listener === 'function') {
+                try {
+                    if (listener(data) === PREVENT_EVENT) {
+                        prevent = PREVENT_EVENT
+                    }
+                } catch (e: any) {
+                    console.error(e)
+                }
+            }
         });
     }
     return prevent;
@@ -64,7 +77,6 @@ export const _onEventCall = (data: any) => {
 export function onEvent<T extends keyof IEvents>(name: T, callback: IEvents[T]) {
     if (typeof callback !== 'function') throw 'Callback must be a function.'
 
-    console.log(`[NodeJS] Registered event: ${name}`)
     if (events.has(name) && Array.isArray(events.get(name))) {
         return events.get(name).push(callback)
     }
@@ -127,19 +139,19 @@ export class ItemPickupEvent {
         // this.getName = () => {
         //     return this.name
         // }
-    
+
         // this.getItem = () => {
         //     return this.item
         // }
-    
+
         // this.getPlayer = () => {
         //     return this.player
         // }
-    
+
         // this.isSilent = () => {
         //     return this.isSilent
         // }
-    
+
         // this.getDefIndex = () => {
         //     return this.defindex
         // }
@@ -179,7 +191,7 @@ export class ClientPutInServerEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -197,16 +209,16 @@ export class ClientDisconnectedEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class ClientConnectEvent {
     private readonly _name: string;
-    private readonly _steamId: string;
+    private readonly _steamId: number;
 
-    constructor(name: string, steamId: string) {
+    constructor(name: string, steamId: number) {
         this._name = name
         this._steamId = steamId
     }
@@ -219,20 +231,18 @@ export class ClientConnectEvent {
         return this._steamId
     }
 
-    get steamId64() {
-        const steamid = this.steamId;
-        if (!steamid) return // bots
-        return (BigInt(steamid) + STEAM_USER_HIGH_VALUE).toString();
+    get steamId64(): string {
+        return (BigInt(this.steamId) + STEAM_USER_HIGH_VALUE).toString();
     }
 }
 
 export class ClientConnectedEvent {
     private readonly _name: string;
-    private readonly _steamId?: string;
+    private readonly _steamId?: number;
     private readonly _ip: string;
     private readonly _bot: boolean;
 
-    constructor(name: string, steamId: string, ip: string, isBot: boolean) {
+    constructor(name: string, steamId: number, ip: string, isBot: boolean) {
         this._name = name
         this._steamId = steamId
         this._ip = ip
@@ -248,12 +258,12 @@ export class ClientConnectedEvent {
     }
 
     get steamId() {
-        return this._steamId ?? undefined
+        return this._steamId ?? null
     }
 
     get steamId64() {
         const steamid = this.steamId;
-        if (!steamid) return // bots
+        if (!steamid) return null// bots
         return (BigInt(steamid) + STEAM_USER_HIGH_VALUE).toString();
     }
 
@@ -275,7 +285,7 @@ export class PlayerActivateEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -293,20 +303,20 @@ export class PlayerSpawnEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class PlayerChangeTeamEvent {
     private readonly _name: string;
-    private readonly _team: string;
-    private readonly _oldTeam: string;
+    private readonly _team: number;
+    private readonly _oldTeam: number;
     private readonly _disconnect: boolean;
     private readonly _silent: boolean;
     private readonly _player: Player;
 
-    constructor(name: string, team: string, oldTeam: string, disconnect: boolean, silent: boolean, player: Player) {
+    constructor(name: string, team: number, oldTeam: number, disconnect: boolean, silent: boolean, player: Player) {
         this._name = name
         this._team = team
         this._oldTeam = oldTeam
@@ -335,7 +345,7 @@ export class PlayerChangeTeamEvent {
         return this._silent
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -347,18 +357,18 @@ export class PlayerHurtEvent {
     private readonly _weapon: string;
     private readonly _damageHp: number;
     private readonly _damageArmor: number;
-    private readonly _hitGoup: number;
+    private readonly _hitGroup: number;
     private readonly _player: Player;
     private readonly _attacker: Player;
 
-    constructor(name: string, hp: number, armor: number, weapon: string, damageHp: number, damageArmor: number, hitGoup: number, player: Player, attacker: Player) {
+    constructor(name: string, hp: number, armor: number, weapon: string, damageHp: number, damageArmor: number, hitGroup: number, player: Player, attacker: Player) {
         this._name = name
         this._hp = hp
         this._armor = armor
         this._weapon = weapon
         this._damageHp = damageHp
         this._damageArmor = damageArmor
-        this._hitGoup = hitGoup
+        this._hitGroup = hitGroup
         this._player = player
         this._attacker = attacker
     }
@@ -386,8 +396,8 @@ export class PlayerHurtEvent {
         }
     }
 
-    get hitGoup() {
-        return this._hitGoup
+    get hitGroup() {
+        return this._hitGroup
     }
 
     get player() {
@@ -436,7 +446,7 @@ export class PlayerChatEvent {
         return this._teamOnly
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -491,14 +501,14 @@ export class MapLoadedEvent {
 
 export class RoundEndEvent {
     private readonly _name: string;
-    private readonly _winner: string;
-    private readonly _reason: string;
+    private readonly _winner: number;
+    private readonly _reason: number;
     private readonly _message: string;
-    private readonly _legacy: boolean;
+    private readonly _legacy: number;
     private readonly _playerCount: number;
-    private readonly _noMusic: boolean;
+    private readonly _noMusic: number;
 
-    constructor(name: string, winner: string, reason: string, message: string, legacy: boolean, playerCount: number, noMusic: boolean) {
+    constructor(name: string, winner: number, reason: number, message: string, legacy: number, playerCount: number, noMusic: number) {
         this._name = name
         this._winner = winner
         this._reason = reason
@@ -583,14 +593,14 @@ export class PlayerDeathEvent {
     private readonly _name: string;
     private readonly _assistFlash: boolean;
     private readonly _weapon: string;
-    private readonly _weaponItemId: number;
-    private readonly _weaponFauxItemId: number;
-    private readonly _weaponOriginalOwnerSteamId: number;
+    private readonly _weaponItemId: string;
+    private readonly _weaponFauxItemId: string;
+    private readonly _weaponOriginalOwnerSteamId: string;
     private readonly _headshot: boolean;
-    private readonly _dominated: boolean;
-    private readonly _revenge: boolean;
-    private readonly _wipe: boolean;
-    private readonly _penetrated: boolean;
+    private readonly _dominated: number;
+    private readonly _revenge: number;
+    private readonly _wipe: number;
+    private readonly _penetrated: number;
     private readonly _noReplay: boolean;
     private readonly _noScope: boolean;
     private readonly _throughSmoke: boolean;
@@ -600,7 +610,7 @@ export class PlayerDeathEvent {
     private readonly _attacker: Player;
     private readonly _assister: Player;
 
-    constructor(name: string, assistFlash: boolean, weapon: string, weaponItemId: number, weaponFauxItemId: number, weaponOriginalOwnerSteamId: number, headshot: boolean, dominated: boolean, revenge: boolean, wipe: boolean, penetrated: boolean, noReplay: boolean, noScope: boolean, throughSmoke: boolean, attackerBlind: boolean, distance: number, player: Player, attacker: Player, assister: Player) {
+    constructor(name: string, assistFlash: boolean, weapon: string, weaponItemId: string, weaponFauxItemId: string, weaponOriginalOwnerSteamId: string, headshot: boolean, dominated: number, revenge: number, wipe: number, penetrated: number, noReplay: boolean, noScope: boolean, throughSmoke: boolean, attackerBlind: boolean, distance: number, player: Player, attacker: Player, assister: Player) {
         this._name = name
         this._assistFlash = assistFlash
         this._weapon = weapon
@@ -641,7 +651,7 @@ export class PlayerDeathEvent {
             fauxId: this._weaponFauxItemId,
             originalOwnerSteamId: this._weaponOriginalOwnerSteamId,
             originalOwnerSteamId64: function() {
-                if (this.originalOwnerSteamId === 0) return this.originalOwnerSteamId;
+                if (!this.originalOwnerSteamId) return this.originalOwnerSteamId;
                 return (BigInt(this.originalOwnerSteamId) + STEAM_USER_HIGH_VALUE).toString();
             }
         }
@@ -713,37 +723,7 @@ export class PlayerFootstepEvent {
         return this._name
     }
 
-    get handler() {
-        return this._player
-    }
-}
-
-export class BreakableBrokeEvent {
-    private readonly _name: string;
-    private readonly _entityId: number;
-    private readonly _material: string;
-    private readonly _player: Player;
-
-    constructor(name: string, entityId: number, material: string, player: Player) {
-        this._name = name
-        this._entityId = entityId
-        this._material = material
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get entityId() {
-        return this._entityId
-    }
-
-    get material() {
-        return this._material
-    }
-
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -767,19 +747,19 @@ export class BreakPropEvent {
         return this._entityId
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class ItemPurchaseEvent {
     private readonly _name: string;
-    private readonly _team: string;
-    private readonly _loadout: string;
+    private readonly _team: number;
+    private readonly _loadout: number;
     private readonly _weapon: string;
     private readonly _player: Player;
 
-    constructor(name: string, team: string, loadout: string, weapon: string, player: Player) {
+    constructor(name: string, team: number, loadout: number, weapon: string, player: Player) {
         this._name = name
         this._team = team
         this._loadout = loadout
@@ -803,17 +783,17 @@ export class ItemPurchaseEvent {
         return this._weapon
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class BombBeginPlantEvent {
     private readonly _name: string;
-    private readonly _site: string;
+    private readonly _site: number;
     private readonly _player: Player;
 
-    constructor(name: string, site: string, player: Player) {
+    constructor(name: string, site: number, player: Player) {
         this._name = name
         this._site = site
         this._player = player
@@ -827,17 +807,17 @@ export class BombBeginPlantEvent {
         return this._site
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class BombPlantedEvent {
     private readonly _name: string;
-    private readonly _site: string;
+    private readonly _site: number;
     private readonly _player: Player;
 
-    constructor(name: string, site: string, player: Player) {
+    constructor(name: string, site: number, player: Player) {
         this._name = name
         this._site = site
         this._player = player
@@ -851,17 +831,17 @@ export class BombPlantedEvent {
         return this._site
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class BombDefusedEvent {
     private readonly _name: string;
-    private readonly _site: string;
+    private readonly _site: number;
     private readonly _player: Player;
 
-    constructor(name: string, site: string, player: Player) {
+    constructor(name: string, site: number, player: Player) {
         this._name = name
         this._site = site
         this._player = player
@@ -875,17 +855,17 @@ export class BombDefusedEvent {
         return this._site
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class BombExplodedEvent {
     private readonly _name: string;
-    private readonly _site: string;
+    private readonly _site: number;
     private readonly _player: Player;
 
-    constructor(name: string, site: string, player: Player) {
+    constructor(name: string, site: number, player: Player) {
         this._name = name
         this._site = site
         this._player = player
@@ -899,7 +879,7 @@ export class BombExplodedEvent {
         return this._site
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -923,7 +903,7 @@ export class BombDroppedEvent {
         return this._entityId
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -941,7 +921,7 @@ export class BombPickedUpEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -983,7 +963,7 @@ export class DefuserPickupEvent {
         return this._entityId
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1003,11 +983,11 @@ export class BeginDefuseEvent {
         return this._name
     }
 
-    get withKit() {
+    get hasKit() {
         return this._hasKit
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1025,17 +1005,17 @@ export class AbortDefuseEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class HostageBeginsFollowingEvent {
     private readonly _name: string;
-    private readonly _hostage: string;
+    private readonly _hostage: number;
     private readonly _player: Player;
 
-    constructor(name: string, hostage: string, player: Player) {
+    constructor(name: string, hostage: number, player: Player) {
         this._name = name
         this._hostage = hostage
         this._player = player
@@ -1049,17 +1029,17 @@ export class HostageBeginsFollowingEvent {
         return this._hostage
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class HostageHurtEvent {
     private readonly _name: string;
-    private readonly _hostage: string;
+    private readonly _hostage: number;
     private readonly _player: Player;
 
-    constructor(name: string, hostage: string, player: Player) {
+    constructor(name: string, hostage: number, player: Player) {
         this._name = name
         this._hostage = hostage
         this._player = player
@@ -1073,18 +1053,18 @@ export class HostageHurtEvent {
         return this._hostage
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class HostageRescuedEvent {
     private readonly _name: string;
-    private readonly _hostage: string;
-    private readonly _site: string;
+    private readonly _hostage: number;
+    private readonly _site: number;
     private readonly _player: Player;
 
-    constructor(name: string, hostage: string, site: string, player: Player) {
+    constructor(name: string, hostage: number, site: number, player: Player) {
         this._name = name
         this._hostage = hostage
         this._site = site
@@ -1103,17 +1083,17 @@ export class HostageRescuedEvent {
         return this._site
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
 
 export class HostageStopsFollowingEvent {
     private readonly _name: string;
-    private readonly _hostage: string;
+    private readonly _hostage: number;
     private readonly _player: Player;
 
-    constructor(name: string, hostage: string, player: Player) {
+    constructor(name: string, hostage: number, player: Player) {
         this._name = name
         this._hostage = hostage
         this._player = player
@@ -1127,7 +1107,7 @@ export class HostageStopsFollowingEvent {
         return this._hostage
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1157,7 +1137,7 @@ export class WeaponFireEvent {
         return this._silenced
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1175,7 +1155,7 @@ export class WeaponReloadEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1193,7 +1173,7 @@ export class WeaponZoomEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1239,11 +1219,11 @@ export const _ItemPickupEvent = (name: string, item: string, silent: boolean, de
     return new ItemPickupEvent(name, item, silent, defindex, player)
 }
 
-export const _ClientConnectedEvent = (name: string, steamId: string, ip: string, isBot: boolean) => {
+export const _ClientConnectedEvent = (name: string, steamId: number, ip: string, isBot: boolean) => {
     return new ClientConnectedEvent(name, steamId, ip, isBot)
 }
 
-export const _ClientConnectEvent = (name: string, steamId: string) => {
+export const _ClientConnectEvent = (name: string, steamId: number) => {
     return new ClientConnectEvent(name, steamId)
 }
 
@@ -1263,7 +1243,7 @@ export const _PlayerSpawnEvent = (name: string, player: Player) => {
     return new PlayerSpawnEvent(name, player)
 }
 
-export const _PlayerChangeTeamEvent = (name: string, team: string, oldTeam: string, disconnect: boolean, silent: boolean, player: Player) => {
+export const _PlayerChangeTeamEvent = (name: string, team: number, oldTeam: number, disconnect: boolean, silent: boolean, player: Player) => {
     return new PlayerChangeTeamEvent(name, team, oldTeam, disconnect, silent, player)
 }
 
@@ -1287,7 +1267,7 @@ export const _MapLoadedEvent = (name: string, map: string, oldMap: string) => {
     return new MapLoadedEvent(name, map, oldMap)
 }
 
-export const _RoundEndEvent = (name: string, winner: string, reason: string, message: string, legacy: boolean, playerCount: number, noMusic: boolean) => {
+export const _RoundEndEvent = (name: string, winner: number, reason: number, message: string, legacy: number, playerCount: number, noMusic: number) => {
     return new RoundEndEvent(name, winner, reason, message, legacy, playerCount, noMusic)
 }
 
@@ -1299,7 +1279,7 @@ export const _FreezeTimeEndedEvent = (name: string) => {
     return new FreezeTimeEndedEvent(name)
 }
 
-export const _PlayerDeathEvent = (name: string, assistFlash: boolean, weapon: string, weaponItemId: number, weaponFauxItemId: number, weaponOriginalOwnerSteamId: number, headshot: boolean, dominated: boolean, revenge: boolean, wipe: boolean, penetrated: boolean, noReplay: boolean, noScope: boolean, throughSmoke: boolean, attackerBlind: boolean, distance: number, player: Player, attacker: Player, assister: Player) => {
+export const _PlayerDeathEvent = (name: string, assistFlash: boolean, weapon: string, weaponItemId: string, weaponFauxItemId: string, weaponOriginalOwnerSteamId: string, headshot: boolean, dominated: number, revenge: number, wipe: number, penetrated: number, noReplay: boolean, noScope: boolean, throughSmoke: boolean, attackerBlind: boolean, distance: number, player: Player, attacker: Player, assister: Player) => {
     return new PlayerDeathEvent(name, assistFlash, weapon, weaponItemId, weaponFauxItemId, weaponOriginalOwnerSteamId, headshot, dominated, revenge, wipe, penetrated, noReplay, noScope, throughSmoke, attackerBlind, distance, player, attacker, assister)
 }
 
@@ -1311,23 +1291,23 @@ export const _BreakPropEvent = (name: string, entityId: number, player: Player) 
     return new BreakPropEvent(name, entityId, player)
 }
 
-export const _ItemPurchaseEvent = (name: string, team: string, loadout: string, weapon: string, player: Player) => {
+export const _ItemPurchaseEvent = (name: string, team: number, loadout: number, weapon: string, player: Player) => {
     return new ItemPurchaseEvent(name, team, loadout, weapon, player)
 }
 
-export const _BombBeginPlantEvent = (name: string, site: string, player: Player) => {
+export const _BombBeginPlantEvent = (name: string, site: number, player: Player) => {
     return new BombBeginPlantEvent(name, site, player)
 }
 
-export const _BombPlantedEvent = (name: string, site: string, player: Player) => {
+export const _BombPlantedEvent = (name: string, site: number, player: Player) => {
     return new BombPlantedEvent(name, site, player)
 }
 
-export const _BombDefusedEvent = (name: string, site: string, player: Player) => {
+export const _BombDefusedEvent = (name: string, site: number, player: Player) => {
     return new BombDefusedEvent(name, site, player)
 }
 
-export const _BombExplodedEvent = (name: string, site: string, player: Player) => {
+export const _BombExplodedEvent = (name: string, site: number, player: Player) => {
     return new BombExplodedEvent(name, site, player)
 }
 
@@ -1355,19 +1335,19 @@ export const _AbortDefuseEvent = (name: string, player: Player) => {
     return new AbortDefuseEvent(name, player)
 }
 
-export const _HostageBeginsFollowingEvent = (name: string, hostage: string, player: Player) => {
+export const _HostageBeginsFollowingEvent = (name: string, hostage: number, player: Player) => {
     return new HostageBeginsFollowingEvent(name, hostage, player)
 }
 
-export const _HostageHurtEvent = (name: string, hostage: string, player: Player) => {
+export const _HostageHurtEvent = (name: string, hostage: number, player: Player) => {
     return new HostageHurtEvent(name, hostage, player)
 }
 
-export const _HostageRescuedEvent = (name: string, hostage: string, site: string, player: Player) => {
+export const _HostageRescuedEvent = (name: string, hostage: number, site: number, player: Player) => {
     return new HostageRescuedEvent(name, hostage, site, player)
 }
 
-export const _HostageStopsFollowingEvent = (name: string, hostage: string, player: Player) => {
+export const _HostageStopsFollowingEvent = (name: string, hostage: number, player: Player) => {
     return new HostageStopsFollowingEvent(name, hostage, player)
 }
 
@@ -1387,6 +1367,49 @@ export const _PlayerBlindEvent = (name: string, entityId: number, blindDuration:
     return new PlayerBlindEvent(name, entityId, blindDuration, player, attacker)
 }
 
+// sadly we need this until metacall start working with javascript classes
+// todo: remove this after metacall update
+const constructors = {
+    item_pickup: ItemPickupEvent,
+    client_put_in_server: ClientPutInServerEvent,
+    client_connected: ClientConnectedEvent,
+    client_connect: ClientConnectEvent,
+    player_activate: PlayerActivateEvent,
+    player_spawn: PlayerSpawnEvent,
+    player_team: PlayerChangeTeamEvent,
+    player_hurt: PlayerHurtEvent,
+    map_shutdown: MapShutdownEvent,
+    player_chat: PlayerChatEvent,
+    game_message: GameMessageEvent,
+    map_loaded: MapLoadedEvent,
+    round_end: RoundEndEvent,
+    round_start: RoundStartEvent,
+    round_freeze_end: FreezeTimeEndedEvent,
+    player_death: PlayerDeathEvent,
+    player_footstep: PlayerFootstepEvent,
+    break_prop: BreakPropEvent,
+    item_purchase: ItemPurchaseEvent,
+    bomb_beginplant: BombBeginPlantEvent,
+    bomb_planted: BombPlantedEvent,
+    bomb_defused: BombDefusedEvent,
+    bomb_exploded: BombExplodedEvent,
+    bomb_dropped: BombDroppedEvent,
+    bomb_pickup: BombPickedUpEvent,
+    defuser_dropped: DefuserDroppedEvent,
+    defuser_pickup: DefuserPickupEvent,
+    bomb_begindefuse: BeginDefuseEvent,
+    bomb_abortdefuse: AbortDefuseEvent,
+    hostage_follows: HostageBeginsFollowingEvent,
+    hostage_hurt: HostageHurtEvent,
+    hostage_rescued: HostageRescuedEvent,
+    hostage_stops_following: HostageStopsFollowingEvent,
+    weapon_fire: WeaponFireEvent,
+    weapon_reload: WeaponReloadEvent,
+    weapon_zoom: WeaponZoomEvent,
+    player_blind: PlayerBlindEvent,
+    client_disconnected: ClientDisconnectedEvent
+};
+
 export default {
     _onEventCall,
 
@@ -1401,7 +1424,7 @@ export default {
     _ClientConnectedEvent,
     ClientConnectedEvent,
     onClientConnected,
-    
+
     _ClientConnectEvent,
     ClientConnectEvent,
     onClientConnect,
@@ -1421,11 +1444,11 @@ export default {
     _PlayerHurtEvent,
     PlayerHurtEvent,
     onPlayerHurt,
-    
+
     _MapShutdownEvent,
     MapShutdownEvent,
     onMapShutdown,
-    
+
     _PlayerChatEvent,
     PlayerChatEvent,
     onPlayerChat,
