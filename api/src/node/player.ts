@@ -35,6 +35,10 @@ export class Player {
         return this._steamId === 0 ? undefined : this._steamId;
     }
 
+    get isBot() {
+        return !this.steamId;
+    }
+
     get steamId64() {
         if (!this.steamId) return 0; // bots
         return (BigInt(this.steamId) + STEAM_USER_HIGH_VALUE).toString();

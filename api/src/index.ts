@@ -6,6 +6,7 @@ import { Color } from './node/color'
 import constants from './node/constants'
 import './node/exceptions'
 import { Player } from './node/player'
+import players from './node/players'
 
 declare global {
     namespace NodeJS {
@@ -20,7 +21,8 @@ export {
     chat,
     Color,
     constants,
-    Player
+    Player,
+    players
 }
 
 export default {
@@ -28,5 +30,6 @@ export default {
     chat,
     Color,
     constants,
-    Player
+    Player,
+    players
 }
