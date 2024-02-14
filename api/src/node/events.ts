@@ -3,67 +3,77 @@ import { PREVENT_EVENT, STEAM_USER_HIGH_VALUE } from "./constants"
 const events = new Map();
 
 type IEvents = {
-    'item_pickup': (event: ItemPickupEvent) => void;
-    'client_put_in_server': (event: ClientPutInServerEvent) => void;
-    'client_connected': (event: ClientConnectedEvent) => void;
-    'client_connect': (event: ClientConnectEvent) => void;
-    'player_activate': (event: PlayerActivateEvent) => void;
-    'player_spawn': (event: PlayerSpawnEvent) => void;
-    'player_team': (event: PlayerChangeTeamEvent) => void;
-    'player_hurt': (event: PlayerHurtEvent) => void;
-    'map_shutdown': (event: MapShutdownEvent) => void;
-    'player_chat': (event: PlayerChatEvent) => void;
-    'game_message': (event: GameMessageEvent) => void;
-    'map_loaded': (event: MapLoadedEvent) => void;
-    'round_end': (event: RoundEndEvent) => void;
-    'round_start': (event: RoundStartEvent) => void;
-    'round_freeze_end': (event: FreezeTimeEndedEvent) => void;
-    'player_death': (event: PlayerDeathEvent) => void;
-    'player_footstep': (event: PlayerFootstepEvent) => void;
-    'break_prop': (event: BreakPropEvent) => void;
-    'item_purchase': (event: ItemPurchaseEvent) => void;
-    'bomb_beginplant': (event: BombBeginPlantEvent) => void;
-    'bomb_planted': (event: BombPlantedEvent) => void;
-    'bomb_defused': (event: BombDefusedEvent) => void;
-    'bomb_exploded': (event: BombExplodedEvent) => void;
-    'bomb_dropped': (event: BombDroppedEvent) => void;
-    'bomb_pickup': (event: BombPickedUpEvent) => void;
-    'defuser_dropped': (event: DefuserDroppedEvent) => void;
-    'defuser_pickup': (event: DefuserPickupEvent) => void;
-    'bomb_begindefuse': (event: BeginDefuseEvent) => void;
-    'bomb_abortdefuse': (event: AbortDefuseEvent) => void;
-    'hostage_follows': (event: HostageBeginsFollowingEvent) => void;
-    'hostage_hurt': (event: HostageHurtEvent) => void;
-    'hostage_rescued': (event: HostageRescuedEvent) => void;
-    'hostage_stops_following': (event: HostageStopsFollowingEvent) => void;
-    'weapon_fire': (event: WeaponFireEvent) => void;
-    'weapon_reload': (event: WeaponReloadEvent) => void;
-    'weapon_zoom': (event: WeaponZoomEvent) => void;
-    'player_blind': (event: PlayerBlindEvent) => void;
-    'client_disconnected': (event: ClientDisconnectedEvent) =>void;
+    item_pickup: (event: ItemPickupEvent) => void;
+    client_put_in_server: (event: ClientPutInServerEvent) => void;
+    client_connected: (event: ClientConnectedEvent) => void;
+    client_connect: (event: ClientConnectEvent) => void;
+    player_activate: (event: PlayerActivateEvent) => void;
+    player_spawn: (event: PlayerSpawnEvent) => void;
+    player_team: (event: PlayerChangeTeamEvent) => void;
+    player_hurt: (event: PlayerHurtEvent) => void;
+    map_shutdown: (event: MapShutdownEvent) => void;
+    player_chat: (event: PlayerChatEvent) => void;
+    game_message: (event: GameMessageEvent) => void;
+    map_loaded: (event: MapLoadedEvent) => void;
+    round_end: (event: RoundEndEvent) => void;
+    round_start: (event: RoundStartEvent) => void;
+    round_freeze_end: (event: FreezeTimeEndedEvent) => void;
+    player_death: (event: PlayerDeathEvent) => void;
+    player_footstep: (event: PlayerFootstepEvent) => void;
+    break_prop: (event: BreakPropEvent) => void;
+    item_purchase: (event: ItemPurchaseEvent) => void;
+    bomb_beginplant: (event: BombBeginPlantEvent) => void;
+    bomb_planted: (event: BombPlantedEvent) => void;
+    bomb_defused: (event: BombDefusedEvent) => void;
+    bomb_exploded: (event: BombExplodedEvent) => void;
+    bomb_dropped: (event: BombDroppedEvent) => void;
+    bomb_pickup: (event: BombPickedUpEvent) => void;
+    defuser_dropped: (event: DefuserDroppedEvent) => void;
+    defuser_pickup: (event: DefuserPickupEvent) => void;
+    bomb_begindefuse: (event: BeginDefuseEvent) => void;
+    bomb_abortdefuse: (event: AbortDefuseEvent) => void;
+    hostage_follows: (event: HostageBeginsFollowingEvent) => void;
+    hostage_hurt: (event: HostageHurtEvent) => void;
+    hostage_rescued: (event: HostageRescuedEvent) => void;
+    hostage_stops_following: (event: HostageStopsFollowingEvent) => void;
+    weapon_fire: (event: WeaponFireEvent) => void;
+    weapon_reload: (event: WeaponReloadEvent) => void;
+    weapon_zoom: (event: WeaponZoomEvent) => void;
+    player_blind: (event: PlayerBlindEvent) => void;
+    client_disconnected: (event: ClientDisconnectedEvent) =>void;
 }
 
 // actual source engine callback
 export const _onEventCall = (data: any) => {
-    if (!data.name) {
+    if (!data._name) {
         return "undefined_event";
-    } 
+    }
     let prevent = "event_no_prevent";
-    if (events.has(data.name)) {
+    if (events.has(data._name)) {
         // temporary hack (cuz classes works weird)
-        if (data.player) {
-            data.player = new Player(data.player.name, data.player.steamId, data.player.slot)
+        try {
+            // @ts-ignore
+            data = Object.assign(new constructors[data._name], data);
+            if (data._player) {
+                data._player = new Player(data._player._name, data._player._steamId, data._player._slot)
+            }
+            if (data._attacker) {
+                data._attacker = new Player(data._attacker._name, data._attacker._steamId, data._attacker._slot)
+            }
+            if (data._assister) {
+                data._assister = new Player(data._assister._name, data._assister._steamId, data._assister._slot)
+            }
+        } catch (e) {
+            console.error(e)
         }
-        if (data.attacker) {
-            data.attacker = new Player(data.attacker.name, data.attacker.steamId, data.attacker.slot)
-        }
-        if (data.assister) {
-            data.assister = new Player(data.assister.name, data.assister.steamId, data.assister.slot)
-        }
-        events.get(data.name).forEach((listener: Function) => {
+        events.get(data._name).forEach((listener: Function) => {
             if (typeof listener === 'function') {
-                if (listener(data) === PREVENT_EVENT) {
-                    prevent = PREVENT_EVENT
+                try {
+                    if (listener(data) === PREVENT_EVENT) {
+                        prevent = PREVENT_EVENT
+                    }
+                } catch (e) {
+                    console.error(e)
                 }
             }
         });
@@ -73,7 +83,6 @@ export const _onEventCall = (data: any) => {
 export function onEvent<T extends keyof IEvents>(name: T, callback: IEvents[T]) {
     if (typeof callback !== 'function') throw 'Callback must be a function.'
 
-    console.log(`[NodeJS] Registered event: ${name}`)
     if (events.has(name) && Array.isArray(events.get(name))) {
         return events.get(name).push(callback)
     }
@@ -136,19 +145,19 @@ export class ItemPickupEvent {
         // this.getName = () => {
         //     return this.name
         // }
-    
+
         // this.getItem = () => {
         //     return this.item
         // }
-    
+
         // this.getPlayer = () => {
         //     return this.player
         // }
-    
+
         // this.isSilent = () => {
         //     return this.isSilent
         // }
-    
+
         // this.getDefIndex = () => {
         //     return this.defindex
         // }
@@ -188,7 +197,7 @@ export class ClientPutInServerEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -206,7 +215,7 @@ export class ClientDisconnectedEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -280,7 +289,7 @@ export class PlayerActivateEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -298,7 +307,7 @@ export class PlayerSpawnEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -340,7 +349,7 @@ export class PlayerChangeTeamEvent {
         return this._silent
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -441,7 +450,7 @@ export class PlayerChatEvent {
         return this._teamOnly
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -718,7 +727,7 @@ export class PlayerFootstepEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -748,7 +757,7 @@ export class BreakableBrokeEvent {
         return this._material
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -772,7 +781,7 @@ export class BreakPropEvent {
         return this._entityId
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -808,7 +817,7 @@ export class ItemPurchaseEvent {
         return this._weapon
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -832,7 +841,7 @@ export class BombBeginPlantEvent {
         return this._site
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -856,7 +865,7 @@ export class BombPlantedEvent {
         return this._site
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -880,7 +889,7 @@ export class BombDefusedEvent {
         return this._site
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -904,7 +913,7 @@ export class BombExplodedEvent {
         return this._site
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -928,7 +937,7 @@ export class BombDroppedEvent {
         return this._entityId
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -946,7 +955,7 @@ export class BombPickedUpEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -988,7 +997,7 @@ export class DefuserPickupEvent {
         return this._entityId
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1012,7 +1021,7 @@ export class BeginDefuseEvent {
         return this._hasKit
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1030,7 +1039,7 @@ export class AbortDefuseEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1054,7 +1063,7 @@ export class HostageBeginsFollowingEvent {
         return this._hostage
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1078,7 +1087,7 @@ export class HostageHurtEvent {
         return this._hostage
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1108,7 +1117,7 @@ export class HostageRescuedEvent {
         return this._site
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1132,7 +1141,7 @@ export class HostageStopsFollowingEvent {
         return this._hostage
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1162,7 +1171,7 @@ export class WeaponFireEvent {
         return this._silenced
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1180,7 +1189,7 @@ export class WeaponReloadEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1198,7 +1207,7 @@ export class WeaponZoomEvent {
         return this._name
     }
 
-    get handler() {
+    get player() {
         return this._player
     }
 }
@@ -1392,6 +1401,49 @@ export const _PlayerBlindEvent = (name: string, entityId: number, blindDuration:
     return new PlayerBlindEvent(name, entityId, blindDuration, player, attacker)
 }
 
+// sadly we need this until metacall start working with javascript classes
+// todo: remove this after metacall update
+const constructors = {
+    item_pickup: ItemPickupEvent,
+    client_put_in_server: ClientPutInServerEvent,
+    client_connected: ClientConnectedEvent,
+    client_connect: ClientConnectEvent,
+    player_activate: PlayerActivateEvent,
+    player_spawn: PlayerSpawnEvent,
+    player_team: PlayerChangeTeamEvent,
+    player_hurt: PlayerHurtEvent,
+    map_shutdown: MapShutdownEvent,
+    player_chat: PlayerChatEvent,
+    game_message: GameMessageEvent,
+    map_loaded: MapLoadedEvent,
+    round_end: RoundEndEvent,
+    round_start: RoundStartEvent,
+    round_freeze_end: FreezeTimeEndedEvent,
+    player_death: PlayerDeathEvent,
+    player_footstep: PlayerFootstepEvent,
+    break_prop: BreakPropEvent,
+    item_purchase: ItemPurchaseEvent,
+    bomb_beginplant: BombBeginPlantEvent,
+    bomb_planted: BombPlantedEvent,
+    bomb_defused: BombDefusedEvent,
+    bomb_exploded: BombExplodedEvent,
+    bomb_dropped: BombDroppedEvent,
+    bomb_pickup: BombPickedUpEvent,
+    defuser_dropped: DefuserDroppedEvent,
+    defuser_pickup: DefuserPickupEvent,
+    bomb_begindefuse: BeginDefuseEvent,
+    bomb_abortdefuse: AbortDefuseEvent,
+    hostage_follows: HostageBeginsFollowingEvent,
+    hostage_hurt: HostageHurtEvent,
+    hostage_rescued: HostageRescuedEvent,
+    hostage_stops_following: HostageStopsFollowingEvent,
+    weapon_fire: WeaponFireEvent,
+    weapon_reload: WeaponReloadEvent,
+    weapon_zoom: WeaponZoomEvent,
+    player_blind: PlayerBlindEvent,
+    client_disconnected: ClientDisconnectedEvent
+};
+
 export default {
     _onEventCall,
 
@@ -1406,7 +1458,7 @@ export default {
     _ClientConnectedEvent,
     ClientConnectedEvent,
     onClientConnected,
-    
+
     _ClientConnectEvent,
     ClientConnectEvent,
     onClientConnect,
@@ -1426,11 +1478,11 @@ export default {
     _PlayerHurtEvent,
     PlayerHurtEvent,
     onPlayerHurt,
-    
+
     _MapShutdownEvent,
     MapShutdownEvent,
     onMapShutdown,
-    
+
     _PlayerChatEvent,
     PlayerChatEvent,
     onPlayerChat,

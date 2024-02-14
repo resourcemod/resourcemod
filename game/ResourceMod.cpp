@@ -135,7 +135,7 @@ const char *ResourceMod::GetLicense() {
 }
 
 const char *ResourceMod::GetVersion() {
-    return "1.0.18-beta";
+    return "1.0.19-beta";
 }
 
 const char *ResourceMod::GetDate() {
