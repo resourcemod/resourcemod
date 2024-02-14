@@ -135,7 +135,11 @@ const char *ResourceMod::GetLicense() {
 }
 
 const char *ResourceMod::GetVersion() {
+<<<<<<< Updated upstream
     return "1.0.17-beta";
+=======
+    return "1.0.22-beta";
+>>>>>>> Stashed changes
 }
 
 const char *ResourceMod::GetDate() {

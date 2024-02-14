@@ -1,6 +1,10 @@
 {
   "name": "resourcemod",
+<<<<<<< Updated upstream
   "version": "1.0.17",
+=======
+  "version": "1.0.22",
+>>>>>>> Stashed changes
   "description": "Create CS2 Content with NodeJS runtime",
   "repository": {
     "type": "git",
