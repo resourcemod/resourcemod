@@ -1,14 +1,15 @@
 // @ts-ignore
 import { metacall } from "metacall"
 import { sayToSlot } from "./chat"
-import { GAME_MESSAGE_TARGET, STEAM_USER_HIGH_VALUE } from "./constants"
+import { STEAM_USER_HIGH_VALUE, GAME_MESSAGE_TARGET } from "./constants"
+import { Color } from "./color";
 
 export class Player {
     private readonly _name: string;
-    private readonly _steamId: string;
+    private readonly _steamId: number;
     private readonly _slot: number;
 
-    constructor(name: string, steamId: string, slot: number) {
+    constructor(name: string, steamId: number, slot: number) {
         this._name = name;
         this._steamId = steamId;
         this._slot = slot;
@@ -31,11 +32,11 @@ export class Player {
     }
 
     get steamId() {
-        return this._steamId === "0" ? undefined : this._steamId;
+        return this._steamId === 0 ? undefined : this._steamId;
     }
 
     get steamId64() {
-        if (!this.steamId) return; // bots
+        if (!this.steamId) return 0; // bots
         return (BigInt(this.steamId) + STEAM_USER_HIGH_VALUE).toString();
     }
 
@@ -99,7 +100,7 @@ export class Player {
         metacall('_PlayerSetModel', this._slot, path);
     }
 
-    setColor(color: string) {
+    setColor(color: Color) {
         metacall('_PlayerSetColor', this._slot, color);
     }
 
@@ -112,7 +113,7 @@ export class Player {
     }
 }
 
-export const _Player = (name: string, steamId: string, slot: number) => {
+export const _Player = (name: string, steamId: number, slot: number) => {
     return new Player(name, steamId, slot)
 }
 

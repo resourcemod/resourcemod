@@ -92,14 +92,14 @@ void Engine::InitMetacall() {
     // Array of scripts to be loaded by MetaCall
     const char *js_scripts[] =
             {
-                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/stdout.js",
-                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/exceptions.js",
-                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/constants.js",
-                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/player.js",
-                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/events.js",
-                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/chat.js",
-                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/precache.js",
-                    "../../csgo/addons/resourcemod/node_modules/resourcemod/node/entrypoint.js"
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/dist/node/stdout.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/dist/node/exceptions.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/dist/node/constants.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/dist/node/player.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/dist/node/events.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/dist/node/chat.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/dist/node/precache.js",
+                    "../../csgo/addons/resourcemod/node_modules/resourcemod/dist/node/entrypoint.js"
             };
 
     int s = metacall_load_from_file("node", js_scripts, sizeof(js_scripts) / sizeof(js_scripts[0]), NULL);
