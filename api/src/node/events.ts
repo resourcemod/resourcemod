@@ -1,6 +1,5 @@
 import { Player } from './player';
-import { PREVENT_EVENT } from "./constants"
-import { STEAM_USER_HIGH_VALUE } from './consts'
+import { PREVENT_EVENT, STEAM_USER_HIGH_VALUE } from "./constants"
 const events = new Map();
 
 type IEvents = {

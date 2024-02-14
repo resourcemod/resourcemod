@@ -1,8 +1,7 @@
 // @ts-ignore
 import { metacall } from "metacall"
 import { sayToSlot } from "./chat"
-import { HUD_PRINT_CENTER } from "./constants"
-import { STEAM_USER_HIGH_VALUE } from './consts'
+import { HUD_PRINT_CENTER, STEAM_USER_HIGH_VALUE } from "./constants"
 
 export class Player {
     private readonly _name: string;
