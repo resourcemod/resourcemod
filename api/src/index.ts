@@ -13,13 +13,7 @@ declare global {
             _orig_write: NodeJS.WriteStream['write'];
         }
     }
-
-    // var metacall: Function;
 }
-
-// global.metacall = (name: string, ...args: any[]) => {
-//     // console.log(`[metacall] ${name}(${args.join(', ')})`)
-// }
 
 export {
     events,
