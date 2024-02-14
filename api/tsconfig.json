@@ -1,10 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": [
-      "ES6",
-      "ESNext"
-    ],
+    "target": "ES5",
     "module": "commonjs",
     "moduleResolution": "node",
     "baseUrl": "./",
@@ -40,7 +36,6 @@
   ],
   // "compileOnSave": true,
   "buildOnSave": false,
-  "lib": ["esnext"],
   "ts-node": {
     "esm": true
   }
