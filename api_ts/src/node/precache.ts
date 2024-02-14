@@ -1,8 +1,4 @@
-import fs from "fs"
-import path from "path"
-
-const mainPath = path.join(__dirname, '../../../resourcemod.config.js')
-const config = fs.existsSync(mainPath) ? require(mainPath) : {}
+const config = require('../../../resourcemod.config')
 
 export const _LoadPrecache = () => {
     return config.precache

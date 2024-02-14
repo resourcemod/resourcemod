@@ -1,5 +1,6 @@
 import events from './node/events'
 import './node/stdout'
+import './node/precache'
 import chat from './node/chat'
 import { Color } from './node/color'
 import constants from './node/constants'
