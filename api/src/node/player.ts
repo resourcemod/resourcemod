@@ -1,7 +1,7 @@
 // @ts-ignore
 import { metacall } from "metacall"
 import { sayToSlot } from "./chat"
-import { HUD_PRINT_CENTER, STEAM_USER_HIGH_VALUE } from "./constants"
+import { GAME_MESSAGE_TARGET, STEAM_USER_HIGH_VALUE } from "./constants"
 
 export class Player {
     private readonly _name: string;
@@ -92,7 +92,7 @@ export class Player {
     }
 
     hint(message: string) {
-        sayToSlot(this._slot, message, HUD_PRINT_CENTER);
+        sayToSlot(this._slot, message, GAME_MESSAGE_TARGET.HUD);
     }
 
     setModel(path: string) {
