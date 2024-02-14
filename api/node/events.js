@@ -1,6 +1,5 @@
 const { Player } = require('./player');
-const { PREVENT_EVENT } = require('./constants');
-const { STEAM_USER_HIGH_VALUE } = require('./consts');
+const { PREVENT_EVENT, STEAM_USER_HIGH_VALUE } = require('./constants');
 const events = new Map();
 
 // actual source engine callback

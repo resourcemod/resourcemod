@@ -1,12 +1,12 @@
-const { metacall } = require("metacall")
-const { sayToSlot } = require("./chat")
-const { HUD_PRINT_CENTER } = require("./constants")
-const { STEAM_USER_HIGH_VALUE } = require("./consts")
+const {metacall} = require("metacall")
+const {sayToSlot} = require("./chat")
+const {HUD_PRINT_CENTER, STEAM_USER_HIGH_VALUE} = require("./constants")
 
 class Player {
     name
     steamId
     slot
+    
     constructor(name, steamId, slot) {
         this.name = name
         this.steamId = steamId
