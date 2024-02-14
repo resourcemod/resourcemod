@@ -1,7 +1,0 @@
-{
-  "language_id": "ext",
-  "path": ".",
-  "scripts": [
-    "backtrace_plugin"
-  ]
-}
