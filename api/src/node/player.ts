@@ -1,7 +1,7 @@
 // @ts-ignore
 import { metacall } from "metacall"
 import { sayToSlot } from "./chat"
-import { STEAM_USER_HIGH_VALUE, GAME_MESSAGE_TARGET } from "./constants"
+import { STEAM_USER_HIGH_VALUE, GAME_MESSAGE_TARGET, PLAYER_TEAM } from "./constants"
 import { Color } from "./color";
 
 export class Player {
@@ -35,13 +35,13 @@ export class Player {
         return this._steamId === 0 ? undefined : this._steamId;
     }
 
-    get isBot() {
-        return !this.steamId;
-    }
-
     get steamId64() {
         if (!this.steamId) return 0; // bots
         return (BigInt(this.steamId) + STEAM_USER_HIGH_VALUE).toString();
+    }
+
+    get isBot() {
+        return !this.steamId;
     }
 
     get isAlive() {
@@ -88,7 +88,7 @@ export class Player {
         return metacall('_PlayerGetTeam', this._slot) as number;
     }
 
-    changeTeam(team: number, kill: boolean) {
+    changeTeam(team: PLAYER_TEAM, kill: boolean) {
         metacall('_PlayerChangeTeam', this._slot, team, kill);
     }
 

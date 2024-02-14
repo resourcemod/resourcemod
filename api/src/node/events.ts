@@ -136,25 +136,6 @@ export class ItemPickupEvent {
         this._player = player
         this._silent = silent
         this._defindex = defindex
-        // this.getName = () => {
-        //     return this.name
-        // }
-
-        // this.getItem = () => {
-        //     return this.item
-        // }
-
-        // this.getPlayer = () => {
-        //     return this.player
-        // }
-
-        // this.isSilent = () => {
-        //     return this.isSilent
-        // }
-
-        // this.getDefIndex = () => {
-        //     return this.defindex
-        // }
     }
 
     get name() {
