@@ -1,5 +1,5 @@
-import { Player } from './player';
-import { onEvent } from './events';
+import { Player } from '../player';
+import { onEvent } from '../events';
 
 const players = new Map<number, Player>();
 
@@ -17,20 +17,18 @@ onEvent('client_disconnected', (event) => {
     players.delete(event.player.slot);
 });
 
-export function getPlayer(slot: number) {
-    return players.get(slot);
+export class Players {
+    static getPlayer(slot: number) {
+        return players.get(slot);
+    }
+
+    static get allPlayers() {
+        return Array.from(players.values());
+    }
+
+    static get allHumanPlayers() {
+        return Array.from(players.values()).filter(player => !player.isBot);
+    }
 }
 
-export function getPlayers() {
-    return Array.from(players.values());
-}
-
-export function getHumanPlayers() {
-    return Array.from(players.values()).filter(player => !player.isBot);
-}
-
-export default {
-    getPlayer,
-    getPlayers,
-    getHumanPlayers
-}
+export default Players;

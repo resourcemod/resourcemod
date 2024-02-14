@@ -6,7 +6,7 @@ import { Color } from './node/color'
 import constants from './node/constants'
 import './node/exceptions'
 import { Player } from './node/player'
-import players from './node/players'
+import server from './node/server'
 
 declare global {
     namespace NodeJS {
@@ -22,7 +22,7 @@ export {
     Color,
     constants,
     Player,
-    players
+    server
 }
 
 export default {
@@ -31,5 +31,5 @@ export default {
     Color,
     constants,
     Player,
-    players
+    server
 }
