@@ -52,19 +52,12 @@ export const _onEventCall = (data: any) => {
     if (events.has(data._name)) {
         // temporary hack (cuz classes works weird)
         try {
-            // @ts-ignore
+            // @ts-expect-error
             data = Object.assign(new constructors[data._name], data);
-            if (data._player) {
-                data._player = new Player(data._player._name, data._player._steamId, data._player._slot)
-            }
-            if (data._attacker) {
-                data._attacker = new Player(data._attacker._name, data._attacker._steamId, data._attacker._slot)
-            }
-            if (data._assister) {
-                data._assister = new Player(data._assister._name, data._assister._steamId, data._assister._slot)
-            }
-        } catch (e) {
-            // @ts-ignore
+            if (data._player) data._player = new Player(data._player._name, data._player._steamId, data._player._slot)
+            if (data._attacker) data._attacker = new Player(data._attacker._name, data._attacker._steamId, data._attacker._slot)
+            if (data._assister) data._assister = new Player(data._assister._name, data._assister._steamId, data._assister._slot)
+        } catch (e: any) {
             console.error(e)
         }
         events.get(data._name).forEach((listener: Function) => {
@@ -73,8 +66,7 @@ export const _onEventCall = (data: any) => {
                     if (listener(data) === PREVENT_EVENT) {
                         prevent = PREVENT_EVENT
                     }
-                } catch (e) {
-                    // @ts-ignore
+                } catch (e: any) {
                     console.error(e)
                 }
             }
@@ -144,25 +136,6 @@ export class ItemPickupEvent {
         this._player = player
         this._silent = silent
         this._defindex = defindex
-        // this.getName = () => {
-        //     return this.name
-        // }
-
-        // this.getItem = () => {
-        //     return this.item
-        // }
-
-        // this.getPlayer = () => {
-        //     return this.player
-        // }
-
-        // this.isSilent = () => {
-        //     return this.isSilent
-        // }
-
-        // this.getDefIndex = () => {
-        //     return this.defindex
-        // }
     }
 
     get name() {
@@ -255,6 +228,10 @@ export class ClientConnectedEvent {
         this._steamId = steamId
         this._ip = ip
         this._bot = isBot
+    }
+
+    get name() {
+        return this._name
     }
 
     get isBot() {

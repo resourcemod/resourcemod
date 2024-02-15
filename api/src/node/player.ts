@@ -1,15 +1,15 @@
 // @ts-ignore
 import { metacall } from "metacall"
 import { sayToSlot } from "./chat"
-import { HUD_PRINT_CENTER, STEAM_USER_HIGH_VALUE } from "./constants"
-import { Color } from "resourcemod/src/node/color";
+import { STEAM_USER_HIGH_VALUE, GAME_MESSAGE_TARGET, PLAYER_TEAM } from "./constants"
+import { Color } from "./color";
 
 export class Player {
     private readonly _name: string;
     private readonly _steamId: number;
-    private readonly _slot: any;
+    private readonly _slot: number;
 
-    constructor(name: string, steamId: number, slot: any) {
+    constructor(name: string, steamId: number, slot: number) {
         this._name = name;
         this._steamId = steamId;
         this._slot = slot;
@@ -38,6 +38,10 @@ export class Player {
     get steamId64() {
         if (!this.steamId) return 0; // bots
         return (BigInt(this.steamId) + STEAM_USER_HIGH_VALUE).toString();
+    }
+
+    get isBot() {
+        return !this.steamId;
     }
 
     get isAlive() {
@@ -84,7 +88,7 @@ export class Player {
         return metacall('_PlayerGetTeam', this._slot) as number;
     }
 
-    changeTeam(team: number, kill: boolean) {
+    changeTeam(team: PLAYER_TEAM, kill: boolean) {
         metacall('_PlayerChangeTeam', this._slot, team, kill);
     }
 
@@ -93,7 +97,7 @@ export class Player {
     }
 
     hint(message: string) {
-        sayToSlot(this._slot, message, HUD_PRINT_CENTER);
+        sayToSlot(this._slot, message, GAME_MESSAGE_TARGET.HUD);
     }
 
     setModel(path: string) {
@@ -113,7 +117,7 @@ export class Player {
     }
 }
 
-export const _Player = (name: string, steamId: number, slot: any) => {
+export const _Player = (name: string, steamId: number, slot: number) => {
     return new Player(name, steamId, slot)
 }
 

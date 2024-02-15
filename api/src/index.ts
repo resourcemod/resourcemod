@@ -6,6 +6,7 @@ import { Color } from './node/color'
 import constants from './node/constants'
 import './node/exceptions'
 import { Player } from './node/player'
+import server from './server/index'
 
 declare global {
     namespace NodeJS {
@@ -13,20 +14,15 @@ declare global {
             _orig_write: NodeJS.WriteStream['write'];
         }
     }
-
-    // var metacall: Function;
 }
-
-// global.metacall = (name: string, ...args: any[]) => {
-//     // console.log(`[metacall] ${name}(${args.join(', ')})`)
-// }
 
 export {
     events,
     chat,
     Color,
     constants,
-    Player
+    Player,
+    server
 }
 
 export default {
@@ -34,5 +30,6 @@ export default {
     chat,
     Color,
     constants,
-    Player
+    Player,
+    server
 }
