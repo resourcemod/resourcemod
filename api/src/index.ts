@@ -6,7 +6,7 @@ import { Color } from './node/color'
 import constants from './node/constants'
 import './node/exceptions'
 import { Player } from './node/player'
-import server from './node/server'
+import server from './server/index'
 
 declare global {
     namespace NodeJS {
