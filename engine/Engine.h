@@ -29,6 +29,7 @@
 #define HUD_PRINTCONSOLE    2
 #define HUD_PRINTTALK        3
 #define HUD_PRINTCENTER        4
+#define HUD_GAME_MESSAGE 5
 
 class Engine {
 public:
@@ -42,6 +43,8 @@ public:
     std::vector<std::string> precacheList;
 
     void Init();
+
+    static uint64_t Now();
 
     void InitMetacall();
 

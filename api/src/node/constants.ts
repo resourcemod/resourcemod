@@ -5,7 +5,7 @@ export const STEAM_USER_HIGH_VALUE = BigInt(76561197960265728)
 export enum GameMessageTarget {
     Console = 2,
     Chat = 3,
-    Hint = 4 // aka Center
+    Hint = 4
 }
 
 export enum Team {

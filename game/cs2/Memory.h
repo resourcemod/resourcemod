@@ -36,6 +36,8 @@ class CBasePlayerController;
 class CCSPlayerController;
 class CCSPlayerPawn;
 class CBaseModelEntity;
+class IGameEventListener2;
+class CPlayerSlot;
 
 namespace SignatureCall {
     inline void(FASTCALL *UTIL_ClientPrint)(CBasePlayerController *player, int msg_dest, const char *msg_name, const char *param1, const char *param2, const char *param3, const char *param4);
@@ -43,6 +45,7 @@ namespace SignatureCall {
     inline void(FASTCALL *CBasePlayerController_SetPawn)(CBasePlayerController *pController, CCSPlayerPawn *pPawn, bool a3, bool a4);
     inline void(FASTCALL *CCSPlayerController_SwitchTeam)(CCSPlayerController *pController, uint32 team);
     inline void(FASTCALL *CBaseModelEntity_SetModel)(CBaseModelEntity *pModel, const char *szModel);
+    inline IGameEventListener2*(FASTCALL *GetLegacyGameEventListener)(CPlayerSlot slot);
 }
 
 class Memory {
@@ -79,12 +82,12 @@ public:
         _tier0Module = new CModule(ROOTBIN, "tier0");
         _serverModule = new CModule(GAMEBIN, "server");
         _vscriptModule = new CModule(ROOTBIN, "vscript");
-
         RESOLVE_SIG(this, "UTIL_ClientPrint", SignatureCall::UTIL_ClientPrint);
         RESOLVE_SIG(this, "UTIL_ClientPrintAll", SignatureCall::UTIL_ClientPrintAll);
         RESOLVE_SIG(this, "CBasePlayerController_SetPawn", SignatureCall::CBasePlayerController_SetPawn);
         RESOLVE_SIG(this, "CCSPlayerController_SwitchTeam", SignatureCall::CCSPlayerController_SwitchTeam);
         RESOLVE_SIG(this, "CBaseModelEntity_SetModel", SignatureCall::CBaseModelEntity_SetModel);
+        RESOLVE_SIG(this, "LegacyGameEventListener", SignatureCall::GetLegacyGameEventListener);
     }
 
     bool IsSymbol(const char *name) {

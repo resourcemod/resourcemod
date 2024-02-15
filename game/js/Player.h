@@ -13,11 +13,14 @@
 #include <igameevents.h>
 #include <metacall/metacall.h>
 #include "../../protobuf/generated/network_connection.pb.h"
+
 class Player;
 
 extern ResourceMod *g_ResourceMod;
 extern IGameEventManager2 *g_gameEventManager;
 extern IVEngineServer2 *g_SourceEngine;
+extern Engine *g_Engine;
+
 class Player {
 public:
     Player(CCSPlayerController *c) {
@@ -107,7 +110,7 @@ public:
         int blue = 0;
         int alpha = 0;
         // fucked up but metacall can't work with classes objects properly for now
-        for (int i = 0; i < metacall_value_size(args[1])/sizeof(v_module_map[0]); ++i) {
+        for (int i = 0; i < metacall_value_size(args[1]) / sizeof(v_module_map[0]); ++i) {
             auto v = metacall_value_to_array(v_module_map[i]);
             if (V_strcmp(metacall_value_to_string(v[0]), "red") == 0) {
                 red = int(metacall_value_to_double(v[1]));
@@ -115,7 +118,7 @@ public:
                 green = int(metacall_value_to_double(v[1]));
             } else if (V_strcmp(metacall_value_to_string(v[0]), "blue") == 0) {
                 blue = int(metacall_value_to_double(v[1]));
-            }else if (V_strcmp(metacall_value_to_string(v[0]), "alpha") == 0) {
+            } else if (V_strcmp(metacall_value_to_string(v[0]), "alpha") == 0) {
                 alpha = int(metacall_value_to_double(v[1]));
             }
         }
@@ -175,21 +178,21 @@ public:
 
     static void ClientPrintAll(int hud_dest, const char *msg, ...) {
         va_list args;
-                va_start(args, msg);
+        va_start(args, msg);
         char buf[256];
         V_vsnprintf(buf, sizeof(buf), msg, args);
-                va_end(args);
+        va_end(args);
 
-        SignatureCall::UTIL_ClientPrintAll(hud_dest, buf, nullptr, nullptr, nullptr, nullptr);
+        return SignatureCall::UTIL_ClientPrintAll(hud_dest, buf, nullptr, nullptr, nullptr, nullptr);
     }
 
     static void ClientPrint(CCSPlayerController *player, int dest, const char *text, ...) {
         va_list args;
-                va_start(args, text);
-
+        va_start(args, text);
         char buf[256];
         V_vsnprintf(buf, sizeof(buf), text, args);
-                va_end(args);
+        va_end(args);
+
         g_ResourceMod->NextFrame([player, buf, dest]() {
             if (player->m_hPawn() && player->m_steamID() > 0)
                 SignatureCall::UTIL_ClientPrint(player, dest, buf, nullptr, nullptr, nullptr, nullptr);
