@@ -24,7 +24,7 @@ void Engine::Init() {
 
     this->gameDataPath = this->resourcemodFolder.c_str();
     this->gameDataPath.append("/node_modules/resourcemod/gamedata/rmod.cs2.json");
-
+    g_Engine = this;
     this->InitMetacall();
 }
 
@@ -62,6 +62,7 @@ void Engine::InitMetacall() {
     metacall_register("log", msg, nullptr, METACALL_BOOL, 1, METACALL_STRING);
     metacall_register("err", err, nullptr, METACALL_BOOL, 1, METACALL_STRING);
 
+    metacall_register("_GameMessage", Player::PrintGameMessage, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_STRING, METACALL_INT); // slot, message, duration
     metacall_register("_AllPrint", Player::PrintAll, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
     metacall_register("_PlayerPrint", Player::Print, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
                       METACALL_STRING);

@@ -12,6 +12,7 @@
 #include <queue>
 #include <mutex>
 #include "TSQueue.h"
+#include <map>
 
 #ifndef IS_INTERNAL_RUNTIME
 #else
@@ -45,6 +46,8 @@ public:
     void Init();
 
     static uint64_t Now();
+
+    std::map<int, std::pair<uint64_t, std::string>> gameMessages;
 
     void InitMetacall();
 

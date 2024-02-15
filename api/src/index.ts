@@ -6,7 +6,8 @@ import { Color } from './node/color'
 import * as constants from './node/constants'
 import './node/exceptions'
 import { Player } from './node/player'
-import * as server from './server/index'
+import server from './server/index'
+import GameMessage from './server/message'
 
 declare global {
     namespace NodeJS {
@@ -22,5 +23,6 @@ export {
     Color,
     constants,
     Player,
-    server
+    server,
+    GameMessage
 }
