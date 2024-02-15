@@ -14,16 +14,12 @@
     "url": "https://github.com/resourcemod/resourcemod/issues"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js --mode production",
-    "build:dev": "webpack --config webpack.config.js --mode development --watch",
-    "start": "node dist/index.js",
-    "build:ts": "tsc"
+    "build:ts": "tsc",
+    "start": "node dist/index.js"
   },
   "devDependencies": {
     "ts-loader": "^9.5.1",
-    "typescript": "^5.3.3",
-    "webpack": "^5.90.1",
-    "webpack-cli": "^5.1.4"
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "metacall": "^0.4.3"
