@@ -24,3 +24,9 @@ bool Engine::HasSuffix(std::string str, std::string suffix) {
     size_t slen = suffix.length();
     return (len >= slen && !memcmp(str.c_str() + len - slen, suffix.c_str(), slen));
 }
+
+
+uint64_t Engine::Now() {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::system_clock::now().time_since_epoch()).count();
+}
