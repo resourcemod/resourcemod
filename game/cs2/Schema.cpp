@@ -100,13 +100,10 @@ SchemaKey Schema::GetOffset(const char *className, uint32_t classKey, const char
     return tableMap->Element(memberIndex);
 }
 
-void Schema::SetStateChanged(Z_CBaseEntity *pEntity, int offset)
+void SetStateChanged(Z_CBaseEntity* pEntity, int offset)
 {
-    //Schema::StateChanged(pEntity->m_NetworkTransmitComponent(), pEntity, offset, -1, -1);
-    auto vars = g_SourceEngine->GetServerGlobals();
+    SignatureCall::StateChanged(pEntity->m_NetworkTransmitComponent(), pEntity, offset, -1, -1);
 
-    if (vars)
-        pEntity->m_lastNetworkChange = vars->curtime;
-
+    pEntity->m_lastNetworkChange = g_SourceEngine->GetServerGlobals()->curtime;
     pEntity->m_isSteadyState().ClearAll();
 };

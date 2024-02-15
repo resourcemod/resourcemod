@@ -4,6 +4,8 @@
 #include "cbaseentity.h"
 #include "ccsplayerpawn.h"
 
+extern IVEngineServer2 *g_SourceEngine;
+
 enum class PlayerConnectedState : uint32_t {
     PlayerNeverConnected = 0xFFFFFFFF,
     PlayerConnected = 0x0,
@@ -13,6 +15,7 @@ enum class PlayerConnectedState : uint32_t {
     PlayerDisconnected = 0x4,
     PlayerReserved = 0x5,
 };
+
 extern CEntitySystem *g_pEntitySystem;
 
 class CBasePlayerController : public Z_CBaseEntity {

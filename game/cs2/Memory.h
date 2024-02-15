@@ -38,6 +38,7 @@ class CCSPlayerPawn;
 class CBaseModelEntity;
 class IGameEventListener2;
 class CPlayerSlot;
+class CEntityInstance;
 
 namespace SignatureCall {
     inline void(FASTCALL *UTIL_ClientPrint)(CBasePlayerController *player, int msg_dest, const char *msg_name, const char *param1, const char *param2, const char *param3, const char *param4);
@@ -46,6 +47,8 @@ namespace SignatureCall {
     inline void(FASTCALL *CCSPlayerController_SwitchTeam)(CCSPlayerController *pController, uint32 team);
     inline void(FASTCALL *CBaseModelEntity_SetModel)(CBaseModelEntity *pModel, const char *szModel);
     inline IGameEventListener2*(FASTCALL *GetLegacyGameEventListener)(CPlayerSlot slot);
+    inline void(FASTCALL *NetworkStateChanged)(int64 chainEntity, int64 offset, int64 a3);
+    inline void(FASTCALL *StateChanged)(void *networkTransmitComponent, CEntityInstance *ent, int64 offset, int16 a4, int16 a5);
 }
 
 class Memory {
@@ -88,6 +91,8 @@ public:
         RESOLVE_SIG(this, "CCSPlayerController_SwitchTeam", SignatureCall::CCSPlayerController_SwitchTeam);
         RESOLVE_SIG(this, "CBaseModelEntity_SetModel", SignatureCall::CBaseModelEntity_SetModel);
         RESOLVE_SIG(this, "LegacyGameEventListener", SignatureCall::GetLegacyGameEventListener);
+        RESOLVE_SIG(this, "NetworkStateChanged", SignatureCall::NetworkStateChanged);
+        RESOLVE_SIG(this, "StateChanged", SignatureCall::StateChanged);
     }
 
     bool IsSymbol(const char *name) {
