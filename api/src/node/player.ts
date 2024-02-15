@@ -120,8 +120,3 @@ export class Player {
 export const _Player = (name: string, steamId: number, slot: number) => {
     return new Player(name, steamId, slot)
 }
-
-export default {
-    Player,
-    _Player
-}

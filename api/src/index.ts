@@ -1,12 +1,12 @@
-import events from './node/events'
+import * as events from './node/events'
 import './node/stdout'
 import './node/precache'
-import chat from './node/chat'
+import * as chat from './node/chat'
 import { Color } from './node/color'
-import constants from './node/constants'
+import * as constants from './node/constants'
 import './node/exceptions'
 import { Player } from './node/player'
-import server from './server/index'
+import * as server from './server/index'
 
 declare global {
     namespace NodeJS {
@@ -17,15 +17,6 @@ declare global {
 }
 
 export {
-    events,
-    chat,
-    Color,
-    constants,
-    Player,
-    server
-}
-
-export default {
     events,
     chat,
     Color,
