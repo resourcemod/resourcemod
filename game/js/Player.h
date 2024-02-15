@@ -13,11 +13,11 @@
 #include <igameevents.h>
 #include <metacall/metacall.h>
 #include "../../protobuf/generated/network_connection.pb.h"
+#include <vector>
 
 class Player;
 
 extern ResourceMod *g_ResourceMod;
-extern IGameEventManager2 *g_gameEventManager;
 extern IVEngineServer2 *g_SourceEngine;
 extern Engine *g_Engine;
 
@@ -72,6 +72,26 @@ public:
     static void *Respawn(size_t argc, void *args[], void *data) {
         CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
         return metacall_value_create_bool(c->Respawn());
+    }
+
+    static void *PrintGameMessage(size_t argc, void *args[], void *data) {
+        int slot = metacall_value_to_int(args[0]);
+        CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+        std::string message = metacall_value_to_string(args[1]);
+        int duration = metacall_value_to_int(args[2]);
+
+        if (message.size() == 0) {
+            return metacall_value_create_bool(false);
+        }
+
+        if (duration == 0) {
+            return metacall_value_create_bool(false);
+        }
+
+        std::pair<uint64_t, std::string> pair = std::make_pair(Engine::Now() + (duration*1000), message);
+        g_Engine->gameMessages[slot] = pair;
+
+        return metacall_value_create_bool(true);
     }
 
     static void *Play(size_t argc, void *args[], void *data) {
@@ -178,20 +198,20 @@ public:
 
     static void ClientPrintAll(int hud_dest, const char *msg, ...) {
         va_list args;
-        va_start(args, msg);
+                va_start(args, msg);
         char buf[256];
         V_vsnprintf(buf, sizeof(buf), msg, args);
-        va_end(args);
+                va_end(args);
 
         return SignatureCall::UTIL_ClientPrintAll(hud_dest, buf, nullptr, nullptr, nullptr, nullptr);
     }
 
     static void ClientPrint(CCSPlayerController *player, int dest, const char *text, ...) {
         va_list args;
-        va_start(args, text);
+                va_start(args, text);
         char buf[256];
         V_vsnprintf(buf, sizeof(buf), text, args);
-        va_end(args);
+                va_end(args);
 
         g_ResourceMod->NextFrame([player, buf, dest]() {
             if (player->m_hPawn() && player->m_steamID() > 0)

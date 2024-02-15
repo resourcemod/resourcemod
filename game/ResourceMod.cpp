@@ -25,6 +25,8 @@ ResourceMod *g_ResourceMod;
 
 PLUGIN_EXPOSE(ResourceMod, resourcemod);
 
+#define MAX_PLAYERS 64
+
 IVEngineServer2 *g_SourceEngine;
 IGameEventSystem *g_SourceEvents;
 EventManager *g_EventManager;
@@ -33,7 +35,9 @@ CEntitySystem *g_pEntitySystem;
 
 CGameResourceService *g_GameResourceService;
 Memory *g_Memory;
+
 class CGameEventListener;
+
 CUtlVector<CGameEventListener *> g_vecEventListeners;
 
 class GameSessionConfiguration_t {
@@ -68,6 +72,7 @@ bool ResourceMod::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 
     Engine *rmod = new Engine();
     rmod->Init();
+
     g_Memory = new Memory();
     g_Memory->LoadOffsets(rmod->gameDataPath);
     g_Memory->LoadSignatures(rmod->gameDataPath);
@@ -98,7 +103,8 @@ CGameEntitySystem *GameEntitySystem() {
                                                    g_Memory->offsets["GameEntitySystem"]);
 }
 
-void ResourceMod::OnLevelInit(char const *pMapName, char const *pMapEntities, char const *pOldLevel, char const *pLandmarkName, bool loadGame, bool background) {
+void ResourceMod::OnLevelInit(char const *pMapName, char const *pMapEntities, char const *pOldLevel,
+                              char const *pLandmarkName, bool loadGame, bool background) {
     auto e = new map_loaded(pMapName, pOldLevel);
     e->Emit();
     delete e;
@@ -120,6 +126,29 @@ void ResourceMod::Hook_GameFrame(bool simulating, bool bFirstTick, bool bLastTic
 }
 
 void ResourceMod::RMFrame() {
+    for (uint16_t i = 0; i < MAX_PLAYERS; i++) {
+        CCSPlayerController *player = CCSPlayerController::FromSlot(i);
+        if (!player)
+            continue;
+        if (!player->IsConnected())
+            continue;
+
+        CBasePlayerPawn *pawn = player->GetPawn();
+        if (!pawn)
+            continue;
+
+        CPlayer_MovementServices *movementServices = pawn->m_pMovementServices();
+        if (!movementServices)
+            continue;
+
+        if (!g_Engine) {
+            continue;
+        }
+        if (g_Engine->gameMessages.count(i) > 0) {
+            player->PrintGameMessage();
+        }
+    }
+
     while (!m_nextFrame.empty()) {
         m_nextFrame.front()();
         m_nextFrame.pop_front();
@@ -135,7 +164,7 @@ const char *ResourceMod::GetLicense() {
 }
 
 const char *ResourceMod::GetVersion() {
-    return "1.0.24-beta";
+    return "1.0.25-beta";
 }
 
 const char *ResourceMod::GetDate() {

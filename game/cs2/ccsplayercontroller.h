@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <igameevents.h>
+#include "../../Engine/Engine.h"
 #include "cbaseplayercontroller.h"
 #include "services.h"
 
@@ -28,6 +30,8 @@
 #define CS_TEAM_CT          3
 
 extern CEntitySystem *g_pEntitySystem;
+extern IGameEventManager2 *g_gameEventManager;
+extern Engine *g_Engine;
 
 class CCSPlayerController : public CBasePlayerController {
 public:
@@ -75,4 +79,29 @@ public:
         CALL_VIRTUAL(void, offset, this);
         return true;
     }
+
+    void PrintGameMessage() {
+        if (g_Engine->gameMessages.count(this->GetPlayerSlot()) == 0) {
+            return;
+        }
+        auto pair = g_Engine->gameMessages[this->GetPlayerSlot()];
+        if (pair.first != 0) {
+            if (pair.first >= Engine::Now()) {
+                IGameEvent *pEvent = g_gameEventManager->CreateEvent("show_survival_respawn_status", true);
+                if (pEvent) {
+                    pEvent->SetString("loc_token", pair.second.c_str());
+                    pEvent->SetUint64("duration", 1);
+                    pEvent->SetInt("userid", this->GetPlayerSlot());
+
+                    IGameEventListener2 *playerListener = SignatureCall::GetLegacyGameEventListener(
+                            this->GetPlayerSlot());
+
+                    playerListener->FireGameEvent(pEvent);
+                }
+            } else {
+                g_Engine->gameMessages.erase(this->GetPlayerSlot());
+            }
+        }
+    }
+
 };
