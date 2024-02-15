@@ -12,26 +12,20 @@ export const sayToSlot = (slot: number, message: string, destination: GameMessag
     metacall('_PlayerPrint', slot, destination, message)
 }
 
-export const colors = {
-    DEFAULT: "\x01",
-    DARK_RED: "\x02",
-    LIGHT_PURPLE: "\x03",
-    GREEN: "\x04",
-    OLIVE: "\x05",
-    LIME: "\x06",
-    RED: "\x07",
-    GREY: "\x08",
-    YELLOW: "\x09",
-    SILVER: "\x0A",
-    LIGHT_BLUE: "\x0B",
-    BLUE: "\x0C",
-    PURPLE: "\x0E",
-    LIGHT_RED: "\x0F",
-    ORANGE: "\x10"
-}
-
-export default {
-    sayToEveryone,
-    sayToSlot,
-    colors
+export enum Colors {
+    Default = "\x01",
+    DarkRed = "\x02",
+    LightPurple = "\x03",
+    Green = "\x04",
+    Olive = "\x05",
+    Lime = "\x06",
+    Red = "\x07",
+    Grey = "\x08",
+    Yellow = "\x09",
+    Silver = "\x0A",
+    LightBlue = "\x0B",
+    Blue = "\x0C",
+    Purple = "\x0E",
+    LightRed = "\x0F",
+    Orange = "\x10"
 }
