@@ -56,6 +56,10 @@ public:
     }
 
     void SetHP(int health) {
+        if (health <= 0) {
+            this->CommitSuicide(false, true);
+            return;
+        }
         m_iHealth = health;
     }
 
