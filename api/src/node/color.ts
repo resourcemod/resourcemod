@@ -15,7 +15,3 @@ export class Color {
         return `${this.red}${separator}${this.green}${separator}${this.blue}${separator}${this.alpha}`
     }
 }
-
-export default {
-    Color
-}
