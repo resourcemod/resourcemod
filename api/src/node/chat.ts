@@ -15,13 +15,19 @@ export const sayToSlot = (slot: number, message: string, destination: GAME_MESSA
 export const colors = {
     DEFAULT: "\x01",
     DARK_RED: "\x02",
-    PURPLE: "\x03",
+    LIGHT_PURPLE: "\x03",
     GREEN: "\x04",
-    LIGHT_GREEN: "\x05",
-    LIME_GREEN: "\x06",
+    OLIVE: "\x05",
+    LIME: "\x06",
     RED: "\x07",
     GREY: "\x08",
-    ORANGE: "\x09",
+    YELLOW: "\x09",
+    SILVER: "\x0A",
+    LIGHT_BLUE: "\x0B",
+    BLUE: "\x0C",
+    PURPLE: "\x0E",
+    LIGHT_RED: "\x0F",
+    ORANGE: "\x10"
 }
 
 export default {
