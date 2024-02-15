@@ -1,7 +1,7 @@
 // @ts-ignore
 import { metacall } from "metacall"
 import { sayToSlot } from "./chat"
-import { STEAM_USER_HIGH_VALUE, GAME_MESSAGE_TARGET, PLAYER_TEAM } from "./constants"
+import { STEAM_USER_HIGH_VALUE, GameMessageTarget, Team } from "./constants"
 import { Color } from "./color";
 
 export class Player {
@@ -88,7 +88,7 @@ export class Player {
         return metacall('_PlayerGetTeam', this._slot) as number;
     }
 
-    changeTeam(team: PLAYER_TEAM, kill: boolean) {
+    changeTeam(team: Team, kill: boolean) {
         metacall('_PlayerChangeTeam', this._slot, team, kill);
     }
 
@@ -97,7 +97,7 @@ export class Player {
     }
 
     hint(message: string) {
-        sayToSlot(this._slot, message, GAME_MESSAGE_TARGET.HUD);
+        sayToSlot(this._slot, message, GameMessageTarget.Hint);
     }
 
     setModel(path: string) {

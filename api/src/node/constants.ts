@@ -1,51 +1,16 @@
-const PREVENT_EVENT = "event_prevent_default";
-
-const TEAM_NONE = 0;
-const TEAM_SPECTATOR = 1;
-const TEAM_CT = 2;
-const TEAM_T = 3;
-
-enum GAME_MESSAGE_TARGET {
-    CONSOLE = 2,
-    HUD = 4,
-    CHAT = 3
-}
-
-enum PLAYER_TEAM {
-    NONE = 0,
-    SPECTATOR = 1,
-    T = 2,
-    CT = 3
-}
-
+export const PREVENT_EVENT = "event_prevent_default";
 // const name by W4nder
-const STEAM_USER_HIGH_VALUE = BigInt(76561197960265728)
+export const STEAM_USER_HIGH_VALUE = BigInt(76561197960265728)
 
-const GAME_MESSAGE_TARGET_CONSOLE = 'console'
-const GAME_MESSAGE_TARGET_HUD = 'hud'
-
-export {
-    PREVENT_EVENT,
-    TEAM_NONE,
-    TEAM_SPECTATOR,
-    TEAM_CT,
-    TEAM_T,
-    STEAM_USER_HIGH_VALUE,
-    GAME_MESSAGE_TARGET_CONSOLE,
-    GAME_MESSAGE_TARGET_HUD,
-    GAME_MESSAGE_TARGET,
-    PLAYER_TEAM
+export enum GameMessageTarget {
+    Console = 2,
+    Chat = 3,
+    Hint = 4 // aka Center
 }
 
-export default {
-    PREVENT_EVENT,
-    TEAM_NONE,
-    TEAM_SPECTATOR,
-    TEAM_CT,
-    TEAM_T,
-    STEAM_USER_HIGH_VALUE,
-    GAME_MESSAGE_TARGET_CONSOLE,
-    GAME_MESSAGE_TARGET_HUD,
-    GAME_MESSAGE_TARGET,
-    PLAYER_TEAM
+export enum Team {
+    None,
+    Spectator,
+    T,
+    CT
 }
