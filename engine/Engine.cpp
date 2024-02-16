@@ -9,6 +9,7 @@
 #include <direct.h>
 #include <metacall/metacall.h>
 #include <cstdlib>
+#include "../../game/js/Weapon.h"
 #include <windows.h>
 
 Engine *g_Engine;
@@ -89,6 +90,11 @@ void Engine::InitMetacall() {
     metacall_register("_PlayerGetIsDisconnecting", Player::GetIsDisconnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
     metacall_register("_PlayerGetIsReserved", Player::GetIsReserved, nullptr, METACALL_BOOL, 1, METACALL_INT);
     metacall_register("_PlayerGetIsReconnecting", Player::GetIsReconnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
+
+    // weapons
+    metacall_register("_WeaponGive", Weapon::Give, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    metacall_register("_WeaponGet", Weapon::Get, nullptr, METACALL_STRING, 2, METACALL_INT, METACALL_INT);
+    metacall_register("_WeaponDrop", Weapon::Drop, nullptr, METACALL_BOOL, 1, METACALL_INT);
 
     // Array of scripts to be loaded by MetaCall
     const char *js_scripts[] =
