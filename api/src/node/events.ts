@@ -134,7 +134,7 @@ export class ItemPickupEvent {
 
     }
 }
-// Base class for equal or semi-equal
+
 export class ClientPutInServerEvent {
     constructor(
         public readonly name: string,
