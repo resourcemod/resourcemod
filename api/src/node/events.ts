@@ -40,7 +40,7 @@ type IEvents = {
     weapon_reload: (event: WeaponReloadEvent) => void;
     weapon_zoom: (event: WeaponZoomEvent) => void;
     player_blind: (event: PlayerBlindEvent) => void;
-    client_disconnected: (event: ClientDisconnectedEvent) =>void;
+    client_disconnected: (event: ClientDisconnectedEvent) => void;
 }
 
 // actual source engine callback
@@ -124,1074 +124,428 @@ export const onClientDisconnected = (callback: IEvents['client_disconnected']) =
 
 // Event classes
 export class ItemPickupEvent {
-    private readonly _name: string;
-    private readonly _item: string;
-    private readonly _player: Player;
-    private readonly _silent: boolean;
-    private readonly _defindex: number;
+    constructor(
+        public readonly name: string,
+        public readonly item: string,
+        public readonly silent: boolean,
+        public readonly defindex: number,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, item: string, silent: boolean, defindex: number, player: Player) {
-        this._name = name
-        this._item = item
-        this._player = player
-        this._silent = silent
-        this._defindex = defindex
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get item() {
-        return this._item
-    }
-
-    get player() {
-        return this._player
-    }
-
-    get silent() {
-        return this._silent
-    }
-
-    get defindex() {
-        return this._defindex
     }
 }
-
+// Base class for equal or semi-equal
 export class ClientPutInServerEvent {
-    private readonly _name: string;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, player: Player) {
-        this._name = name
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class ClientDisconnectedEvent {
-    private readonly _name: string;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, player: Player) {
-        this._name = name
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class ClientConnectEvent {
-    private readonly _name: string;
-    private readonly _steamId: number;
+    constructor(
+        public readonly name: string,
+        public readonly steamId: number
+    ) {
 
-    constructor(name: string, steamId: number) {
-        this._name = name
-        this._steamId = steamId
     }
 
-    get name() {
-        return this._name
-    }
-
-    get steamId() {
-        return this._steamId
-    }
-
-    get steamId64(): string {
+    get steamId64(): string | undefined {
+        if (!this.steamId) return; // bot
         return (BigInt(this.steamId) + STEAM_USER_HIGH_VALUE).toString();
     }
 }
 
-export class ClientConnectedEvent {
-    private readonly _name: string;
-    private readonly _steamId?: number;
-    private readonly _ip: string;
-    private readonly _bot: boolean;
-
-    constructor(name: string, steamId: number, ip: string, isBot: boolean) {
-        this._name = name
-        this._steamId = steamId
-        this._ip = ip
-        this._bot = isBot
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get isBot() {
-        return this._bot
-    }
-
-    get steamId() {
-        return this._steamId ?? null
-    }
-
-    get steamId64() {
-        const steamid = this.steamId;
-        if (!steamid) return null// bots
-        return (BigInt(steamid) + STEAM_USER_HIGH_VALUE).toString();
-    }
-
-    get ip() {
-        return this._ip
+export class ClientConnectedEvent extends ClientConnectEvent {
+    constructor(
+        name: string,
+        steamId: number,
+        public readonly ip: string,
+        public readonly isBot: boolean) {
+        super(name, steamId)
     }
 }
 
 export class PlayerActivateEvent {
-    private readonly _name: string;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, player: Player) {
-        this._name = name
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class PlayerSpawnEvent {
-    private readonly _name: string;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, player: Player) {
-        this._name = name
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class PlayerChangeTeamEvent {
-    private readonly _name: string;
-    private readonly _team: number;
-    private readonly _oldTeam: number;
-    private readonly _disconnect: boolean;
-    private readonly _silent: boolean;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly team: number,
+        public readonly oldTeam: number,
+        public readonly becauseDisconnected: boolean,
+        public readonly silent: boolean,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, team: number, oldTeam: number, disconnect: boolean, silent: boolean, player: Player) {
-        this._name = name
-        this._team = team
-        this._oldTeam = oldTeam
-        this._disconnect = disconnect
-        this._silent = silent
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get team() {
-        return this._team
-    }
-
-    get oldTeam() {
-        return this._oldTeam
-    }
-
-    get becauseDisconnected() {
-        return this._disconnect
-    }
-
-    get silent() {
-        return this._silent
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class PlayerHurtEvent {
-    private readonly _name: string;
-    private readonly _hp: number;
-    private readonly _armor: number;
-    private readonly _weapon: string;
-    private readonly _damageHp: number;
-    private readonly _damageArmor: number;
-    private readonly _hitGroup: number;
-    private readonly _player: Player;
-    private readonly _attacker: Player;
-
-    constructor(name: string, hp: number, armor: number, weapon: string, damageHp: number, damageArmor: number, hitGroup: number, player: Player, attacker: Player) {
-        this._name = name
-        this._hp = hp
-        this._armor = armor
-        this._weapon = weapon
-        this._damageHp = damageHp
-        this._damageArmor = damageArmor
-        this._hitGroup = hitGroup
-        this._player = player
-        this._attacker = attacker
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get hp() {
-        return this._hp
-    }
-
-    get armor() {
-        return this._armor
-    }
-
-    get weapon() {
-        return this._weapon
+    constructor(
+        public readonly name: string,
+        public readonly hp: number,
+        public readonly armor: number,
+        public readonly weapon: string,
+        public readonly damageHp: number,
+        public readonly damageArmor: number,
+        public readonly hitGroup: number,
+        public readonly player: Player,
+        public readonly attacker: Player
+    ) {
     }
 
     get damage() {
         return {
-            hp: this._damageHp,
-            armor: this._damageArmor
+            hp: this.damageHp,
+            armor: this.damageArmor
         }
-    }
-
-    get hitGroup() {
-        return this._hitGroup
-    }
-
-    get player() {
-        return this._player
-    }
-
-    get attacker() {
-        return this._attacker
     }
 }
 
 export class MapShutdownEvent {
-    private readonly _name: string;
-
-    constructor(name: string) {
-        this._name = name
-    }
-
-    get name() {
-        return this._name
+    constructor(
+        public readonly name: string
+    ) {
     }
 }
 
 export class PlayerChatEvent {
-    private readonly _name: string;
-    private readonly _message: string;
-    private readonly _teamOnly: boolean;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly message: string,
+        public readonly teamOnly: boolean,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, text: string, teamOnly: boolean, player: Player) {
-        this._name = name
-        this._message = text
-        this._teamOnly = teamOnly
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get message() {
-        return this._message
-    }
-
-    get teamOnly() {
-        return this._teamOnly
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class GameMessageEvent {
-    private readonly _name: string;
-    private readonly _message: string;
-    private readonly _target: string;
-
-    constructor(name: string, text: string, target: string) {
-        this._name = name
-        this._message = text
-        this._target = target
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get message() {
-        return this._message
-    }
-
-    get target() {
-        return this._target
+    constructor(
+        public readonly name: string,
+        public readonly message: string,
+        public readonly target: string
+    ) {
     }
 }
 
 export class MapLoadedEvent {
-    private readonly _name: string;
-    private readonly _map: string;
-    private readonly _oldMap: string;
+    constructor(
+        public readonly name: string,
+        public readonly map: string,
+        public readonly oldMap: string
+    ) {
 
-    constructor(name: string, map: string, oldMap: string) {
-        this._name = name
-        this._map = map
-        this._oldMap = oldMap
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get map() {
-        return this._map
-    }
-
-    get oldMap() {
-        return this._oldMap
     }
 }
 
 export class RoundEndEvent {
-    private readonly _name: string;
-    private readonly _winner: number;
-    private readonly _reason: number;
-    private readonly _message: string;
-    private readonly _legacy: number;
-    private readonly _playerCount: number;
-    private readonly _noMusic: number;
+    constructor(
+        public readonly name: string,
+        public readonly winner: number,
+        public readonly reason: number,
+        public readonly message: string,
+        public readonly legacy: number,
+        public readonly playerCount: number,
+        public readonly noMusic: number
+    ) {
 
-    constructor(name: string, winner: number, reason: number, message: string, legacy: number, playerCount: number, noMusic: number) {
-        this._name = name
-        this._winner = winner
-        this._reason = reason
-        this._message = message
-        this._legacy = legacy
-        this._playerCount = playerCount
-        this._noMusic = noMusic
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get winner() {
-        return this._winner
-    }
-
-    get reason() {
-        return this._reason
-    }
-
-    get message() {
-        return this._message
-    }
-
-    get legacy() {
-        return this._legacy
-    }
-
-    get playerCount() {
-        return this._playerCount
     }
 
     get isMusicPlaying() {
-        return !this._noMusic
+        return !this.noMusic
     }
 }
 
 export class RoundStartEvent {
-    private readonly _name: string;
-    private readonly _timeLimit: number;
-    private readonly _fragLimit: number;
-    private readonly _objective: string;
-
-    constructor(name: string, timeLimit: number, fragLimit: number, objective: string) {
-        this._name = name
-        this._timeLimit = timeLimit
-        this._fragLimit = fragLimit
-        this._objective = objective
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get timeLimit() {
-        return this._timeLimit
-    }
-
-    get fragLimit() {
-        return this._fragLimit
-    }
-
-    get objective() {
-        return this._objective
+    constructor(
+        public readonly name: string,
+        public readonly timeLimit: number,
+        public readonly fragLimit: number,
+        public readonly objective: string
+    ) {
     }
 }
 
 export class FreezeTimeEndedEvent {
-    private readonly _name: string;
-
-    constructor(name: string) {
-        this._name = name
-    }
-
-    get name() {
-        return this._name
+    constructor(
+        public readonly name: string
+    ) {
     }
 }
 
 export class PlayerDeathEvent {
-    private readonly _name: string;
-    private readonly _assistFlash: boolean;
-    private readonly _weapon: string;
-    private readonly _weaponItemId: string;
-    private readonly _weaponFauxItemId: string;
-    private readonly _weaponOriginalOwnerSteamId: string;
-    private readonly _headshot: boolean;
-    private readonly _dominated: number;
-    private readonly _revenge: number;
-    private readonly _wipe: number;
-    private readonly _penetrated: number;
-    private readonly _noReplay: boolean;
-    private readonly _noScope: boolean;
-    private readonly _throughSmoke: boolean;
-    private readonly _attackerBlind: boolean;
-    private readonly _distance: number;
-    private readonly _player: Player;
-    private readonly _attacker: Player;
-    private readonly _assister: Player;
+    constructor(
+        public readonly name: string,
+        public readonly assistFlash: boolean,
+        public readonly weapon: string,
+        public readonly weaponItemId: string,
+        public readonly weaponFauxItemId: string,
+        public readonly weaponOriginalOwnerSteamId: string,
+        public readonly headshot: boolean,
+        public readonly dominated: number,
+        public readonly revenge: number,
+        public readonly wipe: number,
+        public readonly penetrated: number,
+        public readonly noReplay: boolean,
+        public readonly noScope: boolean,
+        public readonly throughSmoke: boolean,
+        public readonly attackerBlind: boolean,
+        public readonly distance: number,
+        public readonly player: Player,
+        public readonly attacker: Player,
+        public readonly assister: Player
+    ) {
 
-    constructor(name: string, assistFlash: boolean, weapon: string, weaponItemId: string, weaponFauxItemId: string, weaponOriginalOwnerSteamId: string, headshot: boolean, dominated: number, revenge: number, wipe: number, penetrated: number, noReplay: boolean, noScope: boolean, throughSmoke: boolean, attackerBlind: boolean, distance: number, player: Player, attacker: Player, assister: Player) {
-        this._name = name
-        this._assistFlash = assistFlash
-        this._weapon = weapon
-        this._weaponItemId = weaponItemId
-        this._weaponFauxItemId = weaponFauxItemId
-        this._weaponOriginalOwnerSteamId = weaponOriginalOwnerSteamId
-        this._headshot = headshot
-        this._dominated = dominated
-        this._revenge = revenge
-        this._wipe = wipe
-        this._penetrated = penetrated
-        this._noReplay = noReplay
-        this._noScope = noScope
-        this._throughSmoke = throughSmoke
-        this._attackerBlind = attackerBlind
-        this._distance = distance
-        this._player = player
-        this._attacker = attacker
-        this._assister = assister
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get assistFlash() {
-        return this._assistFlash
-    }
-
-    get weapon() {
-        return this._weapon
     }
 
     get weaponDetails() {
         return {
-            name: this._weapon,
-            itemId: this._weaponItemId,
-            fauxId: this._weaponFauxItemId,
-            originalOwnerSteamId: this._weaponOriginalOwnerSteamId,
-            originalOwnerSteamId64: function() {
+            name: this.weapon,
+            itemId: this.weaponItemId,
+            fauxId: this.weaponFauxItemId,
+            originalOwnerSteamId: this.weaponOriginalOwnerSteamId,
+            // todo: move this function to external helper (steamid64(steamid: number): string | number). Then developers could get steamid64 from steamid if they want by just importing helper from resourcemod lib
+            originalOwnerSteamId64: function () {
                 if (!this.originalOwnerSteamId) return this.originalOwnerSteamId;
                 return (BigInt(this.originalOwnerSteamId) + STEAM_USER_HIGH_VALUE).toString();
             }
         }
     }
-
-    get headshot() {
-        return this._headshot
-    }
-
-    get dominated() {
-        return this._dominated
-    }
-
-    get revenge() {
-        return this._revenge
-    }
-
-    get wipe() {
-        return this._wipe
-    }
-
-    get penetrated() {
-        return this._penetrated
-    }
-
-    get hasReplay() {
-        return !this._noReplay
-    }
-
-    get noScope() {
-        return this._noScope
-    }
-
-    get throughSmoke() {
-        return this._throughSmoke
-    }
-
-    get attackerBlind() {
-        return this._attackerBlind
-    }
-
-    get distance() {
-        return this._distance
-    }
-
-    get player() {
-        return this._player
-    }
-
-    get attacker() {
-        return this._attacker
-    }
-
-    get assister() {
-        return this._assister
-    }
 }
 
 export class PlayerFootstepEvent {
-    private readonly _name: string;
-    private readonly _player: Player;
-
-    constructor(name: string, player: Player) {
-        this._name = name
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get player() {
-        return this._player
+    constructor(
+        public readonly name: string,
+        public readonly player: Player
+    ) {
     }
 }
 
 export class BreakPropEvent {
-    private readonly _name: string;
-    private readonly _entityId: number;
-    private readonly _player: Player;
-
-    constructor(name: string, entityId: number, player: Player) {
-        this._name = name
-        this._entityId = entityId
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get entityId() {
-        return this._entityId
-    }
-
-    get player() {
-        return this._player
+    constructor(
+        public readonly name: string,
+        public readonly entityId: number,
+        public readonly player: Player
+    ) {
     }
 }
 
 export class ItemPurchaseEvent {
-    private readonly _name: string;
-    private readonly _team: number;
-    private readonly _loadout: number;
-    private readonly _weapon: string;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly team: number,
+        public readonly loadout: number,
+        public readonly weapon: string,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, team: number, loadout: number, weapon: string, player: Player) {
-        this._name = name
-        this._team = team
-        this._loadout = loadout
-        this._weapon = weapon
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get team() {
-        return this._team
-    }
-
-    get loadout() {
-        return this._loadout
-    }
-
-    get weapon() {
-        return this._weapon
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class BombBeginPlantEvent {
-    private readonly _name: string;
-    private readonly _site: number;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly site: number,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, site: number, player: Player) {
-        this._name = name
-        this._site = site
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get site() {
-        return this._site
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class BombPlantedEvent {
-    private readonly _name: string;
-    private readonly _site: number;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly site: number,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, site: number, player: Player) {
-        this._name = name
-        this._site = site
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get site() {
-        return this._site
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class BombDefusedEvent {
-    private readonly _name: string;
-    private readonly _site: number;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly site: number,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, site: number, player: Player) {
-        this._name = name
-        this._site = site
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get site() {
-        return this._site
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class BombExplodedEvent {
-    private readonly _name: string;
-    private readonly _site: number;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly site: number,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, site: number, player: Player) {
-        this._name = name
-        this._site = site
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get site() {
-        return this._site
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class BombDroppedEvent {
-    private readonly _name: string;
-    private readonly _entityId: number;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly entityId: number,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, entityId: number, player: Player) {
-        this._name = name
-        this._entityId = entityId
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get entityId() {
-        return this._entityId
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class BombPickedUpEvent {
-    private readonly _name: string;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, player: Player) {
-        this._name = name
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class DefuserDroppedEvent {
-    private readonly _name: string;
-    private readonly _entityId: number;
+    constructor(
+        public readonly name: string,
+        public readonly entityId: number,
+    ) {
 
-    constructor(name: string, entityId: number) {
-        this._name = name
-        this._entityId = entityId
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get entityId() {
-        return this._entityId
     }
 }
 
 export class DefuserPickupEvent {
-    private readonly _name: string;
-    private readonly _entityId: number;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly entityId: number,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, entityId: number, player: Player) {
-        this._name = name
-        this._entityId = entityId
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get entityId() {
-        return this._entityId
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class BeginDefuseEvent {
-    private readonly _name: string;
-    private readonly _hasKit: boolean;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly hasKit: boolean,
+        public readonly player: Player
+    ) {
 
-    constructor(name: string, hasKit: boolean, player: Player) {
-        this._name = name
-        this._hasKit = hasKit
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get hasKit() {
-        return this._hasKit
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class AbortDefuseEvent {
-    private readonly _name: string;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, player: Player) {
-        this._name = name
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class HostageBeginsFollowingEvent {
-    private readonly _name: string;
-    private readonly _hostage: number;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly hostage: number,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, hostage: number, player: Player) {
-        this._name = name
-        this._hostage = hostage
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get hostage() {
-        return this._hostage
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class HostageHurtEvent {
-    private readonly _name: string;
-    private readonly _hostage: number;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly hostage: number,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, hostage: number, player: Player) {
-        this._name = name
-        this._hostage = hostage
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get hostage() {
-        return this._hostage
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class HostageRescuedEvent {
-    private readonly _name: string;
-    private readonly _hostage: number;
-    private readonly _site: number;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly hostage: number,
+        public readonly site: number,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, hostage: number, site: number, player: Player) {
-        this._name = name
-        this._hostage = hostage
-        this._site = site
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get hostage() {
-        return this._hostage
-    }
-
-    get site() {
-        return this._site
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class HostageStopsFollowingEvent {
-    private readonly _name: string;
-    private readonly _hostage: number;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly hostage: number,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, hostage: number, player: Player) {
-        this._name = name
-        this._hostage = hostage
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get hostage() {
-        return this._hostage
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class WeaponFireEvent {
-    private readonly _name: string;
-    private readonly _weapon: string;
-    private readonly _silenced: boolean;
-    private readonly _player: Player;
-
-    constructor(name: string, weapon: string, silenced: boolean, player: Player) {
-        this._name = name
-        this._weapon = weapon
-        this._silenced = silenced
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get weapon() {
-        return this._weapon
-    }
-
-    get silenced() {
-        return this._silenced
-    }
-
-    get player() {
-        return this._player
+    constructor(
+        public readonly name: string,
+        public readonly weapon: string,
+        public readonly silenced: boolean,
+        public readonly player: Player
+    ) {
     }
 }
 
 export class WeaponReloadEvent {
-    private readonly _name: string;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, player: Player) {
-        this._name = name
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class WeaponZoomEvent {
-    private readonly _name: string;
-    private readonly _player: Player;
+    constructor(
+        public readonly name: string,
+        public readonly player: Player,
+    ) {
 
-    constructor(name: string, player: Player) {
-        this._name = name
-        this._player = player
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get player() {
-        return this._player
     }
 }
 
 export class PlayerBlindEvent {
-    private readonly _name: string;
-    private readonly _entityId: number;
-    private readonly _blindDuration: number;
-    private readonly _player: Player;
-    private readonly _attacker: Player;
+    constructor(
+        public readonly name: string,
+        public readonly entityId: number,
+        public readonly blindDuration: number,
+        public readonly player: Player,
+        public readonly attacker: Player
+    ) {
 
-    constructor(name: string, entityId: number, blindDuration: number, player: Player, attacker: Player) {
-        this._name = name
-        this._entityId = entityId
-        this._blindDuration = blindDuration
-        this._player = player
-        this._attacker = attacker
-    }
-
-    get name() {
-        return this._name
-    }
-
-    get entityId() {
-        return this._entityId
-    }
-
-    get blindDuration() {
-        return this._blindDuration
-    }
-
-    get player() {
-        return this._player
-    }
-
-    get attacker() {
-        return this._attacker
     }
 }
 

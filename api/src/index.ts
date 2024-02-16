@@ -7,7 +7,7 @@ import * as constants from './node/constants'
 import './node/exceptions'
 import { Player } from './node/player'
 import server from './server/index'
-import GameMessage from './server/message'
+import { GameMessage } from './server/message'
 
 declare global {
     namespace NodeJS {
