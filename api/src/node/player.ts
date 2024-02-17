@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error Could not find a declaration file for module 'metacall'
 import { metacall } from "metacall"
 import { sayToSlot } from "./chat"
 import { STEAM_USER_HIGH_VALUE, GameMessageTarget, Team } from "./constants"
@@ -14,11 +14,11 @@ export class Player {
     }
 
     get hp() {
-        return metacall('_PlayerGetHP', this.slot) as number;
+        return metacall("_PlayerGetHP", this.slot) as number;
     }
 
     set hp(hp: number) {
-        metacall('_PlayerSetHP', this.slot, hp);
+        metacall("_PlayerSetHP", this.slot, hp);
     }
 
     get steamId64(): string | undefined {
@@ -31,51 +31,51 @@ export class Player {
     }
 
     get isAlive() {
-        return metacall('_PlayerGetIsAlive', this.slot) as boolean;
+        return metacall("_PlayerGetIsAlive", this.slot) as boolean;
     }
 
     get isConnected() {
-        return metacall('_PlayerGetIsConnected', this.slot) as boolean;
+        return metacall("_PlayerGetIsConnected", this.slot) as boolean;
     }
 
     get isDisconnected() {
-        return metacall('_PlayerGetIsDisconnected', this.slot) as boolean;
+        return metacall("_PlayerGetIsDisconnected", this.slot) as boolean;
     }
 
     get isConnecting() {
-        return metacall('_PlayerGetIsConnecting', this.slot) as boolean;
+        return metacall("_PlayerGetIsConnecting", this.slot) as boolean;
     }
 
     get isDisconnecting() {
-        return metacall('_PlayerGetIsDisconnecting', this.slot) as boolean;
+        return metacall("_PlayerGetIsDisconnecting", this.slot) as boolean;
     }
 
     get isReserved() {
-        return metacall('_PlayerGetIsReserved', this.slot) as boolean;
+        return metacall("_PlayerGetIsReserved", this.slot) as boolean;
     }
 
     get isReconnecting() {
-        return metacall('_PlayerGetIsReconnecting', this.slot) as boolean;
+        return metacall("_PlayerGetIsReconnecting", this.slot) as boolean;
     }
 
     slap(hp: number) {
-        metacall('_PlayerSlap', this.slot, hp);
+        metacall("_PlayerSlap", this.slot, hp);
     }
 
     slay() {
-        metacall('_PlayerSlay', this.slot);
+        metacall("_PlayerSlay", this.slot);
     }
 
     respawn() {
-        metacall('_PlayerRespawn', this.slot);
+        metacall("_PlayerRespawn", this.slot);
     }
 
     get team(): Team {
-        return metacall('_PlayerGetTeam', this.slot);
+        return metacall("_PlayerGetTeam", this.slot);
     }
 
     changeTeam(team: Team, kill: boolean) {
-        metacall('_PlayerChangeTeam', this.slot, team, kill);
+        metacall("_PlayerChangeTeam", this.slot, team, kill);
     }
 
     say(message: string) {
@@ -87,19 +87,19 @@ export class Player {
     }
 
     setModel(path: string) {
-        metacall('_PlayerSetModel', this.slot, path);
+        metacall("_PlayerSetModel", this.slot, path);
     }
 
     setColor(color: Color) {
-        metacall('_PlayerSetColor', this.slot, color);
+        metacall("_PlayerSetColor", this.slot, color);
     }
 
     playSound(path: string) {
-        metacall('_PlayerPlaySound', this.slot, path);
+        metacall("_PlayerPlaySound", this.slot, path);
     }
 
     kick() {
-        metacall('_PlayerKick', this.slot);
+        metacall("_PlayerKick", this.slot);
     }
 }
 

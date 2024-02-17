@@ -17,7 +17,7 @@ if (node_require) {
 /** Native node require */
 const ts = require("typescript");
 /** Define the extensions for requiring with TypeScript */
-['ts', 'tsx', 'jsx'].forEach(ext => {
+["ts", "tsx", "jsx"].forEach(ext => {
     /* If we require a TypeScript file from NodeJS, probably we do not need introspection data */
     Module._extensions[`.${ext}`] = (module) => {
         const exp = exports.load_from_file([module.filename], false);
@@ -40,9 +40,9 @@ const log = process.env.METACALL_DEBUG ? console.log : noop;
 /** Util: Wraps a function in try / catch and possibly logs */
 const safe = (f, def) => (...args) => {
     try {
-        log(f.name, '<-', ...args);
+        log(f.name, "<-", ...args);
         const res = f(...args);
-        log(f.name, '->', res);
+        log(f.name, "->", res);
         return res;
     }
     catch (err) {
@@ -50,11 +50,11 @@ const safe = (f, def) => (...args) => {
         return def;
     }
 };
-const wrapFunctionExport = (e) => typeof e === 'function' ? { [e.name]: e } : e;
+const wrapFunctionExport = (e) => typeof e === "function" ? { [e.name]: e } : e;
 const defaultCompilerOptions = {
     target: ts.ScriptTarget.ES2017,
     module: ts.ModuleKind.CommonJS,
-    lib: ['lib.es2017.d.ts'],
+    lib: ["lib.es2017.d.ts"],
 };
 /** Generate diagnostics if any, the return value true means there was an error, false otherwise */
 const generateDiagnostics = (program, diagnostics, errors) => {
@@ -71,7 +71,7 @@ const generateDiagnostics = (program, diagnostics, errors) => {
 };
 const getProgramOptions = (paths = []) => {
     const defaultOptions = { options: defaultCompilerOptions, rootNames: paths, configFileParsingDiagnostics: [] };
-    const configFile = ts.findConfigFile(process.cwd(), ts.sys.fileExists, 'tsconfig.json');
+    const configFile = ts.findConfigFile(process.cwd(), ts.sys.fileExists, "tsconfig.json");
     if (!configFile) {
         return defaultOptions;
     }
@@ -137,23 +137,23 @@ const fileResolve = (p) => {
         return node_resolve(p);
     }
     catch (ex) {
-        if (ex.code !== 'MODULE_NOT_FOUND') {
+        if (ex.code !== "MODULE_NOT_FOUND") {
             throw ex;
         }
         // Try global paths
-        const paths = (process.env['NODE_PATH'] || '').split(path.delimiter).filter((e) => e.length !== 0);
+        const paths = (process.env["NODE_PATH"] || "").split(path.delimiter).filter((e) => e.length !== 0);
         for (const r of paths) {
             try {
                 return node_resolve(path.join(r, p));
             }
             catch (e) {
-                if (e.code !== 'MODULE_NOT_FOUND') {
+                if (e.code !== "MODULE_NOT_FOUND") {
                     throw e;
                 }
             }
         }
     }
-    throw Object.assign(Error(`Cannot find module '${p}'`), { code: 'MODULE_NOT_FOUND' });
+    throw Object.assign(Error(`Cannot find module '${p}'`), { code: "MODULE_NOT_FOUND" });
 };
 const fileResolveNoThrow = (p) => {
     try {
@@ -171,7 +171,7 @@ exports.load_from_file = safe(function load_from_file(paths, discover = true) {
     // TODO: Handle the emitSkipped?
     const exportTypes = getMetacallExportTypes(p, paths, (sourceFile, exportTypes) => {
         const { diagnostics /*, emitSkipped */ } = p.emit(sourceFile, (fileName, data) => {
-            var _a;
+            let _a;
             // @ts-ignore
             const nodeModulePaths = Module._nodeModulePaths(path.dirname(fileName));
             const parent = module.parent;
@@ -194,7 +194,7 @@ exports.load_from_file = safe(function load_from_file(paths, discover = true) {
 }, null);
 /** Loads a TypeScript file from memory */
 exports.load_from_memory = safe(function load_from_memory(name, data) {
-    var _a;
+    let _a;
     const extName = `${name}.ts`;
     const { programOptions, transpileOptions } = getTranspileOptions(name, extName);
     const transpileOutput = ts.transpileModule(data, transpileOptions);
@@ -209,13 +209,13 @@ exports.load_from_memory = safe(function load_from_memory(name, data) {
             if (fileName === extName) {
                 return ts.createSourceFile(fileName, data, target);
             }
-            if (fileName.endsWith('.d.ts')) {
+            if (fileName.endsWith(".d.ts")) {
                 try {
-                    const tsPath = path.join(path.dirname(node_resolve('typescript')), fileName);
-                    return ts.createSourceFile(fileName, fs_1.readFileSync(tsPath, 'utf8'), target);
+                    const tsPath = path.join(path.dirname(node_resolve("typescript")), fileName);
+                    return ts.createSourceFile(fileName, fs_1.readFileSync(tsPath, "utf8"), target);
                 }
                 catch (err) {
-                    return ts.createSourceFile(fileName, fs_1.readFileSync(fileName, 'utf8'), target);
+                    return ts.createSourceFile(fileName, fs_1.readFileSync(fileName, "utf8"), target);
                 }
             }
         },
@@ -261,7 +261,7 @@ exports.clear = safe(function clear(handle) {
 /** Returns type information about exported functions from a given handle */
 exports.discover = safe(function discover(handle) {
     const result = Object.keys(handle)
-        .reduce((acc, k) => { var _a; return (Object.assign(Object.assign({}, acc), (_a = discoverTypes.get(k)) !== null && _a !== void 0 ? _a : {})); }, {});
+        .reduce((acc, k) => { let _a; return (Object.assign(Object.assign({}, acc), (_a = discoverTypes.get(k)) !== null && _a !== void 0 ? _a : {})); }, {});
     return result;
 }, {});
 /** Destroy TypeScript loader children in the correct thread, this loader must always be the child of NodeJS loader */

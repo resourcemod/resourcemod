@@ -1,15 +1,15 @@
-// @ts-ignore
+// @ts-expect-error Could not find a declaration file for module 'metacall'
 import {metacall} from "metacall"
 import {GameMessageTarget} from "./constants"
 
 export const sayToEveryone = (message: string, destination: GameMessageTarget = GameMessageTarget.Chat) => {
     if (message.match(/^\\x\d+/gm)) message = ` ${message}`
-    metacall('_AllPrint', destination, message)
+    metacall("_AllPrint", destination, message)
 }
 
 export const sayToSlot = (slot: number, message: string, destination: GameMessageTarget = GameMessageTarget.Chat) => {
     if (message.match(/^\\x\d+/gm)) message = ` ${message}`
-    metacall('_PlayerPrint', slot, destination, message)
+    metacall("_PlayerPrint", slot, destination, message)
 }
 
 export enum Colors {

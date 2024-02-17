@@ -1,4 +1,4 @@
-import { Player } from './player';
+import { Player } from "./player";
 import { PREVENT_EVENT, STEAM_USER_HIGH_VALUE } from "./constants"
 const events = new Map();
 
@@ -52,21 +52,22 @@ export const _onEventCall = (data: any) => {
     if (events.has(data._name)) {
         // temporary hack (cuz classes works weird)
         try {
-            // @ts-expect-error
+            // @ts-expect-error Element implicitly has an 'any' type because expression of type 'any' can't be used to index type
             data = Object.assign(new constructors[data._name], data);
             if (data._player) data._player = new Player(data._player._name, data._player._steamId, data._player._slot)
             if (data._attacker) data._attacker = new Player(data._attacker._name, data._attacker._steamId, data._attacker._slot)
             if (data._assister) data._assister = new Player(data._assister._name, data._assister._steamId, data._assister._slot)
-        } catch (e: any) {
+        } catch (e: unknown) {
             console.error(e)
         }
+        // eslint-disable-next-line @typescript-eslint/ban-types
         events.get(data._name).forEach((listener: Function) => {
-            if (typeof listener === 'function') {
+            if (typeof listener === "function") {
                 try {
                     if (listener(data) === PREVENT_EVENT) {
                         prevent = PREVENT_EVENT
                     }
-                } catch (e: any) {
+                } catch (e: unknown) {
                     console.error(e)
                 }
             }
@@ -75,7 +76,7 @@ export const _onEventCall = (data: any) => {
     return prevent;
 }
 export function onEvent<T extends keyof IEvents>(name: T, callback: IEvents[T]) {
-    if (typeof callback !== 'function') throw 'Callback must be a function.'
+    if (typeof callback !== "function") throw "Callback must be a function."
 
     if (events.has(name) && Array.isArray(events.get(name))) {
         return events.get(name).push(callback)
@@ -83,44 +84,44 @@ export function onEvent<T extends keyof IEvents>(name: T, callback: IEvents[T]) 
     events.set(name, [callback])
 }
 
-export const onItemPickup = (callback: IEvents['item_pickup']) => onEvent('item_pickup', callback)
-export const onClientPutInServer = (callback: IEvents['client_put_in_server']) => onEvent('client_put_in_server', callback)
-export const onClientConnected = (callback: IEvents['client_connected']) => onEvent('client_connected', callback)
-export const onClientConnect = (callback: IEvents['client_connect']) => onEvent('client_connect', callback)
-export const onPlayerActivate = (callback: IEvents['player_activate']) => onEvent('player_activate', callback)
-export const onPlayerSpawn = (callback: IEvents['player_spawn']) => onEvent('player_spawn', callback)
-export const onPlayerChangeTeam = (callback: IEvents['player_team']) => onEvent('player_team', callback)
-export const onPlayerHurt = (callback: IEvents['player_hurt']) => onEvent('player_hurt', callback)
-export const onMapShutdown = (callback: IEvents['map_shutdown']) => onEvent('map_shutdown', callback)
-export const onPlayerChat = (callback: IEvents['player_chat']) => onEvent('player_chat', callback)
-export const onGameMessage = (callback: IEvents['game_message']) => onEvent('game_message', callback)
-export const onMapLoaded = (callback: IEvents['map_loaded']) => onEvent('map_loaded', callback)
-export const onRoundEnded = (callback: IEvents['round_end']) => onEvent('round_end', callback)
-export const onRoundStarted = (callback: IEvents['round_start']) => onEvent('round_start', callback)
-export const onFreezeTimeEnded = (callback: IEvents['round_freeze_end']) => onEvent('round_freeze_end', callback)
-export const onPlayerDeath = (callback: IEvents['player_death']) => onEvent('player_death', callback)
-export const onPlayerFootstep = (callback: IEvents['player_footstep']) => onEvent('player_footstep', callback)
-export const onPropBreak = (callback: IEvents['break_prop']) => onEvent('break_prop', callback)
-export const onItemPurchase = (callback: IEvents['item_purchase']) => onEvent('item_purchase', callback)
-export const onBombBeginPlant = (callback: IEvents['bomb_beginplant']) => onEvent('bomb_beginplant', callback)
-export const onBombPlanted = (callback: IEvents['bomb_planted']) => onEvent('bomb_planted', callback)
-export const onBombDefused = (callback: IEvents['bomb_defused']) => onEvent('bomb_defused', callback)
-export const onBombExploded = (callback: IEvents['bomb_exploded']) => onEvent('bomb_exploded', callback)
-export const onBombDropped = (callback: IEvents['bomb_dropped']) => onEvent('bomb_dropped', callback)
-export const onBombPickup = (callback: IEvents['bomb_pickup']) => onEvent('bomb_pickup', callback)
-export const onDefuserDropped = (callback: IEvents['defuser_dropped']) => onEvent('defuser_dropped', callback)
-export const onDefuserPickup = (callback: IEvents['defuser_pickup']) => onEvent('defuser_pickup', callback)
-export const onBeginDefuse = (callback: IEvents['bomb_begindefuse']) => onEvent('bomb_begindefuse', callback)
-export const onAbortDefuse = (callback: IEvents['bomb_abortdefuse']) => onEvent('bomb_abortdefuse', callback)
-export const onHostageFollows = (callback: IEvents['hostage_follows']) => onEvent('hostage_follows', callback)
-export const onHostageHurt = (callback: IEvents['hostage_hurt']) => onEvent('hostage_hurt', callback)
-export const onHostageRescued = (callback: IEvents['hostage_rescued']) => onEvent('hostage_rescued', callback)
-export const onHostageStopsFollowing = (callback: IEvents['hostage_stops_following']) => onEvent('hostage_stops_following', callback)
-export const onWeaponFire = (callback: IEvents['weapon_fire']) => onEvent('weapon_fire', callback)
-export const onWeaponReload = (callback: IEvents['weapon_reload']) => onEvent('weapon_reload', callback)
-export const onWeaponZoom = (callback: IEvents['weapon_zoom']) => onEvent('weapon_zoom', callback)
-export const onPlayerBlind = (callback: IEvents['player_blind']) => onEvent('player_blind', callback)
-export const onClientDisconnected = (callback: IEvents['client_disconnected']) => onEvent('client_disconnected', callback)
+export const onItemPickup = (callback: IEvents["item_pickup"]) => onEvent("item_pickup", callback)
+export const onClientPutInServer = (callback: IEvents["client_put_in_server"]) => onEvent("client_put_in_server", callback)
+export const onClientConnected = (callback: IEvents["client_connected"]) => onEvent("client_connected", callback)
+export const onClientConnect = (callback: IEvents["client_connect"]) => onEvent("client_connect", callback)
+export const onPlayerActivate = (callback: IEvents["player_activate"]) => onEvent("player_activate", callback)
+export const onPlayerSpawn = (callback: IEvents["player_spawn"]) => onEvent("player_spawn", callback)
+export const onPlayerChangeTeam = (callback: IEvents["player_team"]) => onEvent("player_team", callback)
+export const onPlayerHurt = (callback: IEvents["player_hurt"]) => onEvent("player_hurt", callback)
+export const onMapShutdown = (callback: IEvents["map_shutdown"]) => onEvent("map_shutdown", callback)
+export const onPlayerChat = (callback: IEvents["player_chat"]) => onEvent("player_chat", callback)
+export const onGameMessage = (callback: IEvents["game_message"]) => onEvent("game_message", callback)
+export const onMapLoaded = (callback: IEvents["map_loaded"]) => onEvent("map_loaded", callback)
+export const onRoundEnded = (callback: IEvents["round_end"]) => onEvent("round_end", callback)
+export const onRoundStarted = (callback: IEvents["round_start"]) => onEvent("round_start", callback)
+export const onFreezeTimeEnded = (callback: IEvents["round_freeze_end"]) => onEvent("round_freeze_end", callback)
+export const onPlayerDeath = (callback: IEvents["player_death"]) => onEvent("player_death", callback)
+export const onPlayerFootstep = (callback: IEvents["player_footstep"]) => onEvent("player_footstep", callback)
+export const onPropBreak = (callback: IEvents["break_prop"]) => onEvent("break_prop", callback)
+export const onItemPurchase = (callback: IEvents["item_purchase"]) => onEvent("item_purchase", callback)
+export const onBombBeginPlant = (callback: IEvents["bomb_beginplant"]) => onEvent("bomb_beginplant", callback)
+export const onBombPlanted = (callback: IEvents["bomb_planted"]) => onEvent("bomb_planted", callback)
+export const onBombDefused = (callback: IEvents["bomb_defused"]) => onEvent("bomb_defused", callback)
+export const onBombExploded = (callback: IEvents["bomb_exploded"]) => onEvent("bomb_exploded", callback)
+export const onBombDropped = (callback: IEvents["bomb_dropped"]) => onEvent("bomb_dropped", callback)
+export const onBombPickup = (callback: IEvents["bomb_pickup"]) => onEvent("bomb_pickup", callback)
+export const onDefuserDropped = (callback: IEvents["defuser_dropped"]) => onEvent("defuser_dropped", callback)
+export const onDefuserPickup = (callback: IEvents["defuser_pickup"]) => onEvent("defuser_pickup", callback)
+export const onBeginDefuse = (callback: IEvents["bomb_begindefuse"]) => onEvent("bomb_begindefuse", callback)
+export const onAbortDefuse = (callback: IEvents["bomb_abortdefuse"]) => onEvent("bomb_abortdefuse", callback)
+export const onHostageFollows = (callback: IEvents["hostage_follows"]) => onEvent("hostage_follows", callback)
+export const onHostageHurt = (callback: IEvents["hostage_hurt"]) => onEvent("hostage_hurt", callback)
+export const onHostageRescued = (callback: IEvents["hostage_rescued"]) => onEvent("hostage_rescued", callback)
+export const onHostageStopsFollowing = (callback: IEvents["hostage_stops_following"]) => onEvent("hostage_stops_following", callback)
+export const onWeaponFire = (callback: IEvents["weapon_fire"]) => onEvent("weapon_fire", callback)
+export const onWeaponReload = (callback: IEvents["weapon_reload"]) => onEvent("weapon_reload", callback)
+export const onWeaponZoom = (callback: IEvents["weapon_zoom"]) => onEvent("weapon_zoom", callback)
+export const onPlayerBlind = (callback: IEvents["player_blind"]) => onEvent("player_blind", callback)
+export const onClientDisconnected = (callback: IEvents["client_disconnected"]) => onEvent("client_disconnected", callback)
 
 // Event classes
 export class ItemPickupEvent {
