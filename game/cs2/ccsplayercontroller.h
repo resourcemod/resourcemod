@@ -35,9 +35,9 @@ extern Engine *g_Engine;
 
 class CCSPlayerController : public CBasePlayerController {
 public:
-    DECLARE_SCHEMA_CLASS(CCSPlayerController);
+    DECLARE_SCHEMA_CLASS_BASE(CCSPlayerController, false)
 
-    SCHEMA_FIELD(CCSPlayerController_InGameMoneyServices*, m_pInGameMoneyServices)
+    SCHEMA_FIELD_OFFSET(CCSPlayerController_InGameMoneyServices *, m_pInGameMoneyServices, 0)
 
     SCHEMA_FIELD(CCSPlayerController_ActionTrackingServices*, m_pActionTrackingServices)
 

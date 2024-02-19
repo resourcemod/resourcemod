@@ -41,6 +41,18 @@ public:
         return metacall_value_create_bool(true);
     }
 
+    static void *GetMoney(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        return metacall_value_create_int(c->m_pInGameMoneyServices->m_iAccount());
+    }
+
+    static void *SetMoney(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        int money = metacall_value_to_int(args[1]);
+        c->m_pInGameMoneyServices->m_iAccount = money;
+        return metacall_value_create_bool(true);
+    }
+
     static void *GetArmor(size_t argc, void *args[], void *data) {
         CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
         CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *)c->m_hPlayerPawn().Get();
