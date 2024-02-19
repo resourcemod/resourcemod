@@ -130,7 +130,6 @@ void EventManager::OnClientDisconnect_hk(CPlayerSlot slot, ENetworkDisconnection
 void EventManager::OnClientConnected_hk(CPlayerSlot slot, const char *pszName, uint64 xuid, const char *pszNetworkID,
                                         const char *pszAddress, bool bFakePlayer) {
     auto e = new client_connected(pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
-    logger::log(logger::format("%s slot: %d", pszName, slot));
     if (e->Emit()) {
         RETURN_META(MRES_SUPERCEDE);
     }
