@@ -3,6 +3,7 @@ import { metacall } from "metacall"
 import { sayToSlot } from "./chat"
 import { STEAM_USER_HIGH_VALUE, GameMessageTarget, Team } from "./constants"
 import { Color } from "./color";
+import { GearSlot, Weapon, drop, getWeaponFromGearSlot, give } from "../game/weapons";
 
 export class Player {
     private readonly _name: string;
@@ -72,12 +73,24 @@ export class Player {
         return metacall('_PlayerGetIsReconnecting', this._slot) as boolean;
     }
 
+    get currentWeapon() {
+        return getWeaponFromGearSlot(this._slot, GearSlot.CurrentWeapon)
+    }
+
     slap(hp: number) {
         metacall('_PlayerSlap', this._slot, hp);
     }
 
     slay() {
         metacall('_PlayerSlay', this._slot);
+    }
+
+    giveWeapon(weapon: Weapon) {
+        return give(this._slot, weapon)
+    }
+
+    dropWeapon() {
+        return drop(this._slot)
     }
 
     respawn() {

@@ -12,6 +12,8 @@
 #include <iserver.h>
 #include "eiface.h"
 #include "../GameSystem.h"
+#include "../../protobuf/generated/cs_gameevents.pb.h"
+#include "../../protobuf/generated/te.pb.h"
 
 extern PluginId g_PLID;
 extern SourceHook::ISourceHook *g_SHPtr;
@@ -109,8 +111,13 @@ bool EventManager::OnEventFired(IGameEvent *event, bool bDontBroadcast = false) 
 void EventManager::OnPostEventAbstract(CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64 *clients,
                                        INetworkSerializable *pEvent, const void *pData, unsigned long nSize,
                                        NetChannelBufType_t bufType) {
+    static void (IGameEventSystem::*PostEventAbstract)(CSplitScreenSlot, bool, int, const uint64 *,
+                                                       INetworkSerializable *, const void *, unsigned long, NetChannelBufType_t) = &IGameEventSystem::PostEventAbstract;
+
     NetMessageInfo_t *info = pEvent->GetNetMessageInfo();
-    //Engine::FireEvent();
+    if (info->m_MessageId == GE_FireBulletsId) {
+        // ge block
+    }
 }
 
 void EventManager::OnClientDisconnect_hk(CPlayerSlot slot, ENetworkDisconnectionReason reason, const char *pszName,
@@ -123,6 +130,7 @@ void EventManager::OnClientDisconnect_hk(CPlayerSlot slot, ENetworkDisconnection
 void EventManager::OnClientConnected_hk(CPlayerSlot slot, const char *pszName, uint64 xuid, const char *pszNetworkID,
                                         const char *pszAddress, bool bFakePlayer) {
     auto e = new client_connected(pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
+    logger::log(logger::format("%s slot: %d", pszName, slot));
     if (e->Emit()) {
         RETURN_META(MRES_SUPERCEDE);
     }

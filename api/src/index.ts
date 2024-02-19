@@ -8,6 +8,9 @@ import './node/exceptions'
 import { Player } from './node/player'
 import server from './server/index'
 import GameMessage from './server/message'
+import * as weapons from './game/weapons'
+import { Weapon, GearSlot } from './game/weapons'
+
 
 declare global {
     namespace NodeJS {
@@ -24,5 +27,8 @@ export {
     constants,
     Player,
     server,
-    GameMessage
+    GameMessage,
+    weapons,
+    Weapon,
+    GearSlot
 }
