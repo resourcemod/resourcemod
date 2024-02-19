@@ -25,14 +25,21 @@ class CCSPlayerPawnBase : public CBasePlayerPawn {
 public:
     DECLARE_SCHEMA_CLASS(CCSPlayerPawnBase);
 
+    SCHEMA_FIELD_OFFSET(int, m_ArmorValue, 0)
+
     SCHEMA_FIELD(QAngle, m_angEyeAngles)
 
     SCHEMA_FIELD(float, m_flVelocityModifier)
-};
 
-class CCSPlayerPawn : public CCSPlayerPawnBase {
-public:
-    DECLARE_SCHEMA_CLASS(CCSPlayerPawn);
+    void SetArmor(int armor) {
+        if (armor <= 0) {
+            m_ArmorValue = 0;
+            return;
+        }
+        m_ArmorValue = armor;
+    }
 
-    SCHEMA_FIELD(CCSPlayer_ActionTrackingServices*, m_pActionTrackingServices)
+    int GetArmor() {
+        return m_ArmorValue();
+    }
 };

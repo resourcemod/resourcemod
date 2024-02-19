@@ -8,9 +8,12 @@
 #include "../Virtual.h"
 #include "stdint.h"
 #include "cschemasystem.h"
+#include "Memory.h"
 
 class CEntityInstance;
+
 class CBasePlayerController;
+
 class Z_CBaseEntity;
 
 struct SchemaKey {
@@ -23,7 +26,7 @@ void SetStateChanged(Z_CBaseEntity *pEntity, int offset);
 class Schema {
 public:
     using SchemaKeyValueMap_t = CUtlMap<uint32_t, SchemaKey>;
-    using SchemaTableMap_t = CUtlMap<uint32_t, SchemaKeyValueMap_t*>;
+    using SchemaTableMap_t = CUtlMap<uint32_t, SchemaKeyValueMap_t *>;
 
     static constexpr uint32_t val_32_const = 0x811c9dc5;
     static constexpr uint32_t prime_32_const = 0x1000193;
@@ -42,7 +45,8 @@ public:
 
     static bool IsFieldNetworked(SchemaClassFieldData_t &field);
 
-    static void (FASTCALL *StateChanged)(void *networkTransmitComponent, CEntityInstance *ent, int64 offset, int16 a4, int16 a5);
+    static void
+    (FASTCALL *StateChanged)(void *networkTransmitComponent, CEntityInstance *ent, int64 offset, int16 a4, int16 a5);
 
     static constexpr uint64_t hash_64_fnv1a_const(const char *const str, const uint64_t value = val_64_const) noexcept {
         return (str[0] == '\0') ? value : hash_64_fnv1a_const(&str[1], (value ^ uint64_t(str[0])) * prime_64_const);
@@ -102,14 +106,20 @@ public:
             static const size_t offset = offsetof(ThisClass, varName);                                                                                            \
             ThisClass *pThisClass = (ThisClass *)((byte *)this - offset);                                                                                         \
                                                                                                                                                                   \
-            if (m_key.networked)                                                                                                                             \
-            {                                                                                                                                                     \
-                if (!IsStruct)                                                                                                                                    \
-                    SetStateChanged((Z_CBaseEntity *)pThisClass, m_key.offset + extra_offset);                                                                    \
-                else if (IsPlatformPosix())                                                                                                                       \
-                    CALL_VIRTUAL(void, 1, pThisClass, m_key.offset + extra_offset, 0xFFFFFFFF, 0xFFFF);                                                           \
-            }                                                                                                                                                     \
-            *reinterpret_cast<std::add_pointer_t<type>>((uintptr_t)(pThisClass) + m_key.offset + extra_offset) = val;                                             \
+            if (m_chain != 0 && m_key.networked)                                                                            \
+            {                                                                                                                \
+                SignatureCall::NetworkStateChanged((uintptr_t)(pThisClass) + m_chain, m_key.offset + extra_offset, 0xFFFFFFFF);                                               \
+            }                                                                                                                \
+            else if(m_key.networked)                                                                                        \
+            {                                                                                                                \
+                /* WIP: Works fine for most props, but inlined classes in the middle of a class will
+					need to have their this pointer corrected by the offset .*/                                                \
+                if (!IsStruct)                                                                                                \
+                    SetStateChanged((Z_CBaseEntity*)pThisClass, m_key.offset + extra_offset);\
+                else/* This is currently broken on windows. todo: is thats true? */                                        \
+                    CALL_VIRTUAL(void, 1, pThisClass, m_key.offset + extra_offset, 0xFFFFFFFF, 0xFFFF);                                                                          \
+            }                                                                                                                \
+            *reinterpret_cast<std::add_pointer_t<type>>((uintptr_t)(pThisClass) + m_key.offset + extra_offset) = val;        \
         }                                                                                                                                                         \
         operator std::add_lvalue_reference_t<type>() { return Get(); }                                                                                            \
         std::add_lvalue_reference_t<type> operator()() { return Get(); }                                                                                          \
