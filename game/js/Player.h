@@ -15,7 +15,7 @@
 #include <metacall/metacall.h>
 #include "../../protobuf/generated/network_connection.pb.h"
 #include <vector>
-
+#include "../cs2/Schema.h"
 class Player;
 
 extern ResourceMod *g_ResourceMod;
@@ -98,7 +98,7 @@ public:
 
     static void *SetDeaths(size_t argc, void *args[], void *data) {
         CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-        c->m_pActionTrackingServices->m_matchStats().m_iDamage = metacall_value_to_int(args[1]);
+        c->m_pActionTrackingServices->m_matchStats().m_iDeaths = metacall_value_to_int(args[1]);
         return metacall_value_create_bool(true);
     }
 
