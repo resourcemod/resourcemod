@@ -175,6 +175,11 @@ public:
 
     CHandle<CBaseEntity> GetHandle() { return m_pEntity->m_EHandle; }
     CEntitySubclassVDataBase *GetVData() { return *(CEntitySubclassVDataBase **)((uint8 *)(m_nSubclassID()) + 4); }
+
+    void Remove()
+    {
+        SignatureCall::UTIL_Remove(this);
+    }
 };
 
 class SpawnPoint : public Z_CBaseEntity {

@@ -94,7 +94,7 @@ void Engine::InitMetacall() {
     // weapons
     metacall_register("_WeaponGive", Weapon::Give, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
     metacall_register("_WeaponGet", Weapon::Get, nullptr, METACALL_STRING, 2, METACALL_INT, METACALL_INT);
-    metacall_register("_WeaponDrop", Weapon::Drop, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    metacall_register("_WeaponDrop", Weapon::Drop, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_BOOL);
 
     // armor
     metacall_register("_PlayerGetArmor", Player::GetArmor, nullptr, METACALL_INT, 1, METACALL_INT);

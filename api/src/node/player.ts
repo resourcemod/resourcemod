@@ -131,8 +131,8 @@ export class Player {
         return give(this._slot, weapon)
     }
 
-    dropWeapon() {
-        return drop(this._slot)
+    dropWeapon(remove: boolean = false) {
+        return drop(this._slot, remove)
     }
 
     respawn() {

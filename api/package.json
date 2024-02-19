@@ -1,6 +1,6 @@
 {
   "name": "resourcemod",
-  "version": "1.0.31",
+  "version": "1.0.32",
   "description": "Create CS2 Content with NodeJS runtime",
   "repository": {
     "type": "git",

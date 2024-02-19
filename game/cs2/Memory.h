@@ -49,6 +49,7 @@ namespace SignatureCall {
     inline IGameEventListener2*(FASTCALL *GetLegacyGameEventListener)(CPlayerSlot slot);
     inline void(FASTCALL *NetworkStateChanged)(int64 chainEntity, int64 offset, int64 a3);
     inline void(FASTCALL *StateChanged)(void *networkTransmitComponent, CEntityInstance *ent, int64 offset, int16 a4, int16 a5);
+    inline void(FASTCALL *UTIL_Remove)(CEntityInstance*);
 }
 
 class Memory {
@@ -93,6 +94,7 @@ public:
         RESOLVE_SIG(this, "LegacyGameEventListener", SignatureCall::GetLegacyGameEventListener);
         RESOLVE_SIG(this, "NetworkStateChanged", SignatureCall::NetworkStateChanged);
         RESOLVE_SIG(this, "StateChanged", SignatureCall::StateChanged);
+        RESOLVE_SIG(this, "UTIL_Remove", SignatureCall::UTIL_Remove);
     }
 
     bool IsSymbol(const char *name) {

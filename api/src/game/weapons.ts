@@ -74,6 +74,6 @@ export const getWeaponFromGearSlot = (slot: number, gearSlot: GearSlot) => {
     return null
 }
 
-export const drop = (slot: number) : boolean => {
-    return metacall('_WeaponDrop', slot)
+export const drop = (slot: number, remove: boolean = false) : boolean => {
+    return metacall('_WeaponDrop', slot, remove)
 }

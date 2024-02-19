@@ -134,6 +134,10 @@ public:
         }
 
         itemServices->DropPlayerWeapon(weapon);
+        if (metacall_value_to_bool(args[1]) == true) {
+            weaponServices->RemoveWeapon(weapon);
+            weapon->Remove();
+        }
 
         metacall_value_create_bool(true);
     }
