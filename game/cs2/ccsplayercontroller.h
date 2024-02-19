@@ -39,7 +39,7 @@ public:
 
     SCHEMA_FIELD_OFFSET(CCSPlayerController_InGameMoneyServices *, m_pInGameMoneyServices, 0)
 
-    SCHEMA_FIELD(CCSPlayerController_ActionTrackingServices*, m_pActionTrackingServices)
+    SCHEMA_FIELD_OFFSET(CCSPlayerController_ActionTrackingServices *, m_pActionTrackingServices, 0)
 
     SCHEMA_FIELD(bool, m_bPawnIsAlive);
 

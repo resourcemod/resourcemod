@@ -99,9 +99,21 @@ void Engine::InitMetacall() {
     // armor
     metacall_register("_PlayerGetArmor", Player::GetArmor, nullptr, METACALL_INT, 1, METACALL_INT);
     metacall_register("_PlayerSetArmor", Player::SetArmor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+
     // money
     metacall_register("_PlayerGetMoney", Player::GetMoney, nullptr, METACALL_INT, 1, METACALL_INT);
     metacall_register("_PlayerSetMoney", Player::SetMoney, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+
+    // stats
+    metacall_register("_PlayerGetDamage", Player::GetDamage, nullptr, METACALL_INT, 1, METACALL_INT);
+    metacall_register("_PlayerGetKills", Player::GetKills, nullptr, METACALL_INT, 1, METACALL_INT);
+    metacall_register("_PlayerGetAssists", Player::GetAssists, nullptr, METACALL_INT, 1, METACALL_INT);
+    metacall_register("_PlayerGetDeaths", Player::GetDeaths, nullptr, METACALL_INT, 1, METACALL_INT);
+
+    metacall_register("_PlayerSetDamage", Player::SetDamage, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    metacall_register("_PlayerSetKills", Player::SetKills, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    metacall_register("_PlayerSetAssists", Player::SetAssists, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    metacall_register("_PlayerSetDeaths", Player::SetDeaths, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
 
     // Array of scripts to be loaded by MetaCall
     const char *js_scripts[] =

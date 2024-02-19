@@ -53,9 +53,58 @@ public:
         return metacall_value_create_bool(true);
     }
 
+    static void *GetDamage(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
+        return metacall_value_create_int(matchStats->m_iDamage.Get());
+    }
+
+    static void *GetKills(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
+        return metacall_value_create_int(matchStats->m_iKills.Get());
+    }
+
+    static void *GetAssists(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
+        return metacall_value_create_int(matchStats->m_iAssists.Get());
+    }
+
+    static void *GetDeaths(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
+        return metacall_value_create_int(matchStats->m_iDeaths.Get());
+    }
+
+    static void *SetDamage(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        c->m_pActionTrackingServices->m_matchStats().m_iDamage = metacall_value_to_int(args[1]);
+        return metacall_value_create_bool(true);
+    }
+
+    static void *SetKills(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        int amount = metacall_value_to_int(args[1]);
+        c->m_pActionTrackingServices->m_matchStats().m_iKills = amount;
+        return metacall_value_create_bool(true);
+    }
+
+    static void *SetAssists(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        c->m_pActionTrackingServices->m_matchStats().m_iAssists = metacall_value_to_int(args[1]);
+        return metacall_value_create_bool(true);
+    }
+
+    static void *SetDeaths(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        c->m_pActionTrackingServices->m_matchStats().m_iDamage = metacall_value_to_int(args[1]);
+        return metacall_value_create_bool(true);
+    }
+
     static void *GetArmor(size_t argc, void *args[], void *data) {
         CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-        CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *)c->m_hPlayerPawn().Get();
+        CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *) c->m_hPlayerPawn().Get();
         if (!pawn) {
             return metacall_value_create_int(0);
         }
@@ -64,7 +113,7 @@ public:
 
     static void *SetArmor(size_t argc, void *args[], void *data) {
         CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-        CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *)c->m_hPlayerPawn().Get();
+        CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *) c->m_hPlayerPawn().Get();
         if (!pawn) {
             return metacall_value_create_bool(false);
         }
@@ -120,7 +169,7 @@ public:
             return metacall_value_create_bool(false);
         }
 
-        std::pair<uint64_t, std::string> pair = std::make_pair(Engine::Now() + (duration*1000), message);
+        std::pair<uint64_t, std::string> pair = std::make_pair(Engine::Now() + (duration * 1000), message);
         g_Engine->gameMessages[slot] = pair;
 
         return metacall_value_create_bool(true);
