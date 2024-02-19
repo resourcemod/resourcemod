@@ -96,6 +96,20 @@ public:
 
 extern Memory *g_Memory;
 
+class CEntitySubclassVDataBase
+{
+public:
+    DECLARE_SCHEMA_CLASS_BASE(CEntitySubclassVDataBase, false)
+};
+
+class CModelState
+{
+public:
+    DECLARE_SCHEMA_CLASS_BASE(CModelState, false)
+
+    SCHEMA_FIELD_OFFSET(uint64_t, m_MeshGroupMask, 0)
+};
+
 class Z_CBaseEntity : public CBaseEntity {
 public:
     // This is a unique case as CBaseEntity is already defined in the sdk
@@ -129,6 +143,8 @@ public:
 
     SCHEMA_FIELD(LifeState_t, m_lifeState)
 
+    SCHEMA_FIELD_POINTER_OFFSET(CUtlStringToken, m_nSubclassID, 0)
+
     int entindex() { return m_pEntity->m_EHandle.GetEntryIndex(); }
 
     Vector GetAbsOrigin() { return m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin; }
@@ -158,6 +174,7 @@ public:
     }
 
     CHandle<CBaseEntity> GetHandle() { return m_pEntity->m_EHandle; }
+    CEntitySubclassVDataBase *GetVData() { return *(CEntitySubclassVDataBase **)((uint8 *)(m_nSubclassID()) + 4); }
 };
 
 class SpawnPoint : public Z_CBaseEntity {

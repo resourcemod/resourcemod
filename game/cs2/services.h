@@ -18,103 +18,132 @@
  */
 
 #pragma once
+
 #include <tier0/platform.h>
 #include "globaltypes.h"
+#include "ccsweaponbase.h"
 
 class CBaseEntity;
 
-struct CSPerRoundStats_t
-{
+struct CSPerRoundStats_t {
 public:
     DECLARE_SCHEMA_CLASS_INLINE(CSPerRoundStats_t)
 
     SCHEMA_FIELD(int, m_iKills)
+
     SCHEMA_FIELD(int, m_iDeaths)
+
     SCHEMA_FIELD(int, m_iAssists)
+
     SCHEMA_FIELD(int, m_iDamage)
 };
 
-struct CSMatchStats_t : public CSPerRoundStats_t
-{
+struct CSMatchStats_t : public CSPerRoundStats_t {
 public:
     DECLARE_SCHEMA_CLASS_INLINE(CSMatchStats_t)
 };
 
-class CCSPlayerController_ActionTrackingServices
-{
+class CCSPlayerController_ActionTrackingServices {
 public:
     DECLARE_SCHEMA_CLASS(CCSPlayerController_ActionTrackingServices)
 
     SCHEMA_FIELD(CSMatchStats_t, m_matchStats)
 };
 
-class CPlayer_MovementServices
-{
+class CPlayer_MovementServices {
 public:
     DECLARE_SCHEMA_CLASS(CPlayer_MovementServices);
 
     SCHEMA_FIELD(CInButtonState, m_nButtons)
+
     SCHEMA_FIELD(uint64_t, m_nQueuedButtonDownMask)
+
     SCHEMA_FIELD(uint64_t, m_nQueuedButtonChangeMask)
+
     SCHEMA_FIELD(uint64_t, m_nButtonDoublePressed)
 
     // m_pButtonPressedCmdNumber[64]
     SCHEMA_FIELD_POINTER(uint32_t, m_pButtonPressedCmdNumber)
+
     SCHEMA_FIELD(uint32_t, m_nLastCommandNumberProcessed)
+
     SCHEMA_FIELD(uint64_t, m_nToggleButtonDownMask)
+
     SCHEMA_FIELD(float, m_flMaxspeed)
 };
 
-class CPlayer_MovementServices_Humanoid : CPlayer_MovementServices
-{
+class CPlayer_MovementServices_Humanoid : CPlayer_MovementServices {
 public:
     DECLARE_SCHEMA_CLASS(CPlayer_MovementServices_Humanoid);
 };
 
-class CCSPlayer_MovementServices : CPlayer_MovementServices_Humanoid
-{
+class CCSPlayer_MovementServices : CPlayer_MovementServices_Humanoid {
 public:
     DECLARE_SCHEMA_CLASS(CCSPlayer_MovementServices);
 };
 
-class CCSPlayerController_InGameMoneyServices
-{
+class CCSPlayerController_InGameMoneyServices {
 public:
     DECLARE_SCHEMA_CLASS(CCSPlayerController_InGameMoneyServices);
 
     SCHEMA_FIELD(int, m_iAccount)
 };
 
-class CCSPlayer_ItemServices
-{
+class CCSPlayer_ItemServices {
 public:
     DECLARE_SCHEMA_CLASS(CCSPlayer_ItemServices);
 
     virtual ~CCSPlayer_ItemServices() = 0;
+
+    SCHEMA_FIELD_OFFSET(bool, m_bHasDefuser, 0)
+
+    SCHEMA_FIELD_OFFSET(bool, m_bHasHelmet, 0)
+
+    SCHEMA_FIELD_OFFSET(bool, m_bHasHeavyArmor, 0)
+
 private:
     virtual void unk_01() = 0;
+
     virtual void unk_02() = 0;
+
     virtual void unk_03() = 0;
+
     virtual void unk_04() = 0;
+
     virtual void unk_05() = 0;
+
     virtual void unk_06() = 0;
+
     virtual void unk_07() = 0;
+
     virtual void unk_08() = 0;
+
     virtual void unk_09() = 0;
+
     virtual void unk_10() = 0;
+
     virtual void unk_11() = 0;
+
     virtual void unk_12() = 0;
+
     virtual void unk_13() = 0;
+
     virtual void unk_14() = 0;
-    virtual CBaseEntity* _GiveNamedItem(const char* pchName) = 0;
+
+    virtual CBaseEntity *_GiveNamedItem(const char *pchName) = 0;
+
 public:
-    virtual bool GiveNamedItemBool(const char* pchName) = 0;
-    virtual CBaseEntity* GiveNamedItem(const char* pchName) = 0;
+    virtual bool GiveNamedItemBool(const char *pchName) = 0;
+
+    virtual CBaseEntity *GiveNamedItem(const char *pchName) = 0;
+
+    virtual void DropPlayerWeapon(CBasePlayerWeapon *weapon) = 0;
+
+    virtual void StripPlayerWeapons() = 0;
 };
 
 // We need an exactly sized class to be able to iterate the vector, our schema system implementation can't do this
-class WeaponPurchaseCount_t
-{
+class WeaponPurchaseCount_t {
 private:
     virtual void unk01() {};
     uint64_t unk1 = 0; // 0x8
@@ -129,18 +158,38 @@ private:
     uint32_t unk6 = 0;
 };
 
-struct WeaponPurchaseTracker_t
-{
+struct WeaponPurchaseTracker_t {
 public:
     DECLARE_SCHEMA_CLASS_INLINE(WeaponPurchaseTracker_t)
 
     SCHEMA_FIELD_POINTER(CUtlVector<WeaponPurchaseCount_t>, m_weaponPurchases)
 };
 
-class CCSPlayer_ActionTrackingServices
-{
+class CCSPlayer_ActionTrackingServices {
 public:
     DECLARE_SCHEMA_CLASS(CCSPlayer_ActionTrackingServices)
 
     SCHEMA_FIELD(WeaponPurchaseTracker_t, m_weaponPurchasesThisRound)
+};
+
+class CPlayerPawnComponent
+{
+public:
+    DECLARE_SCHEMA_CLASS_BASE(CPlayerPawnComponent, false)
+
+    SCHEMA_FIELD_OFFSET(CCSPlayerPawn *, __m_pChainEntity, 0)
+};
+
+class CPlayer_WeaponServices : public CPlayerPawnComponent
+{
+public:
+    DECLARE_SCHEMA_CLASS_BASE(CPlayer_WeaponServices, false)
+
+    SCHEMA_FIELD_POINTER_OFFSET(CUtlVector<CHandle<CBasePlayerWeapon>>, m_hMyWeapons, 0)
+    SCHEMA_FIELD_OFFSET(CHandle<CBasePlayerWeapon>, m_hActiveWeapon, 0)
+
+    void RemoveWeapon(CBasePlayerWeapon *weapon)
+    {
+        CALL_VIRTUAL(void, 20, weapon, nullptr, nullptr);
+    }
 };
