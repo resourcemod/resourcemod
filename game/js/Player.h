@@ -6,6 +6,7 @@
 #define RESOURCEMOD_PLAYER_H
 
 #include "../cs2/cbaseplayercontroller.h"
+#include "../cs2/csplayerpawn.h"
 #include "../cs2/ccsplayercontroller.h"
 #include "../hooks/LegacyEvents.h"
 #include "../ResourceMod.h"
@@ -37,6 +38,25 @@ public:
     static void *SetHP(size_t argc, void *args[], void *data) {
         CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
         c->GetPawn()->SetHP(metacall_value_to_int(args[1]));
+        return metacall_value_create_bool(true);
+    }
+
+    static void *GetArmor(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *)c->m_hPlayerPawn().Get();
+        if (!pawn) {
+            return metacall_value_create_int(0);
+        }
+        return metacall_value_create_int(pawn->GetArmor());
+    }
+
+    static void *SetArmor(size_t argc, void *args[], void *data) {
+        CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+        CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *)c->m_hPlayerPawn().Get();
+        if (!pawn) {
+            return metacall_value_create_bool(false);
+        }
+        pawn->SetArmor(metacall_value_to_int(args[1]));
         return metacall_value_create_bool(true);
     }
 

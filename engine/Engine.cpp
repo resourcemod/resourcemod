@@ -96,6 +96,10 @@ void Engine::InitMetacall() {
     metacall_register("_WeaponGet", Weapon::Get, nullptr, METACALL_STRING, 2, METACALL_INT, METACALL_INT);
     metacall_register("_WeaponDrop", Weapon::Drop, nullptr, METACALL_BOOL, 1, METACALL_INT);
 
+    // armor
+    metacall_register("_PlayerGetArmor", Player::GetArmor, nullptr, METACALL_INT, 1, METACALL_INT);
+    metacall_register("_PlayerSetArmor", Player::SetArmor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+
     // Array of scripts to be loaded by MetaCall
     const char *js_scripts[] =
             {
