@@ -35,7 +35,7 @@ https.get("https://s3.eu-central-1.amazonaws.com/saido.static/vdfs/resourcemod.v
 
 try {
     const repository = 'https://github.com/resourcemod/package-template.git'
-    const tag = 'v1.0.22'
+    const tag = 'v1.0.32'
     execSync(`git clone --depth 1 --branch ${tag} ${repository} resourcemod`);
 } catch (e) {
     console.error("Failed to clone resourcemod package.");
