@@ -10,6 +10,7 @@
 #include <metacall/metacall.h>
 #include <cstdlib>
 #include "../../game/js/Weapon.h"
+#include "../game/js/Entity.h"
 #include <windows.h>
 
 Engine *g_Engine;
@@ -77,8 +78,6 @@ void Engine::InitMetacall() {
     metacall_register("_PlayerSlay", Player::Slay, nullptr, METACALL_BOOL, 1, METACALL_INT);
     metacall_register("_PlayerRespawn", Player::Respawn, nullptr, METACALL_BOOL, 1, METACALL_INT);
     metacall_register("_PlayerKick", Player::Kick, nullptr, METACALL_BOOL, 1, METACALL_INT);
-    metacall_register("_PlayerSetModel", Player::SetModel, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
-    metacall_register("_PlayerSetColor", Player::SetColor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_OBJECT);
     metacall_register("_PlayerPlaySound", Player::Play, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
     metacall_register("_PlayerGetTeam", Player::GetTeam, nullptr, METACALL_INT, 1, METACALL_INT);
     metacall_register("_PlayerChangeTeam", Player::ChangeTeam, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
@@ -114,8 +113,21 @@ void Engine::InitMetacall() {
     metacall_register("_PlayerSetAssists", Player::SetAssists, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
     metacall_register("_PlayerSetDeaths", Player::SetDeaths, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
 
-    metacall_register("_PlayerGetCoords", Player::GetCoords, nullptr, METACALL_OBJECT, 1, METACALL_INT);
-    metacall_register("_PlayerSetCoords", Player::SetCoords, nullptr, METACALL_BOOL, 4, METACALL_INT, METACALL_FLOAT, METACALL_FLOAT, METACALL_FLOAT);
+    // entities
+    // model_path, x, y, z
+    metacall_register("_EntityCreate", Entity::Create, nullptr, METACALL_INT, 1, METACALL_STRING); // returns entity id from Engine->entities map
+    metacall_register("_EntitySpawn", Entity::Spawn, nullptr, METACALL_INT, 1, METACALL_INT);
+    metacall_register("_EntityRemove", Entity::Remove, nullptr, METACALL_BOOL, 1, METACALL_INT);
+
+    metacall_register("_EntitySetModel", Entity::SetModel, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    metacall_register("_EntitySetColor", Entity::SetColor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_OBJECT);
+    metacall_register("_EntityGetColor", Entity::GetColor, nullptr, METACALL_OBJECT, 2, METACALL_INT);
+    metacall_register("_EntityGetCollision", Entity::GetCollision, nullptr, METACALL_INT, 1, METACALL_INT);
+    metacall_register("_EntitySetCollision", Entity::SetCollision, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+
+    // coords & angles
+    metacall_register("_EntityGetCoords", Entity::GetCoords, nullptr, METACALL_OBJECT, 1, METACALL_INT);
+    metacall_register("_EntitySetCoords", Entity::SetCoords, nullptr, METACALL_BOOL, 4, METACALL_INT, METACALL_FLOAT, METACALL_FLOAT, METACALL_FLOAT);
 
     // Array of scripts to be loaded by MetaCall
     const char *js_scripts[] =

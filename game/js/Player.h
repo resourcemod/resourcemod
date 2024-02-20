@@ -66,11 +66,7 @@ public:
 
     static void *Play(size_t argc, void *args[], void *data);
 
-    static void *SetModel(size_t argc, void *args[], void *data);
-
     static void *Kick(size_t argc, void *args[], void *data);
-
-    static void *SetColor(size_t argc, void *args[], void *data);
 
     static void *GetTeam(size_t argc, void *args[], void *data);
 
@@ -95,10 +91,6 @@ public:
     static void *GetIsReserved(size_t argc, void *args[], void *data);
 
     static void *GetIsReconnecting(size_t argc, void *args[], void *data);
-
-    static void *GetCoords(size_t argc, void *args[], void *data);
-
-    static void *SetCoords(size_t argc, void *args[], void *data);
 };
 
 #endif //RESOURCEMOD_PLAYER_H

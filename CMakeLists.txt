@@ -20,7 +20,7 @@ add_library(resourcemod SHARED
         engine/Engine.cpp
         engine/Utils.cpp
         game/ResourceMod.cpp
-        game/GameSystem.cpp game/cs2/Schema.cpp game/js/Weapon.h game/cs2/ccsweaponbase.h game/js/Player.cpp)
+        game/GameSystem.cpp game/cs2/Schema.cpp game/js/Weapon.h game/cs2/ccsweaponbase.h game/js/Player.cpp game/js/Entity.cpp)
 
 target_link_libraries(resourcemod
         ${CMAKE_SOURCE_DIR}/third_party/sourcehook/sourcehook.lib

@@ -159,6 +159,11 @@ public:
         m_iHealth = m_iHealth() - iDamage;
     }
 
+    void Spawn()
+    {
+        SignatureCall::CBaseEntity_DispatchSpawn(this, nullptr);
+    }
+
     bool IsAlive() {
         return m_lifeState == LifeState_t::LIFE_ALIVE && m_iHealth > 0;
     }
