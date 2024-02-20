@@ -36,7 +36,7 @@ export enum Weapon {
     SCAR20 = "weapon_scar20",
     SG556 = "weapon_sg556",
     Smoke = "weapon_smokegrenade",
-    SSH08 = "weapon_ssg08",
+    SSG08 = "weapon_ssg08",
     Taser = "weapon_taser",
     Tec9 = "weapon_tec9",
     UMP45 = "weapon_ump45",
