@@ -29,6 +29,13 @@ void *Entity::Spawn(size_t argc, void *args[], void *data) {
     if (entity == nullptr) {
         return metacall_value_create_bool(false);
     }
+
+    std::string model = metacall_value_to_string(args[1]);
+
+    g_ResourceMod->NextFrame([entity, model]() {
+        entity->SetModel(model.c_str()); // may not work if model wasn't precached. Should we add additional checks?
+    });
+
     entity->Spawn();
     return metacall_value_create_bool(true);
 }
@@ -40,7 +47,6 @@ void *Entity::SetModel(size_t argc, void *args[], void *data) {
         return metacall_value_create_bool(false);
     }
     std::string model = metacall_value_to_string(args[1]);
-    logger::log(logger::format("Model: %s, entity_Id: %d", model.c_str(), key));
     g_ResourceMod->NextFrame([entity, model]() {
         entity->SetModel(model.c_str()); // may not work if model wasn't precached. Should we add additional checks?
     });
@@ -54,7 +60,8 @@ void *Entity::SetCollision(size_t argc, void *args[], void *data) {
         return metacall_value_create_bool(false);
     }
 
-    entity->m_Collision.Get().m_nSolidType = (SolidType_t)metacall_value_to_int(args[1]); // collision type. 6 = SOLID_VPHYSICS
+    entity->m_Collision.Get().m_nSolidType = (SolidType_t) metacall_value_to_int(
+            args[1]); // collision type. 6 = SOLID_VPHYSICS
     return metacall_value_create_bool(true);
 }
 
@@ -150,6 +157,50 @@ void *Entity::Remove(size_t argc, void *args[], void *data) {
 
 void *Entity::GetCoords(size_t argc, void *args[], void *data) {
     int key = metacall_value_to_int(args[0]);
+    int slot = metacall_value_to_int(args[1]);
+    if (slot == -1) {
+        return Entity::GetEntityCoords(key);
+    }
+
+    return Entity::GetPlayerCoords(slot);
+}
+
+void *Entity::GetPlayerCoords(int slot) {
+    CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
+    if (c == nullptr) {
+        void *vectorArgs[] = {
+                metacall_value_create_float(0),
+                metacall_value_create_float(0),
+                metacall_value_create_float(0)
+        };
+
+        void *vObj = metacallv("_CreateCoords", vectorArgs);
+
+        metacall_value_destroy(vectorArgs[0]);
+        metacall_value_destroy(vectorArgs[1]);
+        metacall_value_destroy(vectorArgs[2]);
+
+        return vObj;
+    }
+
+    Vector vector = c->GetPawn()->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin();
+
+    void *vectorArgs[] = {
+            metacall_value_create_float(vector.x),
+            metacall_value_create_float(vector.y),
+            metacall_value_create_float(vector.z)
+    };
+
+    void *vObj = metacallv("_CreateCoords", vectorArgs);
+
+    metacall_value_destroy(vectorArgs[0]);
+    metacall_value_destroy(vectorArgs[1]);
+    metacall_value_destroy(vectorArgs[2]);
+
+    return vObj;
+}
+
+void *Entity::GetEntityCoords(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         void *vectorArgs[] = {
@@ -167,7 +218,8 @@ void *Entity::GetCoords(size_t argc, void *args[], void *data) {
         return vObj;
     }
 
-    auto vector = entity->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin();
+    Vector vector = entity->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin();
+
     void *vectorArgs[] = {
             metacall_value_create_float(vector.x),
             metacall_value_create_float(vector.y),
@@ -185,13 +237,34 @@ void *Entity::GetCoords(size_t argc, void *args[], void *data) {
 
 void *Entity::SetCoords(size_t argc, void *args[], void *data) {
     int key = metacall_value_to_int(args[0]);
+    int slot = metacall_value_to_int(args[1]);
+
+    auto x = metacall_value_to_float(args[2]);
+    auto y = metacall_value_to_float(args[3]);
+    auto z = metacall_value_to_float(args[4]);
+
+    if (slot != -1) {
+        return Entity::SetPlayerCoords(slot, x, y, z);
+    }
+
+    return Entity::SetEntityCoords(key, x, y, z);
+}
+
+void* Entity::SetPlayerCoords(int slot, float x, float y, float z) {
+    CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
+    if (c == nullptr) {
+        return metacall_value_create_bool(false);
+    }
+    Vector vec(x, y, z);
+    c->GetPawn()->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin = vec;
+    return metacall_value_create_bool(true);
+}
+
+void* Entity::SetEntityCoords(int key, float x, float y, float z) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return metacall_value_create_bool(false);
     }
-    auto x = metacall_value_to_float(args[1]);
-    auto y = metacall_value_to_float(args[2]);
-    auto z = metacall_value_to_float(args[3]);
     Vector vec(x, y, z);
     entity->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin = vec;
     return metacall_value_create_bool(true);

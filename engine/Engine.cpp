@@ -116,7 +116,7 @@ void Engine::InitMetacall() {
     // entities
     // model_path, x, y, z
     metacall_register("_EntityCreate", Entity::Create, nullptr, METACALL_INT, 1, METACALL_STRING); // returns entity id from Engine->entities map
-    metacall_register("_EntitySpawn", Entity::Spawn, nullptr, METACALL_INT, 1, METACALL_INT);
+    metacall_register("_EntitySpawn", Entity::Spawn, nullptr, METACALL_INT, 2, METACALL_INT, METACALL_STRING);
     metacall_register("_EntityRemove", Entity::Remove, nullptr, METACALL_BOOL, 1, METACALL_INT);
 
     metacall_register("_EntitySetModel", Entity::SetModel, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
@@ -126,8 +126,8 @@ void Engine::InitMetacall() {
     metacall_register("_EntitySetCollision", Entity::SetCollision, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
 
     // coords & angles
-    metacall_register("_EntityGetCoords", Entity::GetCoords, nullptr, METACALL_OBJECT, 1, METACALL_INT);
-    metacall_register("_EntitySetCoords", Entity::SetCoords, nullptr, METACALL_BOOL, 4, METACALL_INT, METACALL_FLOAT, METACALL_FLOAT, METACALL_FLOAT);
+    metacall_register("_EntityGetCoords", Entity::GetCoords, nullptr, METACALL_OBJECT, 2, METACALL_INT, METACALL_INT);
+    metacall_register("_EntitySetCoords", Entity::SetCoords, nullptr, METACALL_BOOL, 5, METACALL_INT, METACALL_INT, METACALL_FLOAT, METACALL_FLOAT, METACALL_FLOAT);
 
     // Array of scripts to be loaded by MetaCall
     const char *js_scripts[] =

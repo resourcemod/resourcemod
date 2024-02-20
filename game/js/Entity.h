@@ -38,6 +38,14 @@ public:
 
     static void *GetCoords(size_t argc, void *args[], void *data);
 
+    static void *GetPlayerCoords(int slot);
+
+    static void *GetEntityCoords(int key);
+
+    static void *SetPlayerCoords(int slot, float x, float y, float z);
+
+    static void *SetEntityCoords(int key, float x, float y, float z);
+
     static void *SetCoords(size_t argc, void *args[], void *data);
 };
 
