@@ -109,11 +109,13 @@ void Engine::InitMetacall() {
     metacall_register("_PlayerGetKills", Player::GetKills, nullptr, METACALL_INT, 1, METACALL_INT);
     metacall_register("_PlayerGetAssists", Player::GetAssists, nullptr, METACALL_INT, 1, METACALL_INT);
     metacall_register("_PlayerGetDeaths", Player::GetDeaths, nullptr, METACALL_INT, 1, METACALL_INT);
-
     metacall_register("_PlayerSetDamage", Player::SetDamage, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
     metacall_register("_PlayerSetKills", Player::SetKills, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
     metacall_register("_PlayerSetAssists", Player::SetAssists, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
     metacall_register("_PlayerSetDeaths", Player::SetDeaths, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+
+    metacall_register("_PlayerGetCoords", Player::GetCoords, nullptr, METACALL_OBJECT, 1, METACALL_INT);
+    metacall_register("_PlayerSetCoords", Player::SetCoords, nullptr, METACALL_BOOL, 4, METACALL_INT, METACALL_FLOAT, METACALL_FLOAT, METACALL_FLOAT);
 
     // Array of scripts to be loaded by MetaCall
     const char *js_scripts[] =

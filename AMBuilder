@@ -46,7 +46,8 @@ for sdk_name in MMSPlugin.sdks:
         'engine/Utils.cpp',
         'game/cs2/Schema.cpp',
         'game/hooks/LegacyEvents.cpp',
-        'game/GameSystem.cpp'
+        'game/GameSystem.cpp',
+        'game/js/Player.cpp'
     ]
 
     if sdk_name in ['dota', 'cs2']:

@@ -9,8 +9,8 @@
 #include "../../logger/logger.h"
 #include "../cs2/CCSPlayerController.h"
 #include "../../engine/Engine.h"
-#include "../js/Player.h"
 #include "metacall/metacall.h"
+#include "../js/Player.h"
 
 extern Engine *g_Engine;
 
