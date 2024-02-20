@@ -32,6 +32,7 @@ std::vector<std::string> weapons = {
         "weapon_knife",
         "weapon_m249",
         "weapon_m4a1",
+        "weapon_m4a1_silencer",
         "weapon_mac10",
         "weapon_mag7",
         "weapon_molotov",
