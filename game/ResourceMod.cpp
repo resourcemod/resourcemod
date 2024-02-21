@@ -153,6 +153,8 @@ void ResourceMod::RMFrame() {
         m_nextFrame.front()();
         m_nextFrame.pop_front();
     }
+    if (g_Engine->isRunning)
+        g_Engine->Tick();
 }
 
 void ResourceMod::NextFrame(std::function<void()> fn) {

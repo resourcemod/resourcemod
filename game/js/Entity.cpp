@@ -31,7 +31,6 @@ void *Entity::Spawn(size_t argc, void *args[], void *data) {
     }
 
     std::string model = metacall_value_to_string(args[1]);
-
     g_ResourceMod->NextFrame([entity, model]() {
         entity->SetModel(model.c_str()); // may not work if model wasn't precached. Should we add additional checks?
     });
@@ -267,5 +266,139 @@ void* Entity::SetEntityCoords(int key, float x, float y, float z) {
     }
     Vector vec(x, y, z);
     entity->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin = vec;
+    return metacall_value_create_bool(true);
+}
+
+void *Entity::GetAngle(size_t argc, void *args[], void *data) {
+    int key = metacall_value_to_int(args[0]);
+    int slot = metacall_value_to_int(args[1]);
+    if (slot != -1) {
+        return Entity::GetPlayerAngle(slot);
+    }
+    return Entity::GetEntityAngle(key);
+}
+
+void *Entity::GetPlayerAngle(int slot) {
+    CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
+    if (c == nullptr) {
+        void *angleArgs[] = {
+                metacall_value_create_float(0),
+                metacall_value_create_float(0),
+                metacall_value_create_float(0)
+        };
+
+        void *vObj = metacallv("_CreateAngle", angleArgs);
+
+        metacall_value_destroy(angleArgs[0]);
+        metacall_value_destroy(angleArgs[1]);
+        metacall_value_destroy(angleArgs[2]);
+
+        return vObj;
+    }
+
+    QAngle angle = c->GetPawn()->m_CBodyComponent->m_pSceneNode->m_angAbsRotation();
+
+    void *angleArgs[] = {
+            metacall_value_create_float(angle.x),
+            metacall_value_create_float(angle.y),
+            metacall_value_create_float(angle.z)
+    };
+
+    void *vObj = metacallv("_CreateAngle", angleArgs);
+
+    metacall_value_destroy(angleArgs[0]);
+    metacall_value_destroy(angleArgs[1]);
+    metacall_value_destroy(angleArgs[2]);
+
+    return vObj;
+}
+
+void *Entity::GetEntityAngle(int key) {
+    auto entity = g_Engine->entities[key];
+    if (entity == nullptr) {
+        void *angleArgs[] = {
+                metacall_value_create_float(0),
+                metacall_value_create_float(0),
+                metacall_value_create_float(0)
+        };
+
+        void *vObj = metacallv("_CreateAngle", angleArgs);
+
+        metacall_value_destroy(angleArgs[0]);
+        metacall_value_destroy(angleArgs[1]);
+        metacall_value_destroy(angleArgs[2]);
+
+        return vObj;
+    }
+
+    QAngle angle = entity->m_CBodyComponent->m_pSceneNode->m_angAbsRotation();
+
+    void *angleArgs[] = {
+            metacall_value_create_float(angle.x),
+            metacall_value_create_float(angle.y),
+            metacall_value_create_float(angle.z)
+    };
+
+    void *vObj = metacallv("_CreateAngle", angleArgs);
+
+    metacall_value_destroy(angleArgs[0]);
+    metacall_value_destroy(angleArgs[1]);
+    metacall_value_destroy(angleArgs[2]);
+
+    return vObj;
+}
+
+void *Entity::SetAngle(size_t argc, void *args[], void *data) {
+    int key = metacall_value_to_int(args[0]);
+    int slot = metacall_value_to_int(args[1]);
+
+    auto x = metacall_value_to_float(args[2]);
+    auto y = metacall_value_to_float(args[3]);
+    auto z = metacall_value_to_float(args[4]);
+
+    if (slot != -1) {
+        return Entity::SetPlayerAngle(slot, x, y, z);
+    }
+    std::string name = metacall_value_to_string(args[5]);
+    std::string model = metacall_value_to_string(args[6]);
+    return Entity::SetEntityAngle(key, x, y, z, name, model);
+}
+
+void* Entity::SetPlayerAngle(int slot, float x, float y, float z) {
+    CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
+    if (c == nullptr) {
+        return metacall_value_create_bool(false);
+    }
+    QAngle angle(x, y, z);
+    angle.x = 0;
+    CALL_VIRTUAL(void, g_Memory->offsets["Teleport"], c->GetPawn(), nullptr, &angle, nullptr);
+    SignatureCall::SnapViewAngles(c->GetPawn(), angle);
+    return metacall_value_create_bool(true);
+}
+
+void* Entity::SetEntityAngle(int key, float x, float y, float z, std::string name, std::string model) {
+    auto entity = g_Engine->entities[key];
+    if (entity == nullptr) {
+        return metacall_value_create_bool(false);
+    }
+    QAngle angle(x, y, z);
+    SolidType_t type = entity->m_pCollision->m_nSolidType();
+    Vector vec = entity->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin();
+    auto newEntity = SignatureCall::UTIL_CreateEntityByName(name.c_str(), -1);
+    if (newEntity == nullptr) {
+        logger::log("CreateEntityByName failed.");
+        return metacall_value_create_bool(false);
+    }
+    newEntity->m_pCollision->m_nSolidType = type;
+    newEntity->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin = vec;
+    newEntity->m_CBodyComponent->m_pSceneNode->m_angAbsRotation = angle;
+
+    g_ResourceMod->NextFrame([key, model]() {
+        Engine::SetEntityModel(key, model.c_str()); // may not work if model wasn't precached. Should we add additional checks?
+    });
+    entity->Remove();
+    newEntity->Spawn();
+    g_Engine->entities[key] = newEntity;
+
     return metacall_value_create_bool(true);
 }

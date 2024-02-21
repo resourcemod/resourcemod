@@ -53,6 +53,7 @@ namespace SignatureCall {
     inline void(FASTCALL *UTIL_Remove)(CEntityInstance*);
     inline CBaseModelEntity*(FASTCALL *UTIL_CreateEntityByName)(const char*, int);
     inline void(FASTCALL *CBaseEntity_DispatchSpawn)(CEntityInstance *, void *);
+    inline void(FASTCALL *SnapViewAngles)(CEntityInstance *pawn, const QAngle &angle);
 }
 
 class Memory {
@@ -100,6 +101,7 @@ public:
         RESOLVE_SIG(this, "UTIL_Remove", SignatureCall::UTIL_Remove);
         RESOLVE_SIG(this, "UTIL_CreateEntityByName", SignatureCall::UTIL_CreateEntityByName);
         RESOLVE_SIG(this, "CBaseEntity_DispatchSpawn", SignatureCall::CBaseEntity_DispatchSpawn);
+        RESOLVE_SIG(this, "SnapViewAngles", SignatureCall::SnapViewAngles);
     }
 
     bool IsSymbol(const char *name) {

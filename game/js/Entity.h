@@ -34,7 +34,15 @@ public:
 
     static void *GetAngle(size_t argc, void *args[], void *data);
 
+    static void *GetPlayerAngle(int slot);
+
+    static void *GetEntityAngle(int key);
+
     static void *SetAngle(size_t argc, void *args[], void *data);
+
+    static void *SetPlayerAngle(int slot, float x, float y, float z);
+
+    static void *SetEntityAngle(int slot, float x, float y, float z, std::string name, std::string model);
 
     static void *GetCoords(size_t argc, void *args[], void *data);
 

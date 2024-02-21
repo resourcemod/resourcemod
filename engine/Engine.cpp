@@ -129,6 +129,9 @@ void Engine::InitMetacall() {
     metacall_register("_EntityGetCoords", Entity::GetCoords, nullptr, METACALL_OBJECT, 2, METACALL_INT, METACALL_INT);
     metacall_register("_EntitySetCoords", Entity::SetCoords, nullptr, METACALL_BOOL, 5, METACALL_INT, METACALL_INT, METACALL_FLOAT, METACALL_FLOAT, METACALL_FLOAT);
 
+    metacall_register("_EntityGetAngle", Entity::GetAngle, nullptr, METACALL_OBJECT, 2, METACALL_INT, METACALL_INT);
+    metacall_register("_EntitySetAngle", Entity::SetAngle, nullptr, METACALL_BOOL, 7, METACALL_INT, METACALL_INT, METACALL_FLOAT, METACALL_FLOAT, METACALL_FLOAT, METACALL_STRING, METACALL_STRING);
+
     // Array of scripts to be loaded by MetaCall
     const char *js_scripts[] =
             {
@@ -168,6 +171,21 @@ void Engine::InitMetacall() {
     for (int i = 0; i < metacall_value_size(precache) / sizeof(cacheList[0]); i++) {
         this->precacheList.push_back(metacall_value_to_string(cacheList[i]));
     }
+
+    this->isRunning = true;
+}
+
+void Engine::Tick() {
+    void* args = metacall("_EventTick");
+    metacall_value_destroy(args);
+}
+
+void Engine::SetEntityModel(int key, const char* model) {
+    auto entity = g_Engine->entities[key];
+    if (entity == nullptr) {
+        return;
+    }
+    entity->SetModel(model);
 }
 
 extern EventManager *g_EventManager;

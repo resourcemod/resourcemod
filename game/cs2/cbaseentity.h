@@ -47,7 +47,7 @@ public:
 
     SCHEMA_FIELD(Vector, m_vecAbsOrigin)
 
-    SCHEMA_FIELD(QAngle, m_angAbsRotation)
+    SCHEMA_FIELD(QAngle, m_angAbsRotation) // network update disabled
 
     SCHEMA_FIELD(Vector, m_vRenderOrigin)
 
