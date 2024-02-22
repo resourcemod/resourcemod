@@ -6,12 +6,13 @@
 #define RESOURCEMOD_ENGINE_H
 
 #include <string>
+#ifdef WIN_32
 #include <windows.h>
+#endif
 #include <memory>
 #include <vector>
 #include <queue>
 #include <mutex>
-#include "TSQueue.h"
 #include <map>
 
 #ifndef IS_INTERNAL_RUNTIME

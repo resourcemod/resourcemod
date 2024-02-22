@@ -6,11 +6,13 @@
 #include "../logger/logger.h"
 #include "../game/hooks/EventManager.h"
 #include "../game/ResourceMod.h"
-#include <direct.h>
 #include <metacall/metacall.h>
 #include <cstdlib>
 #include "../../game/js/Weapon.h"
+#ifdef WIN_32
+#include <direct.h>
 #include <windows.h>
+#endif
 
 Engine *g_Engine;
 
@@ -50,10 +52,11 @@ void *err(size_t argc, void *args[], void *data) {
 }
 
 void Engine::InitMetacall() {
+    #ifdef WIN_32
     _putenv_s("LOADER_LIBRARY_PATH",
               std::filesystem::absolute(
                       "../../csgo/addons/resourcemod/node_modules/resourcemod/bin/metacall").string().c_str());
-
+#endif
     // Initialize MetaCall
     if (metacall_initialize() != 0) {
         logger::log("Cannot initialize metacall");

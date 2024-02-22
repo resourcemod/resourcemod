@@ -20,7 +20,7 @@
 #pragma once
 
 #include <igameevents.h>
-#include "../../Engine/Engine.h"
+#include "../../engine/Engine.h"
 #include "cbaseplayercontroller.h"
 #include "services.h"
 

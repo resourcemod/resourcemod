@@ -140,7 +140,7 @@ public:
             weapon->Remove();
         }
 
-        metacall_value_create_bool(true);
+        return metacall_value_create_bool(true);
     }
 };
 

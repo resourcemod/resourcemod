@@ -16,7 +16,9 @@
 #include "GameDLL.h"
 #include "GameSystem.h"
 #include <icvar.h>
+#ifdef WIN_32
 #include <direct.h>
+#endif
 #include <tier1/utlstring.h>
 #include <tier1/utlvector.h>
 

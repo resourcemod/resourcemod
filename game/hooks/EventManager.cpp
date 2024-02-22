@@ -143,6 +143,7 @@ bool EventManager::OnClientConnect_hk(CPlayerSlot slot, const char *pszName, uin
         RETURN_META_VALUE(MRES_SUPERCEDE, false);
     }
     delete e;
+    return true;
 }
 
 void EventManager::OnClientCommand_hk(CPlayerSlot slot, const CCommand &args) {

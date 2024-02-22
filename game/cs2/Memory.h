@@ -95,6 +95,7 @@ public:
         RESOLVE_SIG(this, "NetworkStateChanged", SignatureCall::NetworkStateChanged);
         RESOLVE_SIG(this, "StateChanged", SignatureCall::StateChanged);
         RESOLVE_SIG(this, "UTIL_Remove", SignatureCall::UTIL_Remove);
+        return true;
     }
 
     bool IsSymbol(const char *name) {

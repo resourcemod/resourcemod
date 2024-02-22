@@ -3,7 +3,6 @@ import os, sys
 
 additional_libs = [
   # Path should be relative either to hl2sdk folder or to build folder
-  '../../../lib/metacall.lib'
 ]
 
 additional_defines = [
@@ -242,10 +241,19 @@ class MMSPluginConfig(object):
         cxx.cxxflags += ['-fvisibility-inlines-hidden']
       cxx.cxxflags += [
         '-fno-exceptions',
-        '-fno-rtti',
         '-fno-threadsafe-statics',
+        '-fdeclspec',
+        '-Wno-mismatched-tags',
+        '-Wno-extra-tokens',
+        '-Wno-macro-redefined',
         '-Wno-non-virtual-dtor',
         '-Wno-overloaded-virtual',
+        '-Wno-register',
+        '-Wno-parentheses',
+        '-Wno-ignored-attributes',
+        '-Wno-invalid-offsetof',
+        '-Wno-deprecated-anon-enum-enum-conversion',
+        '-Wno-format-security'
       ]
       if (cxx.version >= 'gcc-4.7' or cxx.family == 'clang'):
         cxx.cxxflags += ['-Wno-delete-non-virtual-dtor']

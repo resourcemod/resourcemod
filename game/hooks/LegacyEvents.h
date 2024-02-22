@@ -7,7 +7,7 @@
 
 #include "../cs2/cbaseentity.h"
 #include "../../logger/logger.h"
-#include "../cs2/CCSPlayerController.h"
+#include "../cs2/ccsplayercontroller.h"
 #include "../../engine/Engine.h"
 #include "../js/Player.h"
 #include "metacall/metacall.h"
