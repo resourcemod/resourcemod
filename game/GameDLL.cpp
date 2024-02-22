@@ -34,15 +34,3 @@ T *GetInGameInterface(const char *name, const char *library) {
 /*IVEngineServer2 * GameDLL::getIVEngineServer2Interface() {
     return GetInGameInterface<IVEngineServer2>("Source2EngineToServer001", "engine2.dll");
 }*/
-
-CSchemaSystem *GameDLL::getSchemaSystem() {
-    return GetInGameInterface<CSchemaSystem>("SchemaSystem_001", "server.dll");
-}
-
-IVEngineServer2 *GameDLL::getSource2EngineToServer() {
-    return GetInGameInterface<IVEngineServer2>("Source2EngineToServer001", "engine2.dll");
-}
-
-ISource2GameClients *GameDLL::getSource2GameClients() {
-    return GetInGameInterface<ISource2GameClients>("Source2GameClients001", "server.dll");
-}

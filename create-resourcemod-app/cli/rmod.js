@@ -5,10 +5,6 @@ const fs = require('node:fs');
 const {execSync} = require('node:child_process')
 const {platform} = require('node:process');
 
-if (platform !== 'win32') {
-    console.error('ResourceMod only runs on Windows.');
-    return false;
-}
 if (!fs.existsSync('./metamod')) {
     console.error('MetaMod is not installed.');
     console.error('Please install MetaMod first: https://wiki.alliedmods.net/Installing_metamod:source');
