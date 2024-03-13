@@ -52,71 +52,60 @@ void *err(size_t argc, void *args[], void *data) {
 }
 
 void Engine::InitMetacall() {
-    #ifdef WIN_32
-    _putenv_s("LOADER_LIBRARY_PATH",
-              std::filesystem::absolute(
-                      "../../csgo/addons/resourcemod/node_modules/resourcemod/bin/metacall").string().c_str());
-#endif
-    // Initialize MetaCall
-    if (metacall_initialize() != 0) {
-        logger::log("Cannot initialize metacall");
-        return;
-    }
+    go_register("log", msg, nullptr, METACALL_BOOL, 1, METACALL_STRING);
+    go_register("err", err, nullptr, METACALL_BOOL, 1, METACALL_STRING);
 
-    metacall_register("log", msg, nullptr, METACALL_BOOL, 1, METACALL_STRING);
-    metacall_register("err", err, nullptr, METACALL_BOOL, 1, METACALL_STRING);
-
-    metacall_register("_GameMessage", Player::PrintGameMessage, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_STRING, METACALL_INT); // slot, message, duration
-    metacall_register("_AllPrint", Player::PrintAll, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
-    metacall_register("_PlayerPrint", Player::Print, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
+    go_register("_GameMessage", Player::PrintGameMessage, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_STRING, METACALL_INT); // slot, message, duration
+    go_register("_AllPrint", Player::PrintAll, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    go_register("_PlayerPrint", Player::Print, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
                       METACALL_STRING);
 
-    metacall_register("_PlayerGetHP", Player::GetHP, nullptr, METACALL_INT, 1, METACALL_INT);
-    metacall_register("_PlayerSetHP", Player::SetHP, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
-    metacall_register("_PlayerGetName", Player::GetName, nullptr, METACALL_STRING, 1, METACALL_INT);
-    metacall_register("_PlayerGetSteamID", Player::GetSteamID, nullptr, METACALL_STRING, 1, METACALL_INT);
-    metacall_register("_PlayerGetIsAlive", Player::GetIsAlive, nullptr, METACALL_BOOL, 1, METACALL_INT);
-    metacall_register("_PlayerSlap", Player::Slap, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
-    metacall_register("_PlayerSlay", Player::Slay, nullptr, METACALL_BOOL, 1, METACALL_INT);
-    metacall_register("_PlayerRespawn", Player::Respawn, nullptr, METACALL_BOOL, 1, METACALL_INT);
-    metacall_register("_PlayerKick", Player::Kick, nullptr, METACALL_BOOL, 1, METACALL_INT);
-    metacall_register("_PlayerSetModel", Player::SetModel, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
-    metacall_register("_PlayerSetColor", Player::SetColor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_OBJECT);
-    metacall_register("_PlayerPlaySound", Player::Play, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
-    metacall_register("_PlayerGetTeam", Player::GetTeam, nullptr, METACALL_INT, 1, METACALL_INT);
-    metacall_register("_PlayerChangeTeam", Player::ChangeTeam, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
+    go_register("_PlayerGetHP", Player::GetHP, nullptr, METACALL_INT, 1, METACALL_INT);
+    go_register("_PlayerSetHP", Player::SetHP, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    go_register("_PlayerGetName", Player::GetName, nullptr, METACALL_STRING, 1, METACALL_INT);
+    go_register("_PlayerGetSteamID", Player::GetSteamID, nullptr, METACALL_STRING, 1, METACALL_INT);
+    go_register("_PlayerGetIsAlive", Player::GetIsAlive, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    go_register("_PlayerSlap", Player::Slap, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    go_register("_PlayerSlay", Player::Slay, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    go_register("_PlayerRespawn", Player::Respawn, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    go_register("_PlayerKick", Player::Kick, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    go_register("_PlayerSetModel", Player::SetModel, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    go_register("_PlayerSetColor", Player::SetColor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_OBJECT);
+    go_register("_PlayerPlaySound", Player::Play, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    go_register("_PlayerGetTeam", Player::GetTeam, nullptr, METACALL_INT, 1, METACALL_INT);
+    go_register("_PlayerChangeTeam", Player::ChangeTeam, nullptr, METACALL_BOOL, 3, METACALL_INT, METACALL_INT,
                       METACALL_BOOL);
 
-    metacall_register("_PlayerGetIsConnected", Player::GetIsConnected, nullptr, METACALL_BOOL, 1, METACALL_INT);
-    metacall_register("_PlayerGetIsConnecting", Player::GetIsConnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
-    metacall_register("_PlayerGetIsDisconnected", Player::GetIsDisconnected, nullptr, METACALL_BOOL, 1, METACALL_INT);
-    metacall_register("_PlayerGetIsDisconnecting", Player::GetIsDisconnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
-    metacall_register("_PlayerGetIsReserved", Player::GetIsReserved, nullptr, METACALL_BOOL, 1, METACALL_INT);
-    metacall_register("_PlayerGetIsReconnecting", Player::GetIsReconnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    go_register("_PlayerGetIsConnected", Player::GetIsConnected, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    go_register("_PlayerGetIsConnecting", Player::GetIsConnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    go_register("_PlayerGetIsDisconnected", Player::GetIsDisconnected, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    go_register("_PlayerGetIsDisconnecting", Player::GetIsDisconnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    go_register("_PlayerGetIsReserved", Player::GetIsReserved, nullptr, METACALL_BOOL, 1, METACALL_INT);
+    go_register("_PlayerGetIsReconnecting", Player::GetIsReconnecting, nullptr, METACALL_BOOL, 1, METACALL_INT);
 
     // weapons
-    metacall_register("_WeaponGive", Weapon::Give, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
-    metacall_register("_WeaponGet", Weapon::Get, nullptr, METACALL_STRING, 2, METACALL_INT, METACALL_INT);
-    metacall_register("_WeaponDrop", Weapon::Drop, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_BOOL);
+    go_register("_WeaponGive", Weapon::Give, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    go_register("_WeaponGet", Weapon::Get, nullptr, METACALL_STRING, 2, METACALL_INT, METACALL_INT);
+    go_register("_WeaponDrop", Weapon::Drop, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_BOOL);
 
     // armor
-    metacall_register("_PlayerGetArmor", Player::GetArmor, nullptr, METACALL_INT, 1, METACALL_INT);
-    metacall_register("_PlayerSetArmor", Player::SetArmor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    go_register("_PlayerGetArmor", Player::GetArmor, nullptr, METACALL_INT, 1, METACALL_INT);
+    go_register("_PlayerSetArmor", Player::SetArmor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
 
     // money
-    metacall_register("_PlayerGetMoney", Player::GetMoney, nullptr, METACALL_INT, 1, METACALL_INT);
-    metacall_register("_PlayerSetMoney", Player::SetMoney, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    go_register("_PlayerGetMoney", Player::GetMoney, nullptr, METACALL_INT, 1, METACALL_INT);
+    go_register("_PlayerSetMoney", Player::SetMoney, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
 
     // stats
-    metacall_register("_PlayerGetDamage", Player::GetDamage, nullptr, METACALL_INT, 1, METACALL_INT);
-    metacall_register("_PlayerGetKills", Player::GetKills, nullptr, METACALL_INT, 1, METACALL_INT);
-    metacall_register("_PlayerGetAssists", Player::GetAssists, nullptr, METACALL_INT, 1, METACALL_INT);
-    metacall_register("_PlayerGetDeaths", Player::GetDeaths, nullptr, METACALL_INT, 1, METACALL_INT);
+    go_register("_PlayerGetDamage", Player::GetDamage, nullptr, METACALL_INT, 1, METACALL_INT);
+    go_register("_PlayerGetKills", Player::GetKills, nullptr, METACALL_INT, 1, METACALL_INT);
+    go_register("_PlayerGetAssists", Player::GetAssists, nullptr, METACALL_INT, 1, METACALL_INT);
+    go_register("_PlayerGetDeaths", Player::GetDeaths, nullptr, METACALL_INT, 1, METACALL_INT);
 
-    metacall_register("_PlayerSetDamage", Player::SetDamage, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
-    metacall_register("_PlayerSetKills", Player::SetKills, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
-    metacall_register("_PlayerSetAssists", Player::SetAssists, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
-    metacall_register("_PlayerSetDeaths", Player::SetDeaths, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    go_register("_PlayerSetDamage", Player::SetDamage, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    go_register("_PlayerSetKills", Player::SetKills, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    go_register("_PlayerSetAssists", Player::SetAssists, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+    go_register("_PlayerSetDeaths", Player::SetDeaths, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
 
     // Array of scripts to be loaded by MetaCall
     const char *js_scripts[] =
