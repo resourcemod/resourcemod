@@ -33,7 +33,7 @@
 
 class Engine {
 public:
-    const std::string RESOURCEMOD_META = "resourcemod.config.js";
+    const std::string RESOURCEMOD_META = "resourcemod.config.go";
 
     std::string rootPath = "";
     std::string resourcemodFolder = "";

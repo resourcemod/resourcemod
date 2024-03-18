@@ -7,7 +7,7 @@
 #include "../game/hooks/EventManager.h"
 #include "../game/ResourceMod.h"
 #include <cstdlib>
-#include "../../game/js/Weapon.h"
+#include "../../game/go/Weapon.h"
 #include <api.h>
 #include <linux/limits.h>
 #include <csignal>

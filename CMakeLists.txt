@@ -30,10 +30,10 @@ add_library(resourcemod SHARED
         game/ResourceMod.cpp
         game/GameSystem.cpp
         game/cs2/Schema.cpp
-        game/js/Weapon.h
+        game/go/Weapon.h
         game/cs2/ccsweaponbase.h
-        game/js/Player.cpp
-        game/js/Entity.cpp
+        game/go/Player.cpp
+        game/go/Entity.cpp
 )
 
 target_link_libraries(resourcemod
