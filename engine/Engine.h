@@ -6,9 +6,6 @@
 #define RESOURCEMOD_ENGINE_H
 
 #include <string>
-#ifdef WIN_32
-#include <windows.h>
-#endif
 #include <memory>
 #include <vector>
 #include <queue>
@@ -50,7 +47,7 @@ public:
 
     std::map<int, std::pair<uint64_t, std::string>> gameMessages;
 
-    void InitMetacall();
+    void InitResourceModApi();
 
     // Utils
     static std::string GetFileContent(std::string);

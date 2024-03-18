@@ -10,6 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/lib)
 add_definitions(-DCOMPILER_MSVC64 -DCOMPILER_MSVC -Dprotobuf_BUILD_TESTS=OFF)
 
 include_directories(
+        api/bin
         third_party
         alliedmodders/hl2sdk/game/shared
         alliedmodders/hl2sdk/public
