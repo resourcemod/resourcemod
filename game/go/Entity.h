@@ -5,56 +5,47 @@
 #ifndef RESOURCEMOD_ENTITY_H
 #define RESOURCEMOD_ENTITY_H
 
-#include "../cs2/cbaseplayercontroller.h"
-#include "../cs2/csplayerpawn.h"
-#include "../cs2/ccsplayercontroller.h"
-#include "../ResourceMod.h"
-#include <engine/igameeventsystem.h>
-#include <igameevents.h>
-#include <metacall/metacall.h>
 #include <vector>
+#include <cstdio>
 
-class Entity {
-public:
-    static void *Create(size_t argc, void *args[], void *data);
+static int Create(const char* type);
 
-    static void *Spawn(size_t argc, void *args[], void *data);
+static bool Spawn(int key, const char* model);
 
-    static void *Remove(size_t argc, void *args[], void *data);
+static bool Remove(int key);
 
-    static void *SetModel(size_t argc, void *args[], void *data);
+static bool SetModel(int key, const char* model);
 
-    static void *GetCollision(size_t argc, void *args[], void *data);
+static int GetCollision(int key);
 
-    static void *SetCollision(size_t argc, void *args[], void *data);
+static bool SetCollision(int key, int type);
 
-    static void *SetColor(size_t argc, void *args[], void *data);
+static bool SetColor(int key, int red, int green, int blue, int alpha);
 
-    static void *GetColor(size_t argc, void *args[], void *data);
+static char* GetColor(int key);
 
-    static void *GetAngle(size_t argc, void *args[], void *data);
+static char* GetAngle(int key, int slot);
 
-    static void *GetPlayerAngle(int slot);
+static char* GetPlayerAngle(int slot);
 
-    static void *GetEntityAngle(int key);
+static char* GetEntityAngle(int key);
 
-    static void *SetAngle(size_t argc, void *args[], void *data);
+static bool SetAngle(int key, int slot, float x, float y, float z, const char* name, const char* model);
 
-    static void *SetPlayerAngle(int slot, float x, float y, float z);
+static bool SetPlayerAngle(int slot, float x, float y, float z);
 
-    static void *SetEntityAngle(int slot, float x, float y, float z, std::string name, std::string model);
+static bool SetEntityAngle(int key, float x, float y, float z, const char* name, const char* model);
 
-    static void *GetCoords(size_t argc, void *args[], void *data);
+static char* GetCoords(int key, int slot);
 
-    static void *GetPlayerCoords(int slot);
+static char* GetPlayerCoords(int slot);
 
-    static void *GetEntityCoords(int key);
+static char* GetEntityCoords(int key);
 
-    static void *SetPlayerCoords(int slot, float x, float y, float z);
+static bool SetPlayerCoords(int slot, float x, float y, float z);
 
-    static void *SetEntityCoords(int key, float x, float y, float z);
+static bool SetEntityCoords(int key, float x, float y, float z);
 
-    static void *SetCoords(size_t argc, void *args[], void *data);
-};
+static bool SetCoords(int key, int slot, float x, float y, float z);
 
 #endif //RESOURCEMOD_ENTITY_H

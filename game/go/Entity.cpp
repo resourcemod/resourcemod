@@ -3,7 +3,11 @@
 //
 #include "Entity.h"
 #include "../../protobuf/generated/network_connection.pb.h"
-#include <metacall/metacall.h>
+#include "../cs2/cbaseplayercontroller.h"
+#include "../cs2/csplayerpawn.h"
+#include "../cs2/ccsplayercontroller.h"
+#include "../ResourceMod.h"
+#include <igameevents.h>
 
 class Entity;
 
@@ -11,394 +15,225 @@ extern ResourceMod *g_ResourceMod;
 extern IVEngineServer2 *g_SourceEngine;
 extern Engine *g_Engine;
 
-void *Entity::Create(size_t argc, void *args[], void *data) {
-    std::string type = metacall_value_to_string(args[0]);
-    auto entity = SignatureCall::UTIL_CreateEntityByName(type.c_str(), -1);
+static int Create(const char* type) {
+    auto entity = SignatureCall::UTIL_CreateEntityByName(type, -1);
     if (entity == nullptr) {
-        return metacall_value_create_int(-1);
+        return -1;
     }
     int key = g_Engine->entities.size() + 1;
     g_Engine->entities[key] = entity;
 
-    return metacall_value_create_int(key);
+    return key;
 }
 
-void *Entity::Spawn(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
+static bool Spawn(int key, const char* model) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        return metacall_value_create_bool(false);
+        return false;
     }
 
-    std::string model = metacall_value_to_string(args[1]);
     g_ResourceMod->NextFrame([entity, model]() {
-        entity->SetModel(model.c_str()); // may not work if model wasn't precached. Should we add additional checks?
+        entity->SetModel(model); // may not work if model wasn't precached. Should we add additional checks?
     });
 
     entity->Spawn();
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void *Entity::SetModel(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
+static bool SetModel(int key, const char* model) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        return metacall_value_create_bool(false);
+        return false;
     }
-    std::string model = metacall_value_to_string(args[1]);
     g_ResourceMod->NextFrame([entity, model]() {
-        entity->SetModel(model.c_str()); // may not work if model wasn't precached. Should we add additional checks?
+        entity->SetModel(model); // may not work if model wasn't precached. Should we add additional checks?
     });
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void *Entity::SetCollision(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
+static bool SetCollision(int key, int type) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        return metacall_value_create_bool(false);
+        return false;
     }
 
-    entity->m_Collision.Get().m_nSolidType = (SolidType_t) metacall_value_to_int(
-            args[1]); // collision type. 6 = SOLID_VPHYSICS
-    return metacall_value_create_bool(true);
+    entity->m_Collision.Get().m_nSolidType = (SolidType_t) type; // collision type. 6 = SOLID_VPHYSICS
+    return true;
 }
 
-void *Entity::GetCollision(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
+static int GetCollision(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        return metacall_value_create_int(-1);
+        return -1;
     }
-    return metacall_value_create_int(entity->m_Collision.Get().m_nSolidType.Get());
+    return entity->m_Collision.Get().m_nSolidType.Get();
 }
 
-void *Entity::SetColor(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
+static bool SetColor(int key, int red, int green, int blue, int alpha) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        return metacall_value_create_bool(false);
+        return false;
     }
 
-    void **v_module_map = static_cast<void **>(metacall_value_to_map(args[1]));
-    int red = 0;
-    int green = 0;
-    int blue = 0;
-    int alpha = 0;
-    // fucked up but metacall can't work with classes objects properly for now
-    for (int i = 0; i < metacall_value_size(args[1]) / sizeof(v_module_map[0]); ++i) {
-        auto v = metacall_value_to_array(v_module_map[i]);
-        if (V_strcmp(metacall_value_to_string(v[0]), "red") == 0) {
-            red = int(metacall_value_to_double(v[1]));
-        } else if (V_strcmp(metacall_value_to_string(v[0]), "green") == 0) {
-            green = int(metacall_value_to_double(v[1]));
-        } else if (V_strcmp(metacall_value_to_string(v[0]), "blue") == 0) {
-            blue = int(metacall_value_to_double(v[1]));
-        } else if (V_strcmp(metacall_value_to_string(v[0]), "alpha") == 0) {
-            alpha = int(metacall_value_to_double(v[1]));
-        }
-    }
     Color color = Color(red, green, blue, alpha);
     g_ResourceMod->NextFrame([entity, color]() {
         entity->SetColor(color);
     });
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void *Entity::GetColor(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
+static char* GetColor(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        void *colorArgs[] = {
-                metacall_value_create_int(0),
-                metacall_value_create_int(0),
-                metacall_value_create_int(0),
-                metacall_value_create_int(0)
-        };
-
-        void *vObj = metacallv("_CreateColor", colorArgs);
-
-        metacall_value_destroy(colorArgs[0]);
-        metacall_value_destroy(colorArgs[1]);
-        metacall_value_destroy(colorArgs[2]);
-        metacall_value_destroy(colorArgs[3]);
-
-        return vObj;
+        return "0,0,0,0";
     }
     Color color = entity->m_clrRender.Get();
-    void *colorArgs[] = {
-            metacall_value_create_int(color.r()),
-            metacall_value_create_int(color.g()),
-            metacall_value_create_int(color.b()),
-            metacall_value_create_int(color.a())
-    };
-
-    void *vObj = metacallv("_CreateColor", colorArgs);
-
-    metacall_value_destroy(colorArgs[0]);
-    metacall_value_destroy(colorArgs[1]);
-    metacall_value_destroy(colorArgs[2]);
-    metacall_value_destroy(colorArgs[3]);
-
-    return vObj;
+    char* result;
+    sprintf(result, "%d,%d,%d,%d", color.r(), color.g(), color.b(), color.a());
+    return result;
 }
 
-void *Entity::Remove(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
+static bool Remove(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        return metacall_value_create_bool(false);
+        return false;
     }
     entity->Remove();
     g_Engine->entities.erase(key);
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void *Entity::GetCoords(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
-    int slot = metacall_value_to_int(args[1]);
+static char* GetCoords(int key, int slot) {
     if (slot == -1) {
-        return Entity::GetEntityCoords(key);
+        return GetEntityCoords(key);
     }
-
-    return Entity::GetPlayerCoords(slot);
+    return GetPlayerCoords(slot);
 }
 
-void *Entity::GetPlayerCoords(int slot) {
+static char* GetPlayerCoords(int slot) {
     CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
     if (c == nullptr) {
-        void *vectorArgs[] = {
-                metacall_value_create_float(0),
-                metacall_value_create_float(0),
-                metacall_value_create_float(0)
-        };
-
-        void *vObj = metacallv("_CreateCoords", vectorArgs);
-
-        metacall_value_destroy(vectorArgs[0]);
-        metacall_value_destroy(vectorArgs[1]);
-        metacall_value_destroy(vectorArgs[2]);
-
-        return vObj;
+        return "0.0,0.0,0.0";
     }
 
     Vector vector = c->GetPawn()->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin();
-
-    void *vectorArgs[] = {
-            metacall_value_create_float(vector.x),
-            metacall_value_create_float(vector.y),
-            metacall_value_create_float(vector.z)
-    };
-
-    void *vObj = metacallv("_CreateCoords", vectorArgs);
-
-    metacall_value_destroy(vectorArgs[0]);
-    metacall_value_destroy(vectorArgs[1]);
-    metacall_value_destroy(vectorArgs[2]);
-
-    return vObj;
+    char* result;
+    sprintf(result, "%.6f,%.6f,%.6f", vector.x, vector.y, vector.z);
+    return result;
 }
 
-void *Entity::GetEntityCoords(int key) {
+static char* GetEntityCoords(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        void *vectorArgs[] = {
-                metacall_value_create_float(0),
-                metacall_value_create_float(0),
-                metacall_value_create_float(0)
-        };
-
-        void *vObj = metacallv("_CreateCoords", vectorArgs);
-
-        metacall_value_destroy(vectorArgs[0]);
-        metacall_value_destroy(vectorArgs[1]);
-        metacall_value_destroy(vectorArgs[2]);
-
-        return vObj;
+        return "0.0,0.0,0.0";
     }
 
     Vector vector = entity->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin();
-
-    void *vectorArgs[] = {
-            metacall_value_create_float(vector.x),
-            metacall_value_create_float(vector.y),
-            metacall_value_create_float(vector.z)
-    };
-
-    void *vObj = metacallv("_CreateCoords", vectorArgs);
-
-    metacall_value_destroy(vectorArgs[0]);
-    metacall_value_destroy(vectorArgs[1]);
-    metacall_value_destroy(vectorArgs[2]);
-
-    return vObj;
+    char* result;
+    sprintf(result, "%.6f,%.6f,%.6f", vector.x, vector.y, vector.z);
+    return result;
 }
 
-void *Entity::SetCoords(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
-    int slot = metacall_value_to_int(args[1]);
-
-    auto x = metacall_value_to_float(args[2]);
-    auto y = metacall_value_to_float(args[3]);
-    auto z = metacall_value_to_float(args[4]);
-
+static bool SetCoords(int key, int slot, float x, float y, float z) {
     if (slot != -1) {
-        return Entity::SetPlayerCoords(slot, x, y, z);
+        return SetPlayerCoords(slot, x, y, z);
     }
 
-    return Entity::SetEntityCoords(key, x, y, z);
+    return SetEntityCoords(key, x, y, z);
 }
 
-void* Entity::SetPlayerCoords(int slot, float x, float y, float z) {
+static bool SetPlayerCoords(int slot, float x, float y, float z) {
     CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
     if (c == nullptr) {
-        return metacall_value_create_bool(false);
+        return false;
     }
     Vector vec(x, y, z);
     c->GetPawn()->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin = vec;
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void* Entity::SetEntityCoords(int key, float x, float y, float z) {
+static bool SetEntityCoords(int key, float x, float y, float z) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        return metacall_value_create_bool(false);
+        return false;
     }
     Vector vec(x, y, z);
     entity->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin = vec;
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void *Entity::GetAngle(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
-    int slot = metacall_value_to_int(args[1]);
+static char* GetAngle(int key, int slot) {
     if (slot != -1) {
-        return Entity::GetPlayerAngle(slot);
+        return GetPlayerAngle(slot);
     }
-    return Entity::GetEntityAngle(key);
+    return GetEntityAngle(key);
 }
 
-void *Entity::GetPlayerAngle(int slot) {
+static char* GetPlayerAngle(int slot) {
     CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
     if (c == nullptr) {
-        void *angleArgs[] = {
-                metacall_value_create_float(0),
-                metacall_value_create_float(0),
-                metacall_value_create_float(0)
-        };
-
-        void *vObj = metacallv("_CreateAngle", angleArgs);
-
-        metacall_value_destroy(angleArgs[0]);
-        metacall_value_destroy(angleArgs[1]);
-        metacall_value_destroy(angleArgs[2]);
-
-        return vObj;
+        return "0.0,0.0,0.0,0.0";
     }
 
     QAngle angle = c->GetPawn()->m_CBodyComponent->m_pSceneNode->m_angAbsRotation();
-
-    void *angleArgs[] = {
-            metacall_value_create_float(angle.x),
-            metacall_value_create_float(angle.y),
-            metacall_value_create_float(angle.z)
-    };
-
-    void *vObj = metacallv("_CreateAngle", angleArgs);
-
-    metacall_value_destroy(angleArgs[0]);
-    metacall_value_destroy(angleArgs[1]);
-    metacall_value_destroy(angleArgs[2]);
-
-    return vObj;
+    char* result;
+    sprintf(result, "%.6f,%.6f,%.6f,%.6f", 1.0f, angle.x, angle.y, angle.z);
+    return result;
 }
 
-void *Entity::GetEntityAngle(int key) {
+static char* GetEntityAngle(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        void *angleArgs[] = {
-                metacall_value_create_float(0),
-                metacall_value_create_float(0),
-                metacall_value_create_float(0)
-        };
-
-        void *vObj = metacallv("_CreateAngle", angleArgs);
-
-        metacall_value_destroy(angleArgs[0]);
-        metacall_value_destroy(angleArgs[1]);
-        metacall_value_destroy(angleArgs[2]);
-
-        return vObj;
+        return "0.0,0.0,0.0,0.0";
     }
 
     QAngle angle = entity->m_CBodyComponent->m_pSceneNode->m_angAbsRotation();
-
-    void *angleArgs[] = {
-            metacall_value_create_float(angle.x),
-            metacall_value_create_float(angle.y),
-            metacall_value_create_float(angle.z)
-    };
-
-    void *vObj = metacallv("_CreateAngle", angleArgs);
-
-    metacall_value_destroy(angleArgs[0]);
-    metacall_value_destroy(angleArgs[1]);
-    metacall_value_destroy(angleArgs[2]);
-
-    return vObj;
+    char* result;
+    sprintf(result, "%.6f,%.6f,%.6f,%.6f", 1.0f, angle.x, angle.y, angle.z);
+    return result;
 }
 
-void *Entity::SetAngle(size_t argc, void *args[], void *data) {
-    int key = metacall_value_to_int(args[0]);
-    int slot = metacall_value_to_int(args[1]);
-
-    auto x = metacall_value_to_float(args[2]);
-    auto y = metacall_value_to_float(args[3]);
-    auto z = metacall_value_to_float(args[4]);
-
+static bool SetAngle(int key, int slot, float x, float y, float z, const char* name, const char* model) {
     if (slot != -1) {
-        return Entity::SetPlayerAngle(slot, x, y, z);
+        return SetPlayerAngle(slot, x, y, z);
     }
-    std::string name = metacall_value_to_string(args[5]);
-    std::string model = metacall_value_to_string(args[6]);
-    return Entity::SetEntityAngle(key, x, y, z, name, model);
+    return SetEntityAngle(key, x, y, z, name, model);
 }
 
-void* Entity::SetPlayerAngle(int slot, float x, float y, float z) {
+static bool SetPlayerAngle(int slot, float x, float y, float z) {
     CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
     if (c == nullptr) {
-        return metacall_value_create_bool(false);
+        return false;
     }
     QAngle angle(x, y, z);
     angle.x = 0;
     CALL_VIRTUAL(void, g_Memory->offsets["Teleport"], c->GetPawn(), nullptr, &angle, nullptr);
     SignatureCall::SnapViewAngles(c->GetPawn(), angle);
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void* Entity::SetEntityAngle(int key, float x, float y, float z, std::string name, std::string model) {
+static bool SetEntityAngle(int key, float x, float y, float z, const char* name, const char* model) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
-        return metacall_value_create_bool(false);
+        return false;
     }
     QAngle angle(x, y, z);
     SolidType_t type = entity->m_pCollision->m_nSolidType();
     Vector vec = entity->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin();
-    auto newEntity = SignatureCall::UTIL_CreateEntityByName(name.c_str(), -1);
+    auto newEntity = SignatureCall::UTIL_CreateEntityByName(name, -1);
     if (newEntity == nullptr) {
-        logger::log("CreateEntityByName failed.");
-        return metacall_value_create_bool(false);
+        return false;
     }
     newEntity->m_pCollision->m_nSolidType = type;
     newEntity->m_CBodyComponent->m_pSceneNode->m_vecAbsOrigin = vec;
     newEntity->m_CBodyComponent->m_pSceneNode->m_angAbsRotation = angle;
 
     g_ResourceMod->NextFrame([key, model]() {
-        Engine::SetEntityModel(key, model.c_str()); // may not work if model wasn't precached. Should we add additional checks?
+        Engine::SetEntityModel(key, model); // may not work if model wasn't precached. Should we add additional checks?
     });
     entity->Remove();
     newEntity->Spawn();
     g_Engine->entities[key] = newEntity;
 
-    return metacall_value_create_bool(true);
+    return true;
 }

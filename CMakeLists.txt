@@ -34,6 +34,7 @@ add_library(resourcemod SHARED
         game/cs2/ccsweaponbase.h
         game/go/Player.cpp
         game/go/Entity.cpp
+        game/go/Entity.h
 )
 
 target_link_libraries(resourcemod

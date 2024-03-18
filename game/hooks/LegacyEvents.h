@@ -34,6 +34,7 @@ public:
     Player *player;
 
     bool Emit() override {
+
         void *playerArgs[] = {
                 metacall_value_create_string(this->player->controller->GetPlayerName(),
                                              strlen(this->player->controller->GetPlayerName())),
