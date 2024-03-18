@@ -12,6 +12,7 @@
 #include <mutex>
 #include <map>
 
+#include "../game/cs2/cbasemodelentity.h"
 #ifndef IS_INTERNAL_RUNTIME
 #else
 
@@ -42,12 +43,16 @@ public:
     std::vector<std::string> precacheList;
 
     void Init();
-
+    bool isRunning = false;
     static uint64_t Now();
 
     std::map<int, std::pair<uint64_t, std::string>> gameMessages;
+    std::map<int, CBaseModelEntity *> entities;
+
+    static void SetEntityModel(int key, const char* model); // calls on next frame
 
     void InitResourceModApi();
+    void Tick();
 
     // Utils
     static std::string GetFileContent(std::string);

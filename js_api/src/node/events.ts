@@ -54,9 +54,9 @@ export const _onEventCall = (data: any) => {
         try {
             // @ts-expect-error
             data = Object.assign(new constructors[data._name], data);
-            if (data._player) data._player = new Player(data._player._name, data._player._steamId, data._player._slot)
-            if (data._attacker) data._attacker = new Player(data._attacker._name, data._attacker._steamId, data._attacker._slot)
-            if (data._assister) data._assister = new Player(data._assister._name, data._assister._steamId, data._assister._slot)
+            if (data._player) data._player = new Player(data._player._name, data._player._steamId, data._player._slot, data._player.id ?? -1)
+            if (data._attacker) data._attacker = new Player(data._attacker._name, data._attacker._steamId, data._attacker._slot, data._player.id ?? -1)
+            if (data._assister) data._assister = new Player(data._assister._name, data._assister._steamId, data._assister._slot, data._player.id ?? -1)
         } catch (e: any) {
             console.error(e)
         }

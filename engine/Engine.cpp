@@ -70,6 +70,7 @@ void Engine::InitResourceModApi() {
     go_register("_PlayerGetTeam", Player::GetTeam);
     go_register("_PlayerChangeTeam", Player::ChangeTeam);
 
+
     go_register("_PlayerGetIsConnected", Player::GetIsConnected);
     go_register("_PlayerGetIsConnecting", Player::GetIsConnecting);
     go_register("_PlayerGetIsDisconnected", Player::GetIsDisconnected);
@@ -101,9 +102,42 @@ void Engine::InitResourceModApi() {
     go_register("_PlayerSetAssists", Player::SetAssists);
     go_register("_PlayerSetDeaths", Player::SetDeaths);
 
+    // entities
+    // model_path, x, y, z
+    go_register("_EntityCreate", Entity::Create, nullptr, METACALL_INT, 1, METACALL_STRING); // returns entity id from Engine->entities map
+    go_register("_EntitySpawn", Entity::Spawn, nullptr, METACALL_INT, 2, METACALL_INT, METACALL_STRING);
+    go_register("_EntityRemove", Entity::Remove, nullptr, METACALL_BOOL, 1, METACALL_INT);
+
+    go_register("_EntitySetModel", Entity::SetModel, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_STRING);
+    go_register("_EntitySetColor", Entity::SetColor, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_OBJECT);
+    go_register("_EntityGetColor", Entity::GetColor, nullptr, METACALL_OBJECT, 2, METACALL_INT);
+    go_register("_EntityGetCollision", Entity::GetCollision, nullptr, METACALL_INT, 1, METACALL_INT);
+    go_register("_EntitySetCollision", Entity::SetCollision, nullptr, METACALL_BOOL, 2, METACALL_INT, METACALL_INT);
+
+    // coords & angles
+    go_register("_EntityGetCoords", Entity::GetCoords, nullptr, METACALL_OBJECT, 2, METACALL_INT, METACALL_INT);
+    go_register("_EntitySetCoords", Entity::SetCoords, nullptr, METACALL_BOOL, 5, METACALL_INT, METACALL_INT, METACALL_FLOAT, METACALL_FLOAT, METACALL_FLOAT);
+
+    go_register("_EntityGetAngle", Entity::GetAngle, nullptr, METACALL_OBJECT, 2, METACALL_INT, METACALL_INT);
+    go_register("_EntitySetAngle", Entity::SetAngle, nullptr, METACALL_BOOL, 7, METACALL_INT, METACALL_INT, METACALL_FLOAT, METACALL_FLOAT, METACALL_FLOAT, METACALL_STRING, METACALL_STRING);
     // todo: load entrypoint configuration (json)
     // todo: precache resources
     // todo: bootstrap server script function (entrypoint)
+
+    this->isRunning = true;
+}
+
+void Engine::Tick() {
+    void* args = metacall("_EventTick");
+    metacall_value_destroy(args);
+}
+
+void Engine::SetEntityModel(int key, const char* model) {
+    auto entity = g_Engine->entities[key];
+    if (entity == nullptr) {
+        return;
+    }
+    entity->SetModel(model);
 }
 
 extern EventManager *g_EventManager;

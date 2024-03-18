@@ -2,15 +2,18 @@
 import { metacall } from "metacall"
 import { sayToSlot } from "./chat"
 import { STEAM_USER_HIGH_VALUE, GameMessageTarget, Team } from "./constants"
-import { Color } from "./color";
 import { GearSlot, Weapon, drop, getWeaponFromGearSlot, give } from "../game/weapons";
+import { Vec3 } from 'vec3';
+import { Entity, EntityType } from "../game/entities";
+import Players from "../server/players";
 
-export class Player {
+export class Player extends Entity {
     private readonly _name: string;
     private readonly _steamId: number;
     private readonly _slot: number;
 
-    constructor(name: string, steamId: number, slot: number) {
+    constructor(name: string, steamId: number, slot: number, entityId: number) {
+        super(EntityType.Player, entityId, slot)
         this._name = name;
         this._steamId = steamId;
         this._slot = slot;
@@ -155,14 +158,6 @@ export class Player {
         sayToSlot(this._slot, message, GameMessageTarget.Hint);
     }
 
-    setModel(path: string) {
-        metacall('_PlayerSetModel', this._slot, path);
-    }
-
-    setColor(color: Color) {
-        metacall('_PlayerSetColor', this._slot, color);
-    }
-
     playSound(path: string) {
         metacall('_PlayerPlaySound', this._slot, path);
     }
@@ -170,6 +165,10 @@ export class Player {
     kick() {
         metacall('_PlayerKick', this._slot);
     }
+}
+
+export const _CreateCoords = (x: number, y: number, z:number) : Vec3 => {
+    return new Vec3(x, y, z);
 }
 
 export class Stats {
@@ -214,6 +213,11 @@ export class Stats {
     }
 }
 
+export const _PlayerAndEntity = (name: string, steamId: number, slot: number, entityId: number) => {
+    const player = new Player(name, steamId, slot, entityId);
+    return player
+}
+
 export const _Player = (name: string, steamId: number, slot: number) => {
-    return new Player(name, steamId, slot)
+    return Players.getPlayer(slot);
 }

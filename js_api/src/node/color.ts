@@ -11,7 +11,11 @@ export class Color {
         this.alpha = alpha
     }
 
-    toString(separator: string) {
+    toString(separator: string = ', ') {
         return `${this.red}${separator}${this.green}${separator}${this.blue}${separator}${this.alpha}`
     }
+}
+
+export const _CreateColor = (red: number, green: number, blue: number, alpha: number) => {
+    return new Color(red, green, blue, alpha);
 }

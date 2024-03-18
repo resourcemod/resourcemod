@@ -9,6 +9,8 @@ import { Player } from './node/player'
 import server from './server/index'
 import GameMessage from './server/message'
 import * as weapons from './game/weapons'
+import {Entity, EntityType, CollisionType} from './game/entities'
+import {Transform} from './game/transform'
 import { Weapon, GearSlot } from './game/weapons'
 
 
@@ -30,5 +32,9 @@ export {
     GameMessage,
     weapons,
     Weapon,
-    GearSlot
+    GearSlot,
+    EntityType,
+    Entity,
+    CollisionType,
+    Transform
 }
