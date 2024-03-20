@@ -15,7 +15,7 @@ extern ResourceMod *g_ResourceMod;
 extern IVEngineServer2 *g_SourceEngine;
 extern Engine *g_Engine;
 
-static int Create(const char* type) {
+int Create(const char* type) {
     auto entity = SignatureCall::UTIL_CreateEntityByName(type, -1);
     if (entity == nullptr) {
         return -1;
@@ -26,7 +26,7 @@ static int Create(const char* type) {
     return key;
 }
 
-static bool Spawn(int key, const char* model) {
+bool Spawn(int key, const char* model) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return false;
@@ -40,7 +40,7 @@ static bool Spawn(int key, const char* model) {
     return true;
 }
 
-static bool SetModel(int key, const char* model) {
+bool SetModel(int key, const char* model) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return false;
@@ -51,7 +51,7 @@ static bool SetModel(int key, const char* model) {
     return true;
 }
 
-static bool SetCollision(int key, int type) {
+bool SetCollision(int key, int type) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return false;
@@ -61,7 +61,7 @@ static bool SetCollision(int key, int type) {
     return true;
 }
 
-static int GetCollision(int key) {
+int GetCollision(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return -1;
@@ -69,7 +69,7 @@ static int GetCollision(int key) {
     return entity->m_Collision.Get().m_nSolidType.Get();
 }
 
-static bool SetColor(int key, int red, int green, int blue, int alpha) {
+bool SetColor(int key, int red, int green, int blue, int alpha) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return false;
@@ -82,7 +82,7 @@ static bool SetColor(int key, int red, int green, int blue, int alpha) {
     return true;
 }
 
-static char* GetColor(int key) {
+char* GetColor(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return "0,0,0,0";
@@ -93,7 +93,7 @@ static char* GetColor(int key) {
     return result;
 }
 
-static bool Remove(int key) {
+bool Remove(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return false;
@@ -103,14 +103,14 @@ static bool Remove(int key) {
     return true;
 }
 
-static char* GetCoords(int key, int slot) {
+char* GetCoords(int key, int slot) {
     if (slot == -1) {
         return GetEntityCoords(key);
     }
     return GetPlayerCoords(slot);
 }
 
-static char* GetPlayerCoords(int slot) {
+char* GetPlayerCoords(int slot) {
     CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
     if (c == nullptr) {
         return "0.0,0.0,0.0";
@@ -122,7 +122,7 @@ static char* GetPlayerCoords(int slot) {
     return result;
 }
 
-static char* GetEntityCoords(int key) {
+char* GetEntityCoords(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return "0.0,0.0,0.0";
@@ -134,7 +134,7 @@ static char* GetEntityCoords(int key) {
     return result;
 }
 
-static bool SetCoords(int key, int slot, float x, float y, float z) {
+bool SetCoords(int key, int slot, float x, float y, float z) {
     if (slot != -1) {
         return SetPlayerCoords(slot, x, y, z);
     }
@@ -142,7 +142,7 @@ static bool SetCoords(int key, int slot, float x, float y, float z) {
     return SetEntityCoords(key, x, y, z);
 }
 
-static bool SetPlayerCoords(int slot, float x, float y, float z) {
+bool SetPlayerCoords(int slot, float x, float y, float z) {
     CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
     if (c == nullptr) {
         return false;
@@ -152,7 +152,7 @@ static bool SetPlayerCoords(int slot, float x, float y, float z) {
     return true;
 }
 
-static bool SetEntityCoords(int key, float x, float y, float z) {
+bool SetEntityCoords(int key, float x, float y, float z) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return false;
@@ -162,14 +162,14 @@ static bool SetEntityCoords(int key, float x, float y, float z) {
     return true;
 }
 
-static char* GetAngle(int key, int slot) {
+char* GetAngle(int key, int slot) {
     if (slot != -1) {
         return GetPlayerAngle(slot);
     }
     return GetEntityAngle(key);
 }
 
-static char* GetPlayerAngle(int slot) {
+char* GetPlayerAngle(int slot) {
     CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
     if (c == nullptr) {
         return "0.0,0.0,0.0,0.0";
@@ -181,7 +181,7 @@ static char* GetPlayerAngle(int slot) {
     return result;
 }
 
-static char* GetEntityAngle(int key) {
+char* GetEntityAngle(int key) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return "0.0,0.0,0.0,0.0";
@@ -193,14 +193,14 @@ static char* GetEntityAngle(int key) {
     return result;
 }
 
-static bool SetAngle(int key, int slot, float x, float y, float z, const char* name, const char* model) {
+bool SetAngle(int key, int slot, float x, float y, float z, const char* name, const char* model) {
     if (slot != -1) {
         return SetPlayerAngle(slot, x, y, z);
     }
     return SetEntityAngle(key, x, y, z, name, model);
 }
 
-static bool SetPlayerAngle(int slot, float x, float y, float z) {
+bool SetPlayerAngle(int slot, float x, float y, float z) {
     CCSPlayerController* c = CCSPlayerController::FromSlot(slot);
     if (c == nullptr) {
         return false;
@@ -212,7 +212,7 @@ static bool SetPlayerAngle(int slot, float x, float y, float z) {
     return true;
 }
 
-static bool SetEntityAngle(int key, float x, float y, float z, const char* name, const char* model) {
+bool SetEntityAngle(int key, float x, float y, float z, const char* name, const char* model) {
     auto entity = g_Engine->entities[key];
     if (entity == nullptr) {
         return false;

@@ -5,92 +5,78 @@
 #ifndef RESOURCEMOD_PLAYER_H
 #define RESOURCEMOD_PLAYER_H
 
-#include "../cs2/cbaseplayercontroller.h"
-#include "../cs2/csplayerpawn.h"
-#include "../cs2/ccsplayercontroller.h"
-#include "../ResourceMod.h"
-#include <engine/igameeventsystem.h>
-#include <igameevents.h>
-#include <metacall/metacall.h>
-#include <vector>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-class Player {
-public:
-    Player(CCSPlayerController *c) {
-        this->controller = c;
-    };
+extern int GetHP(int slot);
 
-    CCSPlayerController *controller;
+extern bool SetHP(int slot, int hp);
 
-    static void *GetHP(size_t argc, void *args[], void *data);
+extern int GetMoney(int slot);
 
-    static void *SetHP(size_t argc, void *args[], void *data);
+extern bool SetMoney(int slot, int money);
 
-    static void *GetMoney(size_t argc, void *args[], void *data);
+extern int GetDamage(int slot);
 
-    static void *SetMoney(size_t argc, void *args[], void *data);
+extern int GetKills(int slot);
 
-    static void *GetDamage(size_t argc, void *args[], void *data);
+extern int GetAssists(int slot);
 
-    static void *GetKills(size_t argc, void *args[], void *data);
+extern int GetDeaths(int slot);
 
-    static void *GetAssists(size_t argc, void *args[], void *data);
+extern bool SetDamage(int slot, int damage);
 
-    static void *GetDeaths(size_t argc, void *args[], void *data);
+extern bool SetKills(int slot, int kills);
 
-    static void *SetDamage(size_t argc, void *args[], void *data);
+extern bool SetAssists(int slot, int assists);
 
-    static void *SetKills(size_t argc, void *args[], void *data);
+extern bool SetDeaths(int slot, int deaths);
 
-    static void *SetAssists(size_t argc, void *args[], void *data);
+extern int GetArmor(int slot);
 
-    static void *SetDeaths(size_t argc, void *args[], void *data);
+extern bool SetArmor(int slot, int armor);
 
-    static void *GetArmor(size_t argc, void *args[], void *data);
+extern const char *GetName(int slot);
 
-    static void *SetArmor(size_t argc, void *args[], void *data);
+extern long GetSteamID(int slot);
 
-    static void *GetName(size_t argc, void *args[], void *data);
+extern bool GetIsAlive(int slot);
 
-    static void *GetSteamID(size_t argc, void *args[], void *data);
+extern bool Slap(int slot, int damage);
 
-    static void *GetIsAlive(size_t argc, void *args[], void *data);
+extern bool Slay(int slot);
 
-    static void *Slap(size_t argc, void *args[], void *data);
+extern bool Respawn(int slot);
 
-    static void *Slay(size_t argc, void *args[], void *data);
+extern bool PrintGameMessage(int slot, char *message, int duration);
 
-    static void *Respawn(size_t argc, void *args[], void *data);
+extern bool Play(int slot, char *sound);
 
-    static void *PrintGameMessage(size_t argc, void *args[], void *data);
+extern bool Kick(int slot);
 
-    static void *Play(size_t argc, void *args[], void *data);
+extern int GetTeam(int slot);
 
-    static void *Kick(size_t argc, void *args[], void *data);
+extern int ChangeTeam(int slot, int team, bool kill);
 
-    static void *GetTeam(size_t argc, void *args[], void *data);
+extern bool GetIsConnected(int slot);
 
-    static void *ChangeTeam(size_t argc, void *args[], void *data);
+extern bool GetIsConnecting(int slot);
 
-    static void *GetIsConnected(size_t argc, void *args[], void *data);
+extern bool GetIsDisconnected(int slot);
 
-    static void *GetIsConnecting(size_t argc, void *args[], void *data);
+extern bool GetIsDisconnecting(int slot);
 
-    static void *GetIsDisconnected(size_t argc, void *args[], void *data);
+extern bool GetIsReserved(int slot);
 
-    static void ClientPrintAll(int hud_dest, const char *msg, ...);
+extern bool GetIsReconnecting(int slot);
 
-    static void ClientPrint(CCSPlayerController *player, int dest, const char *text, ...);
+extern bool PrintAll(int dest, const char* msg);
 
-    static void *PrintAll(size_t argc, void *args[], void *data);
+extern bool Print(int slot, int dest, const char* msg);
 
-    static void *Print(size_t argc, void *args[], void *data);
-
-    static void *GetIsDisconnecting(size_t argc, void *args[], void *data);
-
-    static void *GetIsReserved(size_t argc, void *args[], void *data);
-
-    static void *GetIsReconnecting(size_t argc, void *args[], void *data);
-};
+#ifdef __cplusplus
+}
+#endif
 
 #endif //RESOURCEMOD_PLAYER_H

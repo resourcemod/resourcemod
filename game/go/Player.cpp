@@ -3,238 +3,237 @@
 //
 #include "Player.h"
 #include "../../protobuf/generated/network_connection.pb.h"
-#include <metacall/metacall.h>
-
-class Player;
+#include "../cs2/cbaseplayercontroller.h"
+#include "../cs2/csplayerpawn.h"
+#include "../cs2/ccsplayercontroller.h"
+#include "../ResourceMod.h"
+#include <engine/igameeventsystem.h>
+#include <igameevents.h>
+#include <vector>
 
 extern ResourceMod *g_ResourceMod;
 extern IVEngineServer2 *g_SourceEngine;
 extern Engine *g_Engine;
 
-void *Player::GetHP(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_int(c->GetPawn()->GetHP());
-}
-
-void *Player::SetHP(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    c->GetPawn()->SetHP(metacall_value_to_int(args[1]));
-    return metacall_value_create_bool(true);
-}
-
-void *Player::GetMoney(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_int(c->m_pInGameMoneyServices->m_iAccount());
-}
-
-void *Player::SetMoney(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    int money = metacall_value_to_int(args[1]);
-    c->m_pInGameMoneyServices->m_iAccount = money;
-    return metacall_value_create_bool(true);
-}
-
-void *Player::GetDamage(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
-    return metacall_value_create_int(matchStats->m_iDamage.Get());
-}
-
-void *Player::GetKills(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
-    return metacall_value_create_int(matchStats->m_iKills.Get());
-}
-
-void *Player::GetAssists(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
-    return metacall_value_create_int(matchStats->m_iAssists.Get());
-}
-
-void *Player::GetDeaths(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
-    return metacall_value_create_int(matchStats->m_iDeaths.Get());
-}
-
-void *Player::SetDamage(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    c->m_pActionTrackingServices->m_matchStats().m_iDamage = metacall_value_to_int(args[1]);
-    return metacall_value_create_bool(true);
-}
-
-void *Player::SetKills(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    int amount = metacall_value_to_int(args[1]);
-    c->m_pActionTrackingServices->m_matchStats().m_iKills = amount;
-    return metacall_value_create_bool(true);
-}
-
-void *Player::SetAssists(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    c->m_pActionTrackingServices->m_matchStats().m_iAssists = metacall_value_to_int(args[1]);
-    return metacall_value_create_bool(true);
-}
-
-void *Player::SetDeaths(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    c->m_pActionTrackingServices->m_matchStats().m_iDeaths = metacall_value_to_int(args[1]);
-    return metacall_value_create_bool(true);
-}
-
-void *Player::GetArmor(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *) c->m_hPlayerPawn().Get();
-    if (!pawn) {
-        return metacall_value_create_int(0);
-    }
-    return metacall_value_create_int(pawn->GetArmor());
-}
-
-void *Player::SetArmor(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *) c->m_hPlayerPawn().Get();
-    if (!pawn) {
-        return metacall_value_create_bool(false);
-    }
-    pawn->SetArmor(metacall_value_to_int(args[1]));
-    return metacall_value_create_bool(true);
-}
-
-void *Player::GetName(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    std::string name = c->GetPlayerName();
-    return metacall_value_create_string(name.c_str(), name.length());
-}
-
-void *Player::GetSteamID(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    uint64 value = c->m_steamID;
-    return metacall_value_create_long(value);
-}
-
-void *Player::GetIsAlive(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_bool(c->IsAlive());
-}
-
-void *Player::Slap(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    c->GetPawn()->Slap(metacall_value_to_int(args[1]));
-    return metacall_value_create_bool(true);
-}
-
-void *Player::Slay(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    c->GetPawn()->CommitSuicide(true, true);
-    return metacall_value_create_bool(true);
-}
-
-void *Player::Respawn(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_bool(c->Respawn());
-}
-
-void *Player::PrintGameMessage(size_t argc, void *args[], void *data) {
-    int slot = metacall_value_to_int(args[0]);
+int GetHP(int slot) {
     CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
-    std::string message = metacall_value_to_string(args[1]);
-    int duration = metacall_value_to_int(args[2]);
+    return c->GetPawn()->GetHP();
+}
 
-    if (message.size() == 0) {
-        return metacall_value_create_bool(false);
+bool SetHP(int slot, int hp) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    c->GetPawn()->SetHP(hp);
+    return true;
+}
+
+int GetMoney(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->m_pInGameMoneyServices->m_iAccount();
+}
+
+bool SetMoney(int slot, int money) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    c->m_pInGameMoneyServices->m_iAccount = money;
+    return true;
+}
+
+int GetDamage(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
+    return matchStats->m_iDamage.Get();
+}
+
+int GetKills(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
+    return matchStats->m_iKills.Get();
+}
+
+int GetAssists(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
+    return matchStats->m_iAssists.Get();
+}
+
+int GetDeaths(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    CSMatchStats_t *matchStats = &c->m_pActionTrackingServices->m_matchStats();
+    return matchStats->m_iDeaths.Get();
+}
+
+bool SetDamage(int slot, int damage) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    c->m_pActionTrackingServices->m_matchStats().m_iDamage = damage;
+    return true;
+}
+
+bool SetKills(int slot, int kills) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    c->m_pActionTrackingServices->m_matchStats().m_iKills = kills;
+    return true;
+}
+
+bool SetAssists(int slot, int assists) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    c->m_pActionTrackingServices->m_matchStats().m_iAssists = assists;
+    return true;
+}
+
+bool SetDeaths(int slot, int deaths) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    c->m_pActionTrackingServices->m_matchStats().m_iDeaths = deaths;
+    return true;
+}
+
+int GetArmor(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *) c->m_hPlayerPawn().Get();
+    if (!pawn) {
+        return 0;
+    }
+    return pawn->GetArmor();
+}
+
+bool SetArmor(int slot, int armor) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    CCSPlayerPawnBase *pawn = (CCSPlayerPawnBase *) c->m_hPlayerPawn().Get();
+    if (!pawn) {
+        return false;
+    }
+    pawn->SetArmor(armor);
+    return true;
+}
+
+const char *GetName(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->GetPlayerName();
+}
+
+long GetSteamID(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->m_steamID;
+}
+
+bool GetIsAlive(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->IsAlive();
+}
+
+bool Slap(int slot, int damage) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    c->GetPawn()->Slap(damage);
+    return true;
+}
+
+bool Slay(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    c->GetPawn()->CommitSuicide(true, true);
+    return true;
+}
+
+bool Respawn(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->Respawn();
+}
+
+bool PrintGameMessage(int slot, char *message, int duration) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    if (strlen(message) == 0) {
+        return false;
     }
 
     if (duration == 0) {
-        return metacall_value_create_bool(false);
+        return false;
     }
 
     std::pair<uint64_t, std::string> pair = std::make_pair(Engine::Now() + (duration * 1000), message);
     g_Engine->gameMessages[slot] = pair;
 
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void *Player::Play(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+bool Play(int slot, char *sound) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
 
     std::string soundPath = "play ";
-    soundPath.append(metacall_value_to_string(args[1]));
+    soundPath.append(sound);
     if (c->GetPawn() != nullptr && c->m_steamID > 0)
         g_SourceEngine->ClientCommand(c->GetPlayerSlot(), soundPath.c_str());
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void *Player::Kick(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
+bool Kick(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
 
     g_SourceEngine->DisconnectClient(c->GetPlayerSlot(), NETWORK_DISCONNECT_KICKED); //disconnect by server
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void *Player::GetTeam(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_int(c->m_iTeamNum.Get());
+int GetTeam(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->m_iTeamNum.Get();
 }
 
-void *Player::ChangeTeam(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-
-    int team = metacall_value_to_int(args[1]);
+int ChangeTeam(int slot, int team, bool kill) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
     if (team < 0 || team > 3) {
-        void *throwArgs[] = {
-                metacall_value_create_string("Invalid team parameter. 0-3 range expected.",
-                                             strlen("Invalid team parameter. 0-3 range expected.")),
-        };
-        metacallv("_throw_exception", throwArgs);
-        return metacall_value_create_bool(false);
+        return false;
     }
-    if (argc > 2) {
-        bool kill = metacall_value_to_bool(args[2]);
-        if (kill) {
-            c->ChangeTeam(team);
-        } else {
-            c->SwitchTeam(team);
-        }
+    if (kill) {
+        c->ChangeTeam(team);
     } else {
         c->SwitchTeam(team);
     }
 
-    return metacall_value_create_bool(true);
+    return true;
 }
 
-void *Player::GetIsConnected(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_bool(c->IsConnected());
+bool GetIsConnected(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->IsConnected();
 }
 
-void *Player::GetIsConnecting(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_bool(c->IsConnecting());
+bool GetIsConnecting(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->IsConnecting();
 }
 
-void *Player::GetIsDisconnected(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_bool(c->IsDisconnected());
+bool GetIsDisconnected(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->IsDisconnected();
 }
 
-void Player::ClientPrintAll(int hud_dest, const char *msg, ...) {
+bool GetIsDisconnecting(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->IsDisconnecting();
+}
+
+bool GetIsReserved(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->IsReserved();
+}
+
+bool GetIsReconnecting(int slot) {
+    CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
+    return c->IsReconnecting();
+}
+
+void ClientPrintAll(int hud_dest, const char *msg, ...) {
     va_list args;
-            va_start(args, msg);
+    va_start(args, msg);
     char buf[256];
     V_vsnprintf(buf, sizeof(buf), msg, args);
-            va_end(args);
+    va_end(args);
 
     return SignatureCall::UTIL_ClientPrintAll(hud_dest, buf, nullptr, nullptr, nullptr, nullptr);
 }
 
-void Player::ClientPrint(CCSPlayerController *player, int dest, const char *text, ...) {
+void ClientPrint(CCSPlayerController *player, int dest, const char *text, ...) {
     va_list args;
-            va_start(args, text);
+    va_start(args, text);
     char buf[256];
     V_vsnprintf(buf, sizeof(buf), text, args);
-            va_end(args);
+    va_end(args);
 
     g_ResourceMod->NextFrame([player, buf, dest]() {
         if (player->m_hPawn() && player->m_steamID() > 0)
@@ -242,37 +241,13 @@ void Player::ClientPrint(CCSPlayerController *player, int dest, const char *text
     });
 }
 
-void *Player::PrintAll(size_t argc, void *args[], void *data) {
-    int dest = metacall_value_to_int(args[0]);
-    std::string msg = metacall_value_to_string(args[1]);
-
-    Player::ClientPrintAll(dest, msg.c_str());
-
-    return metacall_value_create_bool(true);
+bool PrintAll(int dest, const char* msg) {
+    Player::ClientPrintAll(dest, msg);
+    return true;
 }
 
-void *Player::Print(size_t argc, void *args[], void *data) {
-    int slot = metacall_value_to_int(args[0]);
-    int dest = metacall_value_to_int(args[1]);
-    std::string msg = metacall_value_to_string(args[2]);
-
+bool Print(int slot, int dest, const char* msg) {
     CCSPlayerController *c = CCSPlayerController::FromSlot(slot);
-    Player::ClientPrint(c, dest, msg.c_str());
-
-    return metacall_value_create_bool(true);
-}
-
-void *Player::GetIsDisconnecting(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_bool(c->IsDisconnecting());
-}
-
-void *Player::GetIsReserved(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_bool(c->IsReserved());
-}
-
-void *Player::GetIsReconnecting(size_t argc, void *args[], void *data) {
-    CCSPlayerController *c = CCSPlayerController::FromSlot(metacall_value_to_int(args[0]));
-    return metacall_value_create_bool(c->IsReconnecting());
+    Player::ClientPrint(c, dest, msg);
+    return true;
 }

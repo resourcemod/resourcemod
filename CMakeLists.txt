@@ -35,6 +35,7 @@ add_library(resourcemod SHARED
         game/go/Player.cpp
         game/go/Entity.cpp
         game/go/Entity.h
+        game/go/Weapon.cpp
 )
 
 target_link_libraries(resourcemod

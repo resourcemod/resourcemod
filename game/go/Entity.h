@@ -5,47 +5,52 @@
 #ifndef RESOURCEMOD_ENTITY_H
 #define RESOURCEMOD_ENTITY_H
 
-#include <vector>
-#include <cstdio>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-static int Create(const char* type);
+extern int Create(const char* type);
 
-static bool Spawn(int key, const char* model);
+extern bool Spawn(int key, const char* model);
 
-static bool Remove(int key);
+extern bool Remove(int key);
 
-static bool SetModel(int key, const char* model);
+extern bool SetModel(int key, const char* model);
 
-static int GetCollision(int key);
+extern int GetCollision(int key);
 
-static bool SetCollision(int key, int type);
+extern bool SetCollision(int key, int type);
 
-static bool SetColor(int key, int red, int green, int blue, int alpha);
+extern bool SetColor(int key, int red, int green, int blue, int alpha);
 
-static char* GetColor(int key);
+extern char* GetColor(int key);
 
-static char* GetAngle(int key, int slot);
+extern char* GetAngle(int key, int slot);
 
-static char* GetPlayerAngle(int slot);
+extern char* GetPlayerAngle(int slot);
 
-static char* GetEntityAngle(int key);
+extern char* GetEntityAngle(int key);
 
-static bool SetAngle(int key, int slot, float x, float y, float z, const char* name, const char* model);
+extern bool SetAngle(int key, int slot, float x, float y, float z, const char* name, const char* model);
 
-static bool SetPlayerAngle(int slot, float x, float y, float z);
+extern bool SetPlayerAngle(int slot, float x, float y, float z);
 
-static bool SetEntityAngle(int key, float x, float y, float z, const char* name, const char* model);
+extern bool SetEntityAngle(int key, float x, float y, float z, const char* name, const char* model);
 
-static char* GetCoords(int key, int slot);
+extern char* GetCoords(int key, int slot);
 
-static char* GetPlayerCoords(int slot);
+extern char* GetPlayerCoords(int slot);
 
-static char* GetEntityCoords(int key);
+extern char* GetEntityCoords(int key);
 
-static bool SetPlayerCoords(int slot, float x, float y, float z);
+extern bool SetPlayerCoords(int slot, float x, float y, float z);
 
-static bool SetEntityCoords(int key, float x, float y, float z);
+extern bool SetEntityCoords(int key, float x, float y, float z);
 
-static bool SetCoords(int key, int slot, float x, float y, float z);
+extern bool SetCoords(int key, int slot, float x, float y, float z);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //RESOURCEMOD_ENTITY_H
