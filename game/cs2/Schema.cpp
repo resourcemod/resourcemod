@@ -21,7 +21,9 @@ bool Schema::IsFieldNetworked(SchemaClassFieldData_t &field)
 
 bool Schema::InitSchemaFieldsForClass(SchemaTableMap_t *tableMap, const char *className, uint32_t classKey)
 {
-    CSchemaSystemTypeScope *pType = g_SchemaSystem->FindTypeScopeForModule("server.dll"); // todo: linux support
+    std::string module = "server";
+    std::string prefix = "";
+    CSchemaSystemTypeScope *pType = g_SchemaSystem->FindTypeScopeForModule(prefix.append(MODULE_PREFIX).append(module.c_str()).append(MODULE_EXT).c_str());
 
     if (!pType)
         return false;
@@ -53,7 +55,9 @@ bool Schema::InitSchemaFieldsForClass(SchemaTableMap_t *tableMap, const char *cl
 
 int16_t Schema::FindChainOffset(const char *className)
 {
-    CSchemaSystemTypeScope *pType = g_SchemaSystem->FindTypeScopeForModule("server.dll"); // todo: linux support
+    std::string module = "server";
+    std::string prefix = "";
+    CSchemaSystemTypeScope *pType = g_SchemaSystem->FindTypeScopeForModule(prefix.append(MODULE_PREFIX).append(module.c_str()).append(MODULE_EXT).c_str());
 
     if (!pType)
         return false;

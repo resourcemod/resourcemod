@@ -13,7 +13,7 @@ cleanup:
 .PHONY: configure
 configure:
 	@cd build && \
-	  python ../configure.py \
+	  python3 ../configure.py \
 	  --enable-optimize \
 	  --plugin-name=$(PLUGIN_NAME) \
 	  --plugin-alias=$(PLUGIN_ALIAS) \

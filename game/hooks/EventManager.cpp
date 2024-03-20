@@ -12,8 +12,6 @@
 #include <iserver.h>
 #include "eiface.h"
 #include "../GameSystem.h"
-#include "../../protobuf/generated/cs_gameevents.pb.h"
-#include "../../protobuf/generated/te.pb.h"
 
 extern PluginId g_PLID;
 extern SourceHook::ISourceHook *g_SHPtr;
@@ -115,9 +113,7 @@ void EventManager::OnPostEventAbstract(CSplitScreenSlot nSlot, bool bLocalOnly, 
                                                        INetworkSerializable *, const void *, unsigned long, NetChannelBufType_t) = &IGameEventSystem::PostEventAbstract;
 
     NetMessageInfo_t *info = pEvent->GetNetMessageInfo();
-    if (info->m_MessageId == GE_FireBulletsId) {
-        // ge block
-    }
+
 }
 
 void EventManager::OnClientDisconnect_hk(CPlayerSlot slot, ENetworkDisconnectionReason reason, const char *pszName,
@@ -143,6 +139,7 @@ bool EventManager::OnClientConnect_hk(CPlayerSlot slot, const char *pszName, uin
         RETURN_META_VALUE(MRES_SUPERCEDE, false);
     }
     delete e;
+    return true;
 }
 
 void EventManager::OnClientCommand_hk(CPlayerSlot slot, const CCommand &args) {

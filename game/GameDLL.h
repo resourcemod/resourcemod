@@ -14,10 +14,6 @@
 
 class GameDLL {
 public:
-    static CSchemaSystem * getSchemaSystem();
-    static IVEngineServer2 * getSource2EngineToServer();
-    static ISource2GameClients* getSource2GameClients();
-
     static void BootResourceMod();
 
     static bool InitGameSystems();

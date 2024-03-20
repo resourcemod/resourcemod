@@ -39,6 +39,7 @@ class CBaseModelEntity;
 class IGameEventListener2;
 class CPlayerSlot;
 class CEntityInstance;
+class CBaseModelEntity;
 
 namespace SignatureCall {
     inline void(FASTCALL *UTIL_ClientPrint)(CBasePlayerController *player, int msg_dest, const char *msg_name, const char *param1, const char *param2, const char *param3, const char *param4);
@@ -50,6 +51,9 @@ namespace SignatureCall {
     inline void(FASTCALL *NetworkStateChanged)(int64 chainEntity, int64 offset, int64 a3);
     inline void(FASTCALL *StateChanged)(void *networkTransmitComponent, CEntityInstance *ent, int64 offset, int16 a4, int16 a5);
     inline void(FASTCALL *UTIL_Remove)(CEntityInstance*);
+    inline CBaseModelEntity*(FASTCALL *UTIL_CreateEntityByName)(const char*, int);
+    inline void(FASTCALL *CBaseEntity_DispatchSpawn)(CEntityInstance *, void *);
+    inline void(FASTCALL *SnapViewAngles)(CEntityInstance *pawn, const QAngle &angle);
 }
 
 class Memory {
@@ -95,6 +99,10 @@ public:
         RESOLVE_SIG(this, "NetworkStateChanged", SignatureCall::NetworkStateChanged);
         RESOLVE_SIG(this, "StateChanged", SignatureCall::StateChanged);
         RESOLVE_SIG(this, "UTIL_Remove", SignatureCall::UTIL_Remove);
+        RESOLVE_SIG(this, "UTIL_CreateEntityByName", SignatureCall::UTIL_CreateEntityByName);
+        RESOLVE_SIG(this, "CBaseEntity_DispatchSpawn", SignatureCall::CBaseEntity_DispatchSpawn);
+        RESOLVE_SIG(this, "SnapViewAngles", SignatureCall::SnapViewAngles);
+        return true;
     }
 
     bool IsSymbol(const char *name) {

@@ -6,14 +6,13 @@
 #define RESOURCEMOD_ENGINE_H
 
 #include <string>
-#include <windows.h>
 #include <memory>
 #include <vector>
 #include <queue>
 #include <mutex>
-#include "TSQueue.h"
 #include <map>
 
+#include "../game/cs2/cbasemodelentity.h"
 #ifndef IS_INTERNAL_RUNTIME
 #else
 
@@ -34,7 +33,7 @@
 
 class Engine {
 public:
-    const std::string RESOURCEMOD_META = "resourcemod.config.js";
+    const std::string RESOURCEMOD_META = "resourcemod.config.go";
 
     std::string rootPath = "";
     std::string resourcemodFolder = "";
@@ -44,12 +43,16 @@ public:
     std::vector<std::string> precacheList;
 
     void Init();
-
+    bool isRunning = false;
     static uint64_t Now();
 
     std::map<int, std::pair<uint64_t, std::string>> gameMessages;
+    std::map<int, CBaseModelEntity *> entities;
 
-    void InitMetacall();
+    static void SetEntityModel(int key, const char* model); // calls on next frame
+
+    void InitResourceModApi();
+    void Tick();
 
     // Utils
     static std::string GetFileContent(std::string);

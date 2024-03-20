@@ -7,3 +7,6 @@
 [submodule "third_party/google/protobuf"]
 	path = third_party/google/protobuf
 	url = https://github.com/protocolbuffers/protobuf.git
+[submodule "api"]
+	path = api
+	url = git@github.com:resourcemod/api.git

@@ -47,7 +47,7 @@ public:
 
     SCHEMA_FIELD(Vector, m_vecAbsOrigin)
 
-    SCHEMA_FIELD(QAngle, m_angAbsRotation)
+    SCHEMA_FIELD(QAngle, m_angAbsRotation) // network update disabled
 
     SCHEMA_FIELD(Vector, m_vRenderOrigin)
 
@@ -157,6 +157,11 @@ public:
 
     void TakeDamage(int iDamage) {
         m_iHealth = m_iHealth() - iDamage;
+    }
+
+    void Spawn()
+    {
+        SignatureCall::CBaseEntity_DispatchSpawn(this, nullptr);
     }
 
     bool IsAlive() {

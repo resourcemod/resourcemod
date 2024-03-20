@@ -12,7 +12,7 @@ for sdk_name in MMSPlugin.sdks:
 
     binary = MMSPlugin.HL2Library(builder, cxx, MMSPlugin.plugin_name, sdk)
     if binary.compiler.family == 'gcc' or binary.compiler.family == 'clang':
-      binary.compiler.cxxflags += ['--std=c++17']
+      binary.compiler.cxxflags += ['--std=c++20', '-frtti']
     elif binary.compiler.family == 'msvc':
       binary.compiler.cxxflags += ['/std:c++20']
 
@@ -31,7 +31,7 @@ for sdk_name in MMSPlugin.sdks:
       binary.sources += ['game/cs2/plat_unix.cpp']
     elif binary.compiler.target.platform == 'windows':
       binary.compiler.postlink += [
- 	    os.path.join(builder.sourcePath, 'lib', 'metacall.lib')
+ 	      os.path.join(builder.sourcePath, 'lib', 'metacall.lib')
       ]
       binary.sources += ['game/cs2/plat_win.cpp']
 
@@ -46,7 +46,9 @@ for sdk_name in MMSPlugin.sdks:
         'engine/Utils.cpp',
         'game/cs2/Schema.cpp',
         'game/hooks/LegacyEvents.cpp',
-        'game/GameSystem.cpp'
+        'game/GameSystem.cpp',
+        'game/go/Player.cpp',
+        'game/go/Entity.cpp'
     ]
 
     if sdk_name in ['dota', 'cs2']:

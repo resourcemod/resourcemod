@@ -16,7 +16,9 @@
 #include "GameDLL.h"
 #include "GameSystem.h"
 #include <icvar.h>
+#ifdef WIN_32
 #include <direct.h>
+#endif
 #include <tier1/utlstring.h>
 #include <tier1/utlvector.h>
 
@@ -153,6 +155,8 @@ void ResourceMod::RMFrame() {
         m_nextFrame.front()();
         m_nextFrame.pop_front();
     }
+    if (g_Engine->isRunning)
+        g_Engine->Tick();
 }
 
 void ResourceMod::NextFrame(std::function<void()> fn) {
@@ -164,7 +168,7 @@ const char *ResourceMod::GetLicense() {
 }
 
 const char *ResourceMod::GetVersion() {
-    return "1.0.33-beta";
+    return "1.0.34-beta";
 }
 
 const char *ResourceMod::GetDate() {

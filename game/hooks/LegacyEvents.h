@@ -7,10 +7,9 @@
 
 #include "../cs2/cbaseentity.h"
 #include "../../logger/logger.h"
-#include "../cs2/CCSPlayerController.h"
+#include "../cs2/ccsplayercontroller.h"
 #include "../../engine/Engine.h"
-#include "../js/Player.h"
-#include "metacall/metacall.h"
+#include "../go/Player.h"
 
 extern Engine *g_Engine;
 
@@ -35,6 +34,7 @@ public:
     Player *player;
 
     bool Emit() override {
+
         void *playerArgs[] = {
                 metacall_value_create_string(this->player->controller->GetPlayerName(),
                                              strlen(this->player->controller->GetPlayerName())),
@@ -1895,8 +1895,11 @@ public:
         this->slot = slot;
         this->controller = CCSPlayerController::FromSlot(slot);
         this->player = new Player(controller);
+        this->key = g_Engine->entities.size()+1;
+        g_Engine->entities[this->key] = this->controller->GetPawn();
     };
     std::string event_name = "client_put_in_server";
+    int key;
     int slot;
     CCSPlayerController *controller;
     Player *player;
@@ -1906,16 +1909,14 @@ public:
                 metacall_value_create_string(this->player->controller->GetPlayerName(),
                                              strlen(this->player->controller->GetPlayerName())),
                 metacall_value_create_long(this->player->controller->m_steamID),
-                metacall_value_create_int(this->slot)
+                metacall_value_create_int(this->slot),
+                metacall_value_create_int(this->key)
         };
-
-        void *playerObj = metacallv("_Player", playerArgs);
-
+        void *playerObj = metacallv("_PlayerAndEntity", playerArgs);
         void *args[] = {
                 metacall_value_create_string(this->event_name.c_str(), this->event_name.length()),
                 playerObj,
         };
-
         void *objptr = metacallv("_ClientPutInServerEvent", args);
         void *call[] = {
                 objptr
@@ -1925,6 +1926,8 @@ public:
         std::string result = metacall_value_to_string(ret);
         metacall_value_destroy(playerArgs[0]);
         metacall_value_destroy(playerArgs[1]);
+        metacall_value_destroy(playerArgs[2]);
+        metacall_value_destroy(playerArgs[3]);
         for (int i = 0; i < sizeof(args) / sizeof(args[0]); i++) {
             metacall_value_destroy(args[i]);
         }

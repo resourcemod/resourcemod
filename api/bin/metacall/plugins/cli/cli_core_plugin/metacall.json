@@ -1,7 +1,0 @@
-{
-  "language_id": "ext",
-  "path": ".",
-  "scripts": [
-    "cli_core_plugin"
-  ]
-}
